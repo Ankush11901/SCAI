@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAI Billing System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════════════════════════════════
+     RESET & BASE
+     ═══════════════════════════════════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --page: #030303;
+    --card: #0A0A0A;
+    --surface: #111111;
+    --input: #1A1A1A;
+    --border: #222222;
+    --border-dim: #1A1A1A;
+    --border-bright: #333333;
+    --text: #FFFFFF;
+    --text-sec: #A3A3A3;
+    --text-muted: #666666;
+    --brand1: #40EDC3;
+    --brand2: #7FFBA9;
+    --brand3: #D3F89A;
+    --success: #059669;
+    --error: #dc2626;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --gradient: linear-gradient(90.72deg, #40EDC3 0%, #7FFBA9 49.62%, #D3F89A 100%);
+    --glow: 0 0 30px -10px rgba(64, 237, 195, 0.25);
+    --glow-lg: 0 0 60px -20px rgba(64, 237, 195, 0.4);
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+  }
+
+  ::selection { background: rgba(64, 237, 195, 0.3); color: #fff; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--page);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--page); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     LAYOUT
+     ═══════════════════════════════════════════════════════════════════════ */
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
+
+  .hero {
+    text-align: center;
+    padding: 4rem 0 3rem;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(circle, rgba(64,237,195,0.12) 0%, rgba(127,251,169,0.06) 30%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+  }
+  .hero p { color: var(--text-sec); font-size: 1.125rem; max-width: 600px; margin: 0 auto; position: relative; }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 2.5rem 0 3rem;
+    position: relative;
+  }
+  .nav a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-sec);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .nav a:hover {
+    border-color: var(--brand1);
+    color: var(--brand1);
+    box-shadow: var(--glow);
+  }
+
+  /* Section */
+  .section { margin-bottom: 3.5rem; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     CARDS
+     ═══════════════════════════════════════════════════════════════════════ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    border-color: var(--border-bright);
+  }
+  .card-highlight {
+    border-color: rgba(64, 237, 195, 0.3);
+    background: linear-gradient(135deg, var(--card) 0%, rgba(64, 237, 195, 0.03) 100%);
+  }
+  .card-highlight:hover {
+    border-color: rgba(64, 237, 195, 0.5);
+    box-shadow: var(--glow);
+  }
+
+  .card h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .card .subtitle {
+    color: var(--text-sec);
+    font-size: 0.8125rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Grid */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+  @media (max-width: 900px) {
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2rem; }
+    .container { padding: 1rem 1rem 4rem; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     PLAN CARDS
+     ═══════════════════════════════════════════════════════════════════════ */
+  .plan-card { position: relative; overflow: hidden; }
+  .plan-card .plan-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+  .plan-card .price {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .plan-card .price-note {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+  .plan-card .plan-credits {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .plan-card ul { list-style: none; }
+  .plan-card li {
+    font-size: 0.8125rem;
+    color: var(--text-sec);
+    padding: 0.375rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .plan-card li .check { color: var(--success); font-weight: 700; }
+  .plan-card li .cross { color: var(--text-muted); }
+
+  .plan-free .plan-badge { background: rgba(64, 237, 195, 0.1); color: var(--brand1); }
+  .plan-pro .plan-badge { background: var(--gradient); color: var(--page); }
+  .plan-pro .price { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .plan-payg .plan-badge { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     TABLES
+     ═══════════════════════════════════════════════════════════════════════ */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+  thead th {
+    background: var(--surface);
+    color: var(--text-sec);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.6875rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--border-dim);
+    color: var(--text-sec);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(64, 237, 195, 0.02); }
+  td.num { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; }
+  td.highlight { color: var(--brand1); font-weight: 600; }
+  td.money { color: var(--brand3); font-weight: 600; }
+  td strong { color: var(--text); font-weight: 600; }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     STAT CARDS
+     ═══════════════════════════════════════════════════════════════════════ */
+  .stat {
+    text-align: center;
+    padding: 1.25rem 1rem;
+  }
+  .stat .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .stat .stat-label {
+    color: var(--text-sec);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+  }
+  .stat-brand { color: var(--brand1); }
+  .stat-brand3 { color: var(--brand3); }
+  .stat-success { color: var(--success); }
+  .stat-warning { color: var(--warning); }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     FLOW DIAGRAM
+     ═══════════════════════════════════════════════════════════════════════ */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1.5rem 0;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-step .flow-num {
+    width: 24px; height: 24px;
+    border-radius: 999px;
+    background: var(--gradient);
+    color: var(--page);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow-step .flow-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .flow-step .flow-desc {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+  }
+  .flow-arrow {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    padding: 0 0.25rem;
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     FORMULA
+     ═══════════════════════════════════════════════════════════════════════ */
+  .formula {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9375rem;
+    color: var(--brand1);
+    letter-spacing: -0.01em;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .formula::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient);
+  }
+  .formula .op { color: var(--text-muted); }
+  .formula .label { color: var(--text-sec); font-size: 0.75rem; display: block; margin-top: 0.5rem; font-family: 'Inter', sans-serif; }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     BADGE / TAG
+     ═══════════════════════════════════════════════════════════════════════ */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.1875rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-brand { background: rgba(64, 237, 195, 0.1); color: var(--brand1); }
+  .badge-success { background: rgba(5, 150, 105, 0.1); color: var(--success); }
+  .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+  .badge-error { background: rgba(220, 38, 38, 0.1); color: var(--error); }
+  .badge-info { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+  .badge-muted { background: var(--surface); color: var(--text-muted); }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     WATERFALL
+     ═══════════════════════════════════════════════════════════════════════ */
+  .waterfall {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .waterfall-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--card);
+    position: relative;
+  }
+  .waterfall-step:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .waterfall-step:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+  .waterfall-step::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 100%;
+    width: 2px;
+    height: 0;
+    background: var(--border);
+  }
+  .waterfall-num {
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .waterfall-step:nth-child(1) .waterfall-num { background: rgba(64, 237, 195, 0.15); color: var(--brand1); }
+  .waterfall-step:nth-child(2) .waterfall-num { background: rgba(127, 251, 169, 0.15); color: var(--brand2); }
+  .waterfall-step:nth-child(3) .waterfall-num { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+  .waterfall-step:nth-child(4) .waterfall-num { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+  .waterfall-content { flex: 1; }
+  .waterfall-content .wf-title { font-weight: 600; font-size: 0.875rem; }
+  .waterfall-content .wf-desc { color: var(--text-sec); font-size: 0.75rem; margin-top: 0.125rem; }
+  .waterfall-content .wf-tier { margin-left: auto; flex-shrink: 0; }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     MARGIN BAR
+     ═══════════════════════════════════════════════════════════════════════ */
+  .margin-bar-wrap { margin-top: 0.75rem; }
+  .margin-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--border);
+    overflow: hidden;
+    position: relative;
+  }
+  .margin-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--gradient);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .margin-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+  .margin-bar-labels span:last-child { color: var(--brand1); font-weight: 600; }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     MISC
+     ═══════════════════════════════════════════════════════════════════════ */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .text-sec { color: var(--text-sec); }
+  .text-muted { color: var(--text-muted); }
+  .text-brand { color: var(--brand1); }
+  .text-sm { font-size: 0.8125rem; }
+  .text-xs { font-size: 0.75rem; }
+  .mt-1 { margin-top: 0.5rem; }
+  .mt-2 { margin-top: 1rem; }
+  .mb-1 { margin-bottom: 0.5rem; }
+  .mb-2 { margin-bottom: 1rem; }
+  .gap-sm { gap: 0.75rem; }
+
+  .note {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    font-size: 0.8125rem;
+    color: var(--text-sec);
+    margin: 1rem 0;
+  }
+  .note strong { color: var(--info); }
+
+  .warning-note {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: rgba(245, 158, 11, 0.15);
+  }
+  .warning-note strong { color: var(--warning); }
+
+  /* Inline code */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125em;
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    padding: 0.125em 0.375em;
+    border-radius: 4px;
+    color: var(--brand1);
+  }
+
+  /* Article type colors */
+  .type-affiliate { color: #f472b6; }
+  .type-commercial { color: #60a5fa; }
+  .type-comparison { color: #c084fc; }
+  .type-howto { color: #fb923c; }
+  .type-informational { color: #34d399; }
+  .type-listicle { color: #fbbf24; }
+  .type-local { color: #2dd4bf; }
+  .type-recipe { color: #f87171; }
+  .type-review { color: #a78bfa; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="hero">
+    <h1>Billing System</h1>
+    <p>Complete documentation of the SCAI credit system, subscription plans, pricing structure, and revenue economics.</p>
+  </div>
+
+  <nav class="nav">
+    <a href="#plans">Plans</a>
+    <a href="#credits">Credit System</a>
+    <a href="#estimation">Estimation</a>
+    <a href="#waterfall">Deduction</a>
+    <a href="#costs">AI Costs</a>
+    <a href="#margins">Margins</a>
+    <a href="#stripe">Stripe</a>
+    <a href="#access">Access Control</a>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       KEY METRICS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="grid-4 mb-2">
+    <div class="card stat">
+      <div class="stat-value stat-brand">$0.05</div>
+      <div class="stat-label">Per credit</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-value stat-brand3">~92%</div>
+      <div class="stat-label">Avg gross margin</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-value" style="color: var(--text)">~16</div>
+      <div class="stat-label">Avg credits / article</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-value stat-success">$99</div>
+      <div class="stat-label">Pro monthly</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PLANS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="plans">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(64,237,195,0.1); color: var(--brand1);">&#9733;</div>
+      <h2>Subscription Plans</h2>
+    </div>
+
+    <div class="grid-3">
+      <!-- Free -->
+      <div class="card plan-card plan-free">
+        <div class="plan-badge">Free</div>
+        <div class="price">$0</div>
+        <div class="price-note">Forever free</div>
+        <div class="plan-credits">100 credits / month</div>
+        <ul>
+          <li><span class="check">&#10003;</span> ~6-7 articles / month</li>
+          <li><span class="check">&#10003;</span> Up to 1,000 words</li>
+          <li><span class="check">&#10003;</span> Up to 3 images</li>
+          <li><span class="check">&#10003;</span> Flux images only</li>
+          <li><span class="check">&#10003;</span> Single WP export</li>
+          <li><span class="cross">&#10005;</span> Bulk generation</li>
+          <li><span class="cross">&#10005;</span> Gemini images</li>
+          <li><span class="cross">&#10005;</span> API access</li>
+        </ul>
+      </div>
+
+      <!-- Pro -->
+      <div class="card plan-card plan-pro card-highlight">
+        <div class="plan-badge">Pro</div>
+        <div class="price">$99</div>
+        <div class="price-note">/month &middot; or $79/mo billed yearly</div>
+        <div class="plan-credits" style="border-color: rgba(64,237,195,0.2); background: rgba(64,237,195,0.05);">2,000 credits / month</div>
+        <ul>
+          <li><span class="check">&#10003;</span> ~65-125 articles / month</li>
+          <li><span class="check">&#10003;</span> Up to 5,000 words</li>
+          <li><span class="check">&#10003;</span> Up to 10 images</li>
+          <li><span class="check">&#10003;</span> Flux + Gemini images</li>
+          <li><span class="check">&#10003;</span> Bulk generation (50/job)</li>
+          <li><span class="check">&#10003;</span> Bulk WP export</li>
+          <li><span class="check">&#10003;</span> Cluster mode</li>
+          <li><span class="check">&#10003;</span> API access</li>
+        </ul>
+      </div>
+
+      <!-- PAYG -->
+      <div class="card plan-card plan-payg">
+        <div class="plan-badge">Pay as you go</div>
+        <div class="price">$0.05</div>
+        <div class="price-note">per credit &middot; no commitment</div>
+        <div class="plan-credits">Top-up as needed</div>
+        <ul>
+          <li><span class="check">&#10003;</span> All Pro features</li>
+          <li><span class="check">&#10003;</span> ~$0.80 per article (1,000w)</li>
+          <li><span class="check">&#10003;</span> No monthly fee</li>
+          <li><span class="check">&#10003;</span> Never expires</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Credit Packs -->
+    <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1rem; font-weight: 700;">Credit Packs (PAYG)</h3>
+    <div class="grid-4 gap-sm">
+      <div class="card stat" style="padding: 1rem;">
+        <div class="stat-value" style="font-size: 1.5rem;">100</div>
+        <div class="stat-label">$5.00</div>
+      </div>
+      <div class="card stat" style="padding: 1rem;">
+        <div class="stat-value" style="font-size: 1.5rem;">500</div>
+        <div class="stat-label">$25.00</div>
+      </div>
+      <div class="card stat card-highlight" style="padding: 1rem;">
+        <div class="stat-value stat-brand" style="font-size: 1.5rem;">1,000</div>
+        <div class="stat-label">$50.00 &middot; Popular</div>
+      </div>
+      <div class="card stat" style="padding: 1rem;">
+        <div class="stat-value" style="font-size: 1.5rem;">5,000</div>
+        <div class="stat-label">$250.00 &middot; Best value</div>
+      </div>
+    </div>
+    <p class="text-xs text-muted mt-1">All packs priced at flat $0.05/credit. No volume discounts.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CREDIT SYSTEM
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="credits">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(211,248,154,0.1); color: var(--brand3);">&#9679;</div>
+      <h2>Credit System</h2>
+    </div>
+
+    <div class="formula">
+      totalCredits <span class="op">=</span> baseTextCredits <span class="op">+</span> imageCredits <span class="op">+</span> overheadCredits
+      <span class="label">Core credit formula for every article</span>
+    </div>
+
+    <div class="grid-3 mt-2">
+      <!-- Text -->
+      <div class="card">
+        <h3>Text Credits</h3>
+        <p class="subtitle">Base content generation</p>
+        <div style="font-family: 'JetBrains Mono', monospace; color: var(--brand1); font-size: 0.875rem; margin-bottom: 1rem;">
+          ceil(wordCount / 1000) &times; 5
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Words</th><th style="text-align:right">Credits</th></tr></thead>
+            <tbody>
+              <tr><td>500</td><td class="num">3</td></tr>
+              <tr><td>1,000</td><td class="num highlight">5</td></tr>
+              <tr><td>1,500</td><td class="num">8</td></tr>
+              <tr><td>2,000</td><td class="num">10</td></tr>
+              <tr><td>3,000</td><td class="num">15</td></tr>
+              <tr><td>5,000</td><td class="num">25</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="card">
+        <h3>Image Credits</h3>
+        <p class="subtitle">Per generated image</p>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);border:1px solid var(--border-dim);">
+            <div>
+              <div style="font-weight:600;font-size:0.875rem;">Flux</div>
+              <div class="text-xs text-muted">flux-dev, flux-2, flux-schnell</div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:800;color:var(--brand1);">2</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);border:1px solid var(--border-dim);">
+            <div>
+              <div style="font-weight:600;font-size:0.875rem;">Gemini</div>
+              <div class="text-xs text-muted">gemini-3-pro, imagen-3.0</div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:800;color:var(--warning);">13</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);border:1px solid var(--border-dim);">
+            <div>
+              <div style="font-weight:600;font-size:0.875rem;">None</div>
+              <div class="text-xs text-muted">Text-only generation</div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:800;color:var(--text-muted);">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overhead -->
+      <div class="card">
+        <h3>Overhead Credits</h3>
+        <p class="subtitle">Extra AI calls per type</p>
+        <div class="table-wrap" style="margin-top:0.5rem;">
+          <table>
+            <thead><tr><th>Type</th><th style="text-align:right">Credits</th></tr></thead>
+            <tbody>
+              <tr><td><span class="type-affiliate">Affiliate</span></td><td class="num highlight">4</td></tr>
+              <tr><td><span class="type-comparison">Comparison</span></td><td class="num">2</td></tr>
+              <tr><td><span class="type-recipe">Recipe</span></td><td class="num">2</td></tr>
+              <tr><td><span class="type-review">Review</span></td><td class="num">2</td></tr>
+              <tr><td><span class="type-commercial">Commercial</span></td><td class="num">1</td></tr>
+              <tr><td><span class="type-howto">How-To</span></td><td class="num">1</td></tr>
+              <tr><td><span class="type-informational">Informational</span></td><td class="num">1</td></tr>
+              <tr><td><span class="type-listicle">Listicle</span></td><td class="num">1</td></tr>
+              <tr><td><span class="type-local">Local</span></td><td class="num">1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CREDIT ESTIMATION
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="estimation">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(127,251,169,0.1); color: var(--brand2);">&#9881;</div>
+      <h2>Credit Estimation by Article Type</h2>
+    </div>
+
+    <p class="text-sm text-sec mb-2">Credits are estimated <strong>before</strong> generation using the orchestrator's actual article structure &mdash; dynamic H2 count, precise image counts, and per-type overhead. Not rough multipliers.</p>
+
+    <!-- 1000 words Flux table -->
+    <h3 style="font-size:0.9375rem;margin-bottom:0.75rem;">1,000 words &middot; Flux images</h3>
+    <div class="table-wrap mb-2">
+      <table>
+        <thead>
+          <tr>
+            <th>Article Type</th>
+            <th style="text-align:right">Text</th>
+            <th style="text-align:right">Images</th>
+            <th style="text-align:right">Img Credits</th>
+            <th style="text-align:right">Overhead</th>
+            <th style="text-align:right">Total</th>
+            <th style="text-align:right">User Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong class="type-affiliate">Affiliate</strong></td>
+            <td class="num">5</td><td class="num">7</td><td class="num">14</td><td class="num">4</td>
+            <td class="num highlight"><strong>23</strong></td><td class="num money">$1.15</td>
+          </tr>
+          <tr>
+            <td><strong class="type-listicle">Listicle</strong></td>
+            <td class="num">5</td><td class="num">6</td><td class="num">12</td><td class="num">1</td>
+            <td class="num highlight"><strong>18</strong></td><td class="num money">$0.90</td>
+          </tr>
+          <tr>
+            <td><strong class="type-comparison">Comparison</strong></td>
+            <td class="num">5</td><td class="num">5</td><td class="num">10</td><td class="num">2</td>
+            <td class="num highlight"><strong>17</strong></td><td class="num money">$0.85</td>
+          </tr>
+          <tr>
+            <td><strong class="type-howto">How-To</strong></td>
+            <td class="num">5</td><td class="num">5</td><td class="num">10</td><td class="num">1</td>
+            <td class="num highlight"><strong>16</strong></td><td class="num money">$0.80</td>
+          </tr>
+          <tr>
+            <td><strong class="type-local">Local</strong></td>
+            <td class="num">5</td><td class="num">5</td><td class="num">10</td><td class="num">1</td>
+            <td class="num highlight"><strong>16</strong></td><td class="num money">$0.80</td>
+          </tr>
+          <tr>
+            <td><strong class="type-review">Review</strong></td>
+            <td class="num">5</td><td class="num">4</td><td class="num">8</td><td class="num">2</td>
+            <td class="num highlight"><strong>15</strong></td><td class="num money">$0.75</td>
+          </tr>
+          <tr>
+            <td><strong class="type-commercial">Commercial</strong></td>
+            <td class="num">5</td><td class="num">4</td><td class="num">8</td><td class="num">1</td>
+            <td class="num highlight"><strong>14</strong></td><td class="num money">$0.70</td>
+          </tr>
+          <tr>
+            <td><strong class="type-informational">Informational</strong></td>
+            <td class="num">5</td><td class="num">4</td><td class="num">8</td><td class="num">1</td>
+            <td class="num highlight"><strong>14</strong></td><td class="num money">$0.70</td>
+          </tr>
+          <tr>
+            <td><strong class="type-recipe">Recipe</strong></td>
+            <td class="num">5</td><td class="num">2</td><td class="num">4</td><td class="num">2</td>
+            <td class="num highlight"><strong>11</strong></td><td class="num money">$0.55</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <strong>Why affiliate is the most expensive:</strong> Each product generates <em>two</em> images (H2 section + product card) = 7 images for 3 products. Plus 4 overhead credits for Phase 0 (inference, validation, name cleaning, product cards).
+    </div>
+
+    <!-- Scaling with word count -->
+    <h3 style="font-size:0.9375rem;margin-top:2rem;margin-bottom:0.75rem;">Scaling with Word Count (Flux)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Type</th><th class="num">1,000w</th><th class="num">1,500w</th><th class="num">2,000w</th><th class="num">3,000w</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong class="type-affiliate">Affiliate</strong></td><td class="num">23</td><td class="num">36</td><td class="num">40</td><td class="num">45</td></tr>
+          <tr><td><strong class="type-listicle">Listicle</strong></td><td class="num">18</td><td class="num">27</td><td class="num">27</td><td class="num">32</td></tr>
+          <tr><td><strong class="type-recipe">Recipe</strong></td><td class="num">11</td><td class="num">22</td><td class="num">28</td><td class="num">33</td></tr>
+          <tr><td><strong class="type-informational">Informational</strong></td><td class="num">14</td><td class="num">25</td><td class="num">25</td><td class="num">30</td></tr>
+          <tr><td><strong class="type-commercial">Commercial</strong></td><td class="num">14</td><td class="num">25</td><td class="num">27</td><td class="num">32</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-muted mt-1">Recipe catches up at higher word counts as more dynamic H2s (and images) unlock past the 550-word unique budget.</p>
+
+    <!-- Gemini comparison -->
+    <h3 style="font-size:0.9375rem;margin-top:2rem;margin-bottom:0.75rem;">Flux vs Gemini Images (1,000 words)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Type</th><th class="num">Flux</th><th class="num">Gemini</th><th class="num">Difference</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong class="type-affiliate">Affiliate</strong></td><td class="num">23</td><td class="num" style="color:var(--warning);">100</td><td class="num" style="color:var(--error);">+77</td></tr>
+          <tr><td><strong class="type-listicle">Listicle</strong></td><td class="num">18</td><td class="num" style="color:var(--warning);">84</td><td class="num" style="color:var(--error);">+66</td></tr>
+          <tr><td><strong class="type-informational">Informational</strong></td><td class="num">14</td><td class="num" style="color:var(--warning);">58</td><td class="num" style="color:var(--error);">+44</td></tr>
+          <tr><td><strong class="type-recipe">Recipe</strong></td><td class="num">11</td><td class="num" style="color:var(--warning);">33</td><td class="num" style="color:var(--error);">+22</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-muted mt-1">Gemini images cost ~6.5x more credits than Flux (13 vs 2 per image).</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       DEDUCTION WATERFALL
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="waterfall">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(59,130,246,0.1); color: var(--info);">&#8615;</div>
+      <h2>Credit Deduction Waterfall</h2>
+    </div>
+
+    <p class="text-sm text-sec mb-2">When an article is generated, credits are deducted in priority order. If a source is exhausted, the next one is used.</p>
+
+    <div class="waterfall">
+      <div class="waterfall-step">
+        <div class="waterfall-num">1</div>
+        <div class="waterfall-content">
+          <div class="wf-title">Daily Allocation</div>
+          <div class="wf-desc">Legacy &mdash; currently 0 for all tiers. Skipped in practice.</div>
+        </div>
+        <span class="badge badge-muted">All tiers</span>
+      </div>
+      <div class="waterfall-step">
+        <div class="waterfall-num">2</div>
+        <div class="waterfall-content">
+          <div class="wf-title">Monthly Allocation</div>
+          <div class="wf-desc">Free: 100/mo &middot; Pro: 2,000/mo &middot; Resets each billing cycle</div>
+        </div>
+        <span class="badge badge-brand">Free + Pro</span>
+      </div>
+      <div class="waterfall-step">
+        <div class="waterfall-num">3</div>
+        <div class="waterfall-content">
+          <div class="wf-title">PAYG Balance</div>
+          <div class="wf-desc">Purchased credit packs. Never expires. Used after monthly is exhausted.</div>
+        </div>
+        <span class="badge badge-info">All tiers</span>
+      </div>
+      <div class="waterfall-step">
+        <div class="waterfall-num">4</div>
+        <div class="waterfall-content">
+          <div class="wf-title">Overage</div>
+          <div class="wf-desc">Default 100-credit cap, billed at $0.05/credit. Only for Pro users.</div>
+        </div>
+        <span class="badge badge-warning">Pro only</span>
+      </div>
+    </div>
+
+    <div class="note warning-note mt-2">
+      <strong>Unused credits do NOT roll over.</strong> Monthly allocation resets to 0 used on each billing cycle (Stripe <code>invoice.paid</code> event). Overage counter also resets.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       AI PROVIDER COSTS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="costs">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(245,158,11,0.1); color: var(--warning);">&#9889;</div>
+      <h2>AI Provider Costs (Our Expenses)</h2>
+    </div>
+
+    <div class="grid-2">
+      <!-- Text models -->
+      <div class="card">
+        <h3>Text Generation Models</h3>
+        <p class="subtitle">Token pricing &mdash; costs per 1K tokens</p>
+        <div class="table-wrap" style="margin-top:0.75rem;">
+          <table>
+            <thead><tr><th>Model</th><th class="num">Input</th><th class="num">Output</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Gemini 2.0 Flash</strong> <span class="badge badge-success" style="margin-left:4px;">Primary</span></td><td class="num">$0.0001</td><td class="num">$0.0004</td></tr>
+              <tr><td>GPT-4o Mini</td><td class="num">$0.00015</td><td class="num">$0.0006</td></tr>
+              <tr><td>Claude 3 Haiku</td><td class="num">$0.00025</td><td class="num">$0.00125</td></tr>
+              <tr><td>Gemini 3 Flash Preview</td><td class="num">$0.0005</td><td class="num">$0.003</td></tr>
+              <tr><td>Gemini 1.5 Pro</td><td class="num">$0.00125</td><td class="num">$0.005</td></tr>
+              <tr><td>GPT-4o</td><td class="num">$0.0025</td><td class="num">$0.01</td></tr>
+              <tr><td>Claude 3.5 Sonnet</td><td class="num">$0.003</td><td class="num">$0.015</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Image models -->
+      <div class="card">
+        <h3>Image Generation Models</h3>
+        <p class="subtitle">Per-image pricing</p>
+        <div class="table-wrap" style="margin-top:0.75rem;">
+          <table>
+            <thead><tr><th>Model</th><th class="num">Our Cost</th><th class="num">We Charge</th><th class="num">Markup</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>flux-2 (Dev)</strong> <span class="badge badge-success" style="margin-left:4px;">Default</span></td><td class="num">$0.012</td><td class="num money">$0.10</td>
+                <td class="num" style="color:var(--success);">8.3x</td>
+              </tr>
+              <tr>
+                <td>flux-2-edit</td><td class="num">$0.024</td><td class="num money">$0.10</td>
+                <td class="num" style="color:var(--success);">4.2x</td>
+              </tr>
+              <tr>
+                <td>flux-dev</td><td class="num">$0.025</td><td class="num money">$0.10</td>
+                <td class="num" style="color:var(--success);">4.0x</td>
+              </tr>
+              <tr>
+                <td>imagen-3.0</td><td class="num">$0.04</td><td class="num money">$0.65</td>
+                <td class="num" style="color:var(--success);">16.3x</td>
+              </tr>
+              <tr>
+                <td><strong>gemini-3-pro</strong></td><td class="num">$0.13</td><td class="num money">$0.65</td>
+                <td class="num" style="color:var(--success);">5.0x</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-muted mt-1">Costs stored as micro-dollars (USD &times; 1,000,000) for integer precision in SQLite.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MARGINS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="margins">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(5,150,105,0.1); color: var(--success);">&#9650;</div>
+      <h2>Revenue &amp; Margin Analysis</h2>
+    </div>
+
+    <!-- Per-article margins -->
+    <h3 style="font-size:0.9375rem;margin-bottom:0.75rem;">Per-Article Margin (1,000w, Flux)</h3>
+    <div class="table-wrap mb-2">
+      <table>
+        <thead>
+          <tr><th>Type</th><th class="num">Credits</th><th class="num">Revenue</th><th class="num">AI Cost</th><th class="num">Gross Margin</th><th class="num">Margin %</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong class="type-recipe">Recipe</strong></td><td class="num">11</td><td class="num money">$0.55</td><td class="num">~$0.03</td><td class="num" style="color:var(--success);">$0.52</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:95%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.03</span><span>95%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-comparison">Comparison</strong></td><td class="num">17</td><td class="num money">$0.85</td><td class="num">~$0.07</td><td class="num" style="color:var(--success);">$0.78</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:92%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.07</span><span>92%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-review">Review</strong></td><td class="num">15</td><td class="num money">$0.75</td><td class="num">~$0.06</td><td class="num" style="color:var(--success);">$0.69</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:92%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.06</span><span>92%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-commercial">Commercial</strong></td><td class="num">14</td><td class="num money">$0.70</td><td class="num">~$0.06</td><td class="num" style="color:var(--success);">$0.64</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:91%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.06</span><span>91%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-informational">Informational</strong></td><td class="num">14</td><td class="num money">$0.70</td><td class="num">~$0.06</td><td class="num" style="color:var(--success);">$0.64</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:91%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.06</span><span>91%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-howto">How-To</strong></td><td class="num">16</td><td class="num money">$0.80</td><td class="num">~$0.07</td><td class="num" style="color:var(--success);">$0.73</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:91%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.07</span><span>91%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-local">Local</strong></td><td class="num">16</td><td class="num money">$0.80</td><td class="num">~$0.07</td><td class="num" style="color:var(--success);">$0.73</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:91%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.07</span><span>91%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-listicle">Listicle</strong></td><td class="num">18</td><td class="num money">$0.90</td><td class="num">~$0.08</td><td class="num" style="color:var(--success);">$0.82</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:91%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.08</span><span>91%</span></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong class="type-affiliate">Affiliate</strong></td><td class="num">23</td><td class="num money">$1.15</td><td class="num">~$0.10</td><td class="num" style="color:var(--success);">$1.05</td>
+            <td class="num">
+              <div class="margin-bar-wrap">
+                <div class="margin-bar"><div class="margin-bar-fill" style="width:91%"></div></div>
+                <div class="margin-bar-labels"><span>AI: $0.10</span><span>91%</span></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Per-user revenue -->
+    <h3 style="font-size:0.9375rem;margin-top:2.5rem;margin-bottom:1rem;">Per-User Monthly Revenue</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:start;">
+          <div>
+            <h3>Pro User ($99/mo)</h3>
+            <p class="subtitle">2,000 credits included</p>
+          </div>
+          <span class="badge badge-success">Best revenue</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+          <div style="padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">100% utilization</div>
+            <div style="font-size:1.25rem;font-weight:800;color:var(--success);margin-top:0.25rem;">$91</div>
+            <div style="font-size:0.6875rem;color:var(--text-muted);">net / month (92%)</div>
+          </div>
+          <div style="padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">50% utilization</div>
+            <div style="font-size:1.25rem;font-weight:800;color:var(--success);margin-top:0.25rem;">$95</div>
+            <div style="font-size:0.6875rem;color:var(--text-muted);">net / month (96%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:start;">
+          <div>
+            <h3>Free User (100 credits/mo)</h3>
+            <p class="subtitle">Acquisition funnel</p>
+          </div>
+          <span class="badge badge-error">Cost center</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+          <div style="padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Revenue</div>
+            <div style="font-size:1.25rem;font-weight:800;color:var(--text-muted);margin-top:0.25rem;">$0</div>
+            <div style="font-size:0.6875rem;color:var(--text-muted);">no subscription</div>
+          </div>
+          <div style="padding:0.75rem;background:var(--surface);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">AI Cost (full use)</div>
+            <div style="font-size:1.25rem;font-weight:800;color:var(--error);margin-top:0.25rem;">-$0.40</div>
+            <div style="font-size:0.6875rem;color:var(--text-muted);">~6 articles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue per dollar -->
+    <h3 style="font-size:0.9375rem;margin-top:2.5rem;margin-bottom:1rem;">Net Revenue After All Costs</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Plan</th><th class="num">User Pays</th><th class="num">Stripe Fee</th><th class="num">AI Cost</th><th class="num">Net Revenue</th><th class="num">Net Margin</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pro Monthly</strong></td><td class="num">$99.00</td><td class="num" style="color:var(--error);">~$3.17</td><td class="num" style="color:var(--error);">~$8.00</td>
+            <td class="num" style="color:var(--success);font-weight:700;">$87.83</td><td class="num highlight">89%</td>
+          </tr>
+          <tr>
+            <td><strong>Pro Yearly</strong></td><td class="num">$79.00</td><td class="num" style="color:var(--error);">~$2.59</td><td class="num" style="color:var(--error);">~$8.00</td>
+            <td class="num" style="color:var(--success);font-weight:700;">$68.41</td><td class="num highlight">87%</td>
+          </tr>
+          <tr>
+            <td><strong>PAYG $50 pack</strong></td><td class="num">$50.00</td><td class="num" style="color:var(--error);">~$1.75</td><td class="num" style="color:var(--error);">~$4.00</td>
+            <td class="num" style="color:var(--success);font-weight:700;">$44.25</td><td class="num highlight">89%</td>
+          </tr>
+          <tr>
+            <td><strong>PAYG $5 pack</strong></td><td class="num">$5.00</td><td class="num" style="color:var(--error);">~$0.45</td><td class="num" style="color:var(--error);">~$0.40</td>
+            <td class="num" style="color:var(--success);font-weight:700;">$4.15</td><td class="num highlight">83%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-muted mt-1">Stripe fee: 2.9% + $0.30 per transaction. Small PAYG packs have disproportionate fee impact (9% on $5 pack).</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       STRIPE INTEGRATION
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="stripe">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(99,102,241,0.1); color: #818cf8;">&#9889;</div>
+      <h2>Stripe Integration</h2>
+    </div>
+
+    <h3 style="font-size:0.9375rem;margin-bottom:1rem;">Checkout &amp; Webhook Flow</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-label">User</div>
+        <div class="flow-desc">Clicks subscribe<br>or buy credits</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-label">Checkout</div>
+        <div class="flow-desc">Stripe hosted<br>checkout session</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-label">Payment</div>
+        <div class="flow-desc">Card charged<br>via Stripe</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-label">Webhook</div>
+        <div class="flow-desc">POST /api/<br>webhooks/stripe</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <div class="flow-label">Process</div>
+        <div class="flow-desc">Update DB<br>& grant credits</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:0.9375rem;margin-top:2rem;margin-bottom:0.75rem;">Webhook Events</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Stripe Event</th><th>Our Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>checkout.session.completed</code> (subscription)</td><td>Create subscription, upgrade to Pro, grant 2,000 credits</td></tr>
+          <tr><td><code>checkout.session.completed</code> (payment)</td><td>Add PAYG credits from pack metadata</td></tr>
+          <tr><td><code>invoice.paid</code></td><td>Reset monthly credits, update billing period</td></tr>
+          <tr><td><code>invoice.payment_failed</code></td><td>Set subscription status to <span class="badge badge-warning">past_due</span></td></tr>
+          <tr><td><code>customer.subscription.updated</code></td><td>Sync status (active, past_due, canceled, etc.)</td></tr>
+          <tr><td><code>customer.subscription.deleted</code></td><td>Cancel subscription, downgrade to free</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Idempotency:</strong> Every webhook event is checked against the <code>billing_events</code> table. If the <code>stripeEventId</code> already exists, processing is skipped. This prevents double-crediting from Stripe retries.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       ACCESS CONTROL
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="access">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(220,38,38,0.1); color: var(--error);">&#9919;</div>
+      <h2>Feature Access Control</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Feature</th><th style="text-align:center">Anonymous</th><th style="text-align:center">Free</th><th style="text-align:center">Pro</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Generate articles</td>
+            <td style="text-align:center"><span class="badge badge-warning">1/day</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Max word count</td>
+            <td style="text-align:center"><span class="badge badge-muted">800</span></td>
+            <td style="text-align:center"><span class="badge badge-muted">1,000</span></td>
+            <td style="text-align:center"><span class="badge badge-brand">5,000</span></td>
+          </tr>
+          <tr>
+            <td>Max images/article</td>
+            <td style="text-align:center"><span class="badge badge-muted">2</span></td>
+            <td style="text-align:center"><span class="badge badge-muted">3</span></td>
+            <td style="text-align:center"><span class="badge badge-brand">10</span></td>
+          </tr>
+          <tr>
+            <td>Image providers</td>
+            <td style="text-align:center"><span class="badge badge-muted">Flux</span></td>
+            <td style="text-align:center"><span class="badge badge-muted">Flux</span></td>
+            <td style="text-align:center"><span class="badge badge-brand">Flux + Gemini</span></td>
+          </tr>
+          <tr>
+            <td>Bulk generation</td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">50/job</span></td>
+          </tr>
+          <tr>
+            <td>WordPress export (single)</td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>WordPress export (bulk)</td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>API access</td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Cluster mode</td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-error">&#10005;</span></td>
+            <td style="text-align:center"><span class="badge badge-success">&#10003;</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       KEY FILES
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="files">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(64,237,195,0.1); color: var(--brand1);">&#128196;</div>
+      <h2>Key Files Reference</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>lib/billing/constants.ts</code></td><td>Plan configs, credit packs, pricing constants</td></tr>
+          <tr><td><code>lib/services/credit-estimator.ts</code></td><td>Structure-based credit estimation (before generation)</td></tr>
+          <tr><td><code>lib/services/credit-service.ts</code></td><td>Credit balance management, waterfall deduction, refunds</td></tr>
+          <tr><td><code>lib/services/billing-service.ts</code></td><td>Subscription lifecycle, Stripe event processing</td></tr>
+          <tr><td><code>lib/services/stripe-service.ts</code></td><td>Stripe API: checkout, portal, customer management</td></tr>
+          <tr><td><code>lib/services/access-service.ts</code></td><td>Feature access control by tier</td></tr>
+          <tr><td><code>lib/services/cost-tracking-service.ts</code></td><td>AI usage logging, cost calculation, summaries</td></tr>
+          <tr><td><code>lib/ai/models.ts</code></td><td>Model specs, token pricing, image pricing</td></tr>
+          <tr><td><code>app/api/webhooks/stripe/route.ts</code></td><td>Stripe webhook handler</td></tr>
+          <tr><td><code>app/api/credits/estimate/route.ts</code></td><td>Credit estimation API endpoint</td></tr>
+          <tr><td><code>drizzle/schema.ts</code></td><td>Database schema definitions</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       DESIGN RATIONALE
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(211,248,154,0.1); color: var(--brand3);">&#128161;</div>
+      <h2>Credit Valuation Rationale</h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Why $0.05 per credit?</h3>
+        <p class="subtitle">Simple mental model</p>
+        <p class="text-sm text-sec">Pro user pays $99 for 2,000 credits. That's $0.0495/credit &mdash; close enough to $0.05 to be intuitive. A typical article costs ~16 credits = ~$0.80. Users can reason: "an article costs under a dollar."</p>
+      </div>
+      <div class="card">
+        <h3>Why 5 credits per 1K words?</h3>
+        <p class="subtitle">25x markup on Gemini Flash</p>
+        <p class="text-sm text-sec">Gemini Flash text costs ~$0.004/article. We charge 5 credits ($0.25) for text alone. The 25x markup provides cushion for fallback models (GPT-4o costs ~$0.03), retries, and infrastructure.</p>
+      </div>
+      <div class="card">
+        <h3>Why 2 credits for Flux images?</h3>
+        <p class="subtitle">8.3x markup covers storage + bandwidth</p>
+        <p class="text-sm text-sec">Flux 2 Dev costs $0.012/image. 2 credits = $0.10 (8.3x markup). Covers: failed generations needing retry, R2 storage costs for hosting images, bandwidth for serving them, and general overhead.</p>
+      </div>
+      <div class="card">
+        <h3>Why not per-token billing?</h3>
+        <p class="subtitle">Predictability wins</p>
+        <p class="text-sm text-sec">Token counts are opaque to users, small prompt variations cause fluctuating bills, and images dominate costs anyway (not tokens). Credits give a simpler, more predictable experience that users can plan around.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:3rem 0 1rem;border-top:1px solid var(--border);margin-top:2rem;">
+    <p style="font-size:0.75rem;color:var(--text-muted);">SCAI Billing System Documentation &middot; Generated from codebase analysis</p>
+  </div>
+
+</div>
+</body>
+</html>

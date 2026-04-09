@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCAI Article Generator - Codebase Documentation</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-hover: #22222e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent-cyan: #00d4ff;
+            --accent-mint: #00ffa3;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-orange: #f97316;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            --border-color: #2a2a3a;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #00ffa3 100%);
+            --gradient-2: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .header .version {
+            display: inline-block;
+            background: var(--bg-card);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            margin-bottom: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: var(--bg-card);
+            color: var(--accent-cyan);
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-cyan);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        /* Directory Tree */
+        .tree {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .tree-item {
+            padding: 0.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tree-item.folder {
+            color: var(--accent-cyan);
+        }
+
+        .tree-item.file {
+            color: var(--text-secondary);
+        }
+
+        .tree-item .badge {
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: var(--bg-hover);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-cyan { background: rgba(0, 212, 255, 0.2); color: var(--accent-cyan); }
+        .badge-mint { background: rgba(0, 255, 163, 0.2); color: var(--accent-mint); }
+        .badge-purple { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
+        .badge-pink { background: rgba(236, 72, 153, 0.2); color: var(--accent-pink); }
+        .badge-orange { background: rgba(249, 115, 22, 0.2); color: var(--accent-orange); }
+        .badge-yellow { background: rgba(234, 179, 8, 0.2); color: var(--accent-yellow); }
+        .badge-red { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .badge-green { background: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
+
+        /* Pipeline */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .pipeline-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 160px;
+            position: relative;
+        }
+
+        .pipeline-step .number {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .pipeline-step h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .pipeline-step p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pipeline-arrow {
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block .comment {
+            color: var(--text-muted);
+        }
+
+        .code-block .keyword {
+            color: var(--accent-purple);
+        }
+
+        .code-block .string {
+            color: var(--accent-mint);
+        }
+
+        .code-block .function {
+            color: var(--accent-cyan);
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Collapsible */
+        .collapsible {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .collapsible-header h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .collapsible-content {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            display: none;
+        }
+
+        .collapsible.open .collapsible-content {
+            display: block;
+        }
+
+        .collapsible-toggle {
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* Article types */
+        .article-type-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .article-type-card:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .article-type-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .article-type-info h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .article-type-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Rule categories */
+        .rule-category {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .rule-category h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .rule-list {
+            list-style: none;
+        }
+
+        .rule-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rule-list li:last-child {
+            border-bottom: none;
+        }
+
+        .rule-list li::before {
+            content: "•";
+            color: var(--accent-mint);
+        }
+
+        /* File path */
+        .file-path {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-mint);
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Provider cards */
+        .provider-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .provider-logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .provider-card h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .provider-models {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Component matrix */
+        .matrix-table {
+            font-size: 0.8rem;
+        }
+
+        .matrix-table th:first-child,
+        .matrix-table td:first-child {
+            position: sticky;
+            left: 0;
+            background: var(--bg-card);
+            z-index: 1;
+        }
+
+        .matrix-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .matrix-dot.required {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .matrix-dot.optional {
+            border: 2px solid var(--text-muted);
+        }
+
+        .matrix-dot.na {
+            background: var(--bg-secondary);
+        }
+
+        /* Forbidden content */
+        .forbidden-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .forbidden-item {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                flex-direction: column;
+            }
+
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        section {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>SCAI Article Generator</h1>
+            <p>SEO Content AI Article Generator - Complete Codebase Documentation</p>
+            <span class="version">v1.0.0 | Next.js 16 | React 19 | TypeScript</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-links">
+                <a href="#overview">Overview</a>
+                <a href="#structure">Directory Structure</a>
+                <a href="#pipeline">Generation Pipeline</a>
+                <a href="#rules">Rules System</a>
+                <a href="#ai-providers">AI Providers</a>
+                <a href="#article-types">Article Types</a>
+                <a href="#components">Components</a>
+                <a href="#api-routes">API Routes</a>
+                <a href="#database">Database</a>
+                <a href="#services">Services</a>
+                <a href="#key-files">Key Files</a>
+            </div>
+        </nav>
+
+        <!-- Overview Stats -->
+        <section id="overview">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-1);">📊</span>
+                Codebase Overview
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">200+</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">32</div>
+                    <div class="stat-label">API Routes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">13</div>
+                    <div class="stat-label">Pages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">48+</div>
+                    <div class="stat-label">Components</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">34</div>
+                    <div class="stat-label">Services</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">9</div>
+                    <div class="stat-label">Article Types</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">AI Providers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">DB Tables</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Tech Stack</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span class="badge badge-cyan">Next.js 16</span>
+                    <span class="badge badge-cyan">React 19</span>
+                    <span class="badge badge-purple">TypeScript</span>
+                    <span class="badge badge-pink">Tailwind CSS</span>
+                    <span class="badge badge-orange">Drizzle ORM</span>
+                    <span class="badge badge-yellow">Turso DB</span>
+                    <span class="badge badge-mint">Vercel AI SDK</span>
+                    <span class="badge badge-green">Trigger.dev</span>
+                    <span class="badge badge-purple">Pusher</span>
+                    <span class="badge badge-cyan">Cloudflare R2</span>
+                    <span class="badge badge-pink">Better Auth</span>
+                    <span class="badge badge-orange">Radix UI</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Directory Structure -->
+        <section id="structure">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-2);">📁</span>
+                Directory Structure
+            </h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Root Directories</h3>
+                    <div class="tree">
+                        <div class="tree-item folder">📂 app/ <span class="badge badge-cyan">Next.js App Router</span></div>
+                        <div class="tree-item folder">📂 components/ <span class="badge badge-purple">48+ React Components</span></div>
+                        <div class="tree-item folder">📂 lib/ <span class="badge badge-mint">Core Business Logic</span></div>
+                        <div class="tree-item folder">📂 data/ <span class="badge badge-orange">Static Data & Types</span></div>
+                        <div class="tree-item folder">📂 scripts/ <span class="badge badge-yellow">Utility Scripts</span></div>
+                        <div class="tree-item folder">📂 drizzle/ <span class="badge badge-pink">DB Migrations</span></div>
+                        <div class="tree-item folder">📂 public/ <span class="badge badge-cyan">Static Assets</span></div>
+                        <div class="tree-item folder">📂 tests/ <span class="badge badge-green">Test Files</span></div>
+                        <div class="tree-item folder">📂 Rules Documentation/ <span class="badge badge-red">7 Rule Files</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Lib Directory (Core Logic)</h3>
+                    <div class="tree">
+                        <div class="tree-item folder">📂 lib/ai/ <span class="badge badge-cyan">AI Generation</span></div>
+                        <div class="tree-item file" style="padding-left: 1.5rem;">├── providers.ts, models.ts</div>
+                        <div class="tree-item file" style="padding-left: 1.5rem;">├── generate.ts, stream-content.ts</div>
+                        <div class="tree-item file" style="padding-left: 1.5rem;">├── prompts/ (6 files)</div>
+                        <div class="tree-item file" style="padding-left: 1.5rem;">└── rules/ (forbidden-content.ts)</div>
+                        <div class="tree-item folder">📂 lib/services/ <span class="badge badge-purple">34 Services</span></div>
+                        <div class="tree-item folder">📂 lib/db/ <span class="badge badge-orange">Database</span></div>
+                        <div class="tree-item folder">📂 lib/jobs/ <span class="badge badge-green">Trigger.dev Jobs</span></div>
+                        <div class="tree-item folder">📂 lib/hooks/ <span class="badge badge-pink">React Hooks</span></div>
+                        <div class="tree-item folder">📂 lib/types/ <span class="badge badge-yellow">TypeScript Types</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Generation Pipeline -->
+        <section id="pipeline">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-1);">⚡</span>
+                Article Generation Pipeline
+            </h2>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <span class="number">1</span>
+                    <h4>User Input</h4>
+                    <p>Topic, type, variation</p>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <span class="number">2</span>
+                    <h4>Structure</h4>
+                    <p>H1, H2s, Meta, Alts</p>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <span class="number">3</span>
+                    <h4>Content</h4>
+                    <p>Parallel generation</p>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <span class="number">4</span>
+                    <h4>Hydration</h4>
+                    <p>Text → HTML templates</p>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <span class="number">5</span>
+                    <h4>Assembly</h4>
+                    <p>Combine sections</p>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <span class="number">6</span>
+                    <h4>Validation</h4>
+                    <p>Rules & correction</p>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <span class="number">7</span>
+                    <h4>Images</h4>
+                    <p>Background job</p>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 2rem;">
+                <div class="card">
+                    <h3 class="card-title">Key Pipeline Files</h3>
+                    <table>
+                        <tr>
+                            <td><span class="file-path">lib/services/unified-orchestrator.ts</span></td>
+                            <td>Main orchestration (176KB)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="file-path">lib/ai/generate.ts</span></td>
+                            <td>Structure generation</td>
+                        </tr>
+                        <tr>
+                            <td><span class="file-path">lib/ai/stream-content.ts</span></td>
+                            <td>Streaming content</td>
+                        </tr>
+                        <tr>
+                            <td><span class="file-path">lib/services/template-hydrator.ts</span></td>
+                            <td>Template injection (47KB)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="file-path">lib/services/article-assembler.ts</span></td>
+                            <td>HTML assembly (70KB)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="file-path">lib/jobs/generate-images.ts</span></td>
+                            <td>Image generation job</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Generation Flow</h3>
+                    <div class="code-block">
+<span class="comment">// API Entry Point</span>
+POST /api/generate
+  ↓
+<span class="function">unifiedOrchestrator</span>()
+  ├── <span class="function">generateStructureAI</span>() <span class="comment">// Phase 1</span>
+  ├── <span class="function">streamOverview</span>() <span class="comment">// Phase 2 (parallel)</span>
+  ├── <span class="function">streamSectionContent</span>()
+  ├── <span class="function">generateUniqueComponents</span>()
+  ├── <span class="function">hydrateTemplates</span>() <span class="comment">// Phase 3</span>
+  ├── <span class="function">assembleArticle</span>() <span class="comment">// Phase 4</span>
+  ├── <span class="function">validateContent</span>() <span class="comment">// Phase 5</span>
+  └── <span class="function">triggerImageGeneration</span>() <span class="comment">// Phase 6</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rules System -->
+        <section id="rules">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-2);">📜</span>
+                Rules System
+            </h2>
+
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <h3 class="card-title">🔑 Key Rules Files (For Updates)</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Purpose</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="file-path">lib/ai/rules/forbidden-content.ts</span></td>
+                                <td>AI prompt rules injection - Main rules engine</td>
+                                <td><span class="badge badge-red">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-path">data/guidelines.ts</span></td>
+                                <td>UI display of all rules (3,063 lines)</td>
+                                <td><span class="badge badge-red">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-path">lib/services/content-validator.ts</span></td>
+                                <td>Post-generation validation</td>
+                                <td><span class="badge badge-orange">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-path">lib/services/article-validator.ts</span></td>
+                                <td>Documentation standards check</td>
+                                <td><span class="badge badge-orange">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-path">lib/services/content-corrector.ts</span></td>
+                                <td>Auto-fix content issues</td>
+                                <td><span class="badge badge-yellow">Medium</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-path">lib/ai/prompts/*.ts</span></td>
+                                <td>Prompts with embedded rules</td>
+                                <td><span class="badge badge-yellow">Medium</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="rule-category">
+                    <h4>⭐ GOLDEN RULES (Mandatory)</h4>
+                    <ul class="rule-list">
+                        <li>Header Consistency - H1 type determines ALL H2 types</li>
+                        <li>Color Restriction - Black/White/Grayscale ONLY</li>
+                        <li>No Emoji - Only ✓, •, ★, ☆, +/– allowed</li>
+                        <li>One Type Per Article - Cannot mix article types</li>
+                        <li>H1 Exclusivity - Exactly ONE H1 per article</li>
+                        <li>H3 Restriction - Only in FAQ and Honorable Mentions</li>
+                        <li>AI Cannot Modify - No fabrication of external data</li>
+                    </ul>
+                </div>
+                <div class="rule-category">
+                    <h4>📏 CHARACTER LIMITS</h4>
+                    <ul class="rule-list">
+                        <li>H1: 30-70 characters</li>
+                        <li>H2: 30-70 characters</li>
+                        <li>Closing H2: 30-70 characters</li>
+                        <li>FAQ H3: 20-70 characters</li>
+                        <li>Meta Title: 30-60 characters</li>
+                        <li>Meta Description: 120-160 characters</li>
+                        <li>Featured Image Alt: 80-125 characters</li>
+                    </ul>
+                </div>
+                <div class="rule-category">
+                    <h4>📝 WORD COUNT TARGETS</h4>
+                    <ul class="rule-list">
+                        <li>Overview Paragraph: 100 words (2×50)</li>
+                        <li>Standard Paragraph: 150 words (3×50)</li>
+                        <li>Closing Paragraph: 150 words</li>
+                        <li>FAQ Answer: 125 words each</li>
+                        <li>All with ±5 tolerance</li>
+                    </ul>
+                </div>
+                <div class="rule-category">
+                    <h4>🔤 FORMAT CONSISTENCY</h4>
+                    <ul class="rule-list">
+                        <li>QUESTION: Start with What/How/Why/Which/When/Where, end with ?</li>
+                        <li>STATEMENT: Declarative sentences, NO question marks</li>
+                        <li>LISTICLE: Start with number (1., 2., 3., ...)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">🚫 Forbidden Content</h3>
+                <h4 style="margin: 1rem 0 0.5rem; color: var(--text-secondary);">Marketing Buzzwords (Auto-Rejected)</h4>
+                <div class="forbidden-list">
+                    <span class="forbidden-item">unique</span>
+                    <span class="forbidden-item">amazing</span>
+                    <span class="forbidden-item">incredible</span>
+                    <span class="forbidden-item">revolutionary</span>
+                    <span class="forbidden-item">cutting-edge</span>
+                    <span class="forbidden-item">state-of-the-art</span>
+                    <span class="forbidden-item">seamless</span>
+                    <span class="forbidden-item">synergy</span>
+                    <span class="forbidden-item">leverage</span>
+                    <span class="forbidden-item">disruptive</span>
+                    <span class="forbidden-item">paradigm</span>
+                    <span class="forbidden-item">game-changer</span>
+                    <span class="forbidden-item">world-class</span>
+                    <span class="forbidden-item">groundbreaking</span>
+                </div>
+                <h4 style="margin: 1.5rem 0 0.5rem; color: var(--text-secondary);">Forbidden Closing H2</h4>
+                <div class="forbidden-list">
+                    <span class="forbidden-item">Conclusion</span>
+                    <span class="forbidden-item">Summary</span>
+                    <span class="forbidden-item">Final Thoughts</span>
+                    <span class="forbidden-item">In Summary</span>
+                    <span class="forbidden-item">Wrap Up</span>
+                    <span class="forbidden-item">To Wrap Up</span>
+                </div>
+                <h4 style="margin: 1.5rem 0 0.5rem; color: var(--text-secondary);">Forbidden Paragraph Starts</h4>
+                <div class="forbidden-list">
+                    <span class="forbidden-item">In conclusion</span>
+                    <span class="forbidden-item">To summarize</span>
+                    <span class="forbidden-item">Finally</span>
+                    <span class="forbidden-item">As we've discussed</span>
+                    <span class="forbidden-item">To wrap up</span>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">📂 8 Main Rule Categories</h3>
+                <div class="grid-4">
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-cyan);">1. GOLDEN_RULES</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Critical overriding rules</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-mint);">2. COMPONENT_DEFINITIONS</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">16 universal + type-specific</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-purple);">3. CONTENT_LOGIC</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Generation flow, SEO, quality</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-pink);">4. PRESENTATION</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Layout, image placement</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-orange);">5. CONFIGURATION</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">User toggles, options</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-yellow);">6. AI_BEHAVIOR</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Token limits, validation</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-green);">7. IMAGE_GENERATION</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Aspect ratios, quality</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--accent-red);">8. QUALITY_STANDARDS</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Grammar, readability, UX</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Providers -->
+        <section id="ai-providers">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-1);">🤖</span>
+                AI Providers
+            </h2>
+            <div class="grid-3">
+                <div class="provider-card">
+                    <div class="provider-logo">🔮</div>
+                    <h4>Google Gemini</h4>
+                    <p style="color: var(--accent-mint); margin-bottom: 0.5rem;">Preferred (Fastest)</p>
+                    <div class="provider-models">
+                        gemini-2.0-flash (fast)<br>
+                        gemini-2.0-flash (default)<br>
+                        gemini-2.0-flash (powerful)
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                        $0.10/1M input • $0.40/1M output
+                    </p>
+                </div>
+                <div class="provider-card">
+                    <div class="provider-logo">🧠</div>
+                    <h4>OpenAI</h4>
+                    <p style="color: var(--accent-purple); margin-bottom: 0.5rem;">Default Primary</p>
+                    <div class="provider-models">
+                        gpt-4o-mini (fast)<br>
+                        gpt-4o (default)<br>
+                        gpt-4.1 (powerful)
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                        $0.15/1M input • $0.60/1M output
+                    </p>
+                </div>
+                <div class="provider-card">
+                    <div class="provider-logo">🎭</div>
+                    <h4>Anthropic Claude</h4>
+                    <p style="color: var(--accent-orange); margin-bottom: 0.5rem;">Balanced Reasoning</p>
+                    <div class="provider-models">
+                        claude-3-5-haiku (fast)<br>
+                        claude-sonnet-4 (default)<br>
+                        claude-sonnet-4 (powerful)
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                        $3/1M input • $15/1M output
+                    </p>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">Fallback Strategy</h3>
+                <p style="color: var(--text-secondary);">
+                    <span class="badge badge-purple">OpenAI</span> →
+                    <span class="badge badge-mint">Gemini</span> →
+                    <span class="badge badge-orange">Claude</span>
+                </p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                    Automatic failover on retriable errors (429, 503, timeouts). Schema/validation errors do NOT trigger fallback.
+                </p>
+            </div>
+        </section>
+
+        <!-- Article Types -->
+        <section id="article-types">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-2);">📝</span>
+                Article Types (9)
+            </h2>
+            <div class="grid-3">
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(0, 212, 255, 0.2);">🛒</div>
+                    <div class="article-type-info">
+                        <h4>Affiliate</h4>
+                        <p>Product-focused with Amazon links</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(168, 85, 247, 0.2);">💼</div>
+                    <div class="article-type-info">
+                        <h4>Commercial</h4>
+                        <p>Business/service features</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(236, 72, 153, 0.2);">⚖️</div>
+                    <div class="article-type-info">
+                        <h4>Comparison</h4>
+                        <p>Head-to-head comparisons</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(0, 255, 163, 0.2);">📋</div>
+                    <div class="article-type-info">
+                        <h4>How-To</h4>
+                        <p>Step-by-step instructions</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(249, 115, 22, 0.2);">📚</div>
+                    <div class="article-type-info">
+                        <h4>Informational</h4>
+                        <p>Educational content</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(234, 179, 8, 0.2);">📊</div>
+                    <div class="article-type-info">
+                        <h4>Listicle</h4>
+                        <p>Numbered list format</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(34, 197, 94, 0.2);">📍</div>
+                    <div class="article-type-info">
+                        <h4>Local</h4>
+                        <p>Location-specific content</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(239, 68, 68, 0.2);">🍳</div>
+                    <div class="article-type-info">
+                        <h4>Recipe</h4>
+                        <p>Cooking with ingredients</p>
+                    </div>
+                </div>
+                <div class="article-type-card">
+                    <div class="article-type-icon" style="background: rgba(139, 92, 246, 0.2);">⭐</div>
+                    <div class="article-type-info">
+                        <h4>Review</h4>
+                        <p>Product/service reviews</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">Title Variations (All Types Support)</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; flex: 1; min-width: 200px;">
+                        <strong style="color: var(--accent-cyan);">Question</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">What Are the Best...?</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; flex: 1; min-width: 200px;">
+                        <strong style="color: var(--accent-mint);">Statement</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">The Best Products for...</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; flex: 1; min-width: 200px;">
+                        <strong style="color: var(--accent-purple);">Listicle</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">7 Best Products for...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Components -->
+        <section id="components">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-1);">🧩</span>
+                UI Components (48+)
+            </h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Core Generation</h3>
+                    <table>
+                        <tr><td>GeneratorForm.tsx</td><td>Main article form</td></tr>
+                        <tr><td>ArticlePreview.tsx</td><td>Preview/Code/Validate views</td></tr>
+                        <tr><td>GenerationProgress.tsx</td><td>Progress indicator</td></tr>
+                        <tr><td>ValidationPanel.tsx</td><td>Compliance checking</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Bulk Operations</h3>
+                    <table>
+                        <tr><td>BulkGeneratorForm.tsx</td><td>CSV/single keyword input</td></tr>
+                        <tr><td>BulkProgressPanel.tsx</td><td>Real-time job monitoring</td></tr>
+                        <tr><td>BulkArticleCard.tsx</td><td>Individual article status</td></tr>
+                        <tr><td>ClusterModeForm.tsx</td><td>Cluster generation</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Layout & Navigation</h3>
+                    <table>
+                        <tr><td>AppShell.tsx</td><td>Main layout wrapper</td></tr>
+                        <tr><td>Sidebar.tsx</td><td>Navigation + quota</td></tr>
+                        <tr><td>TopBar.tsx</td><td>Header bar</td></tr>
+                        <tr><td>PageLayout.tsx</td><td>Content wrapper</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Article Display</h3>
+                    <table>
+                        <tr><td>IsolatedArticlePreview.tsx</td><td>Iframe preview</td></tr>
+                        <tr><td>LiveBuilder.tsx</td><td>Live editing</td></tr>
+                        <tr><td>MatrixTable.tsx</td><td>Component matrix</td></tr>
+                        <tr><td>VariationGrid.tsx</td><td>Component showcase</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">UI Primitives (23 Components)</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span class="badge badge-cyan">Button</span>
+                    <span class="badge badge-cyan">Dialog</span>
+                    <span class="badge badge-cyan">Select</span>
+                    <span class="badge badge-cyan">Dropdown</span>
+                    <span class="badge badge-cyan">Tabs</span>
+                    <span class="badge badge-purple">Toast</span>
+                    <span class="badge badge-purple">Tooltip</span>
+                    <span class="badge badge-purple">Input</span>
+                    <span class="badge badge-purple">Textarea</span>
+                    <span class="badge badge-purple">Card</span>
+                    <span class="badge badge-mint">Checkbox</span>
+                    <span class="badge badge-mint">Switch</span>
+                    <span class="badge badge-mint">Progress</span>
+                    <span class="badge badge-mint">Accordion</span>
+                    <span class="badge badge-mint">Popover</span>
+                    <span class="badge badge-orange">RadioGroup</span>
+                    <span class="badge badge-orange">Slider</span>
+                    <span class="badge badge-orange">Skeleton</span>
+                    <span class="badge badge-orange">ErrorBoundary</span>
+                    <span class="badge badge-pink">AnimatedCard</span>
+                    <span class="badge badge-pink">AnimatedList</span>
+                    <span class="badge badge-pink">PageTransition</span>
+                    <span class="badge badge-pink">MentionTextarea</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Routes -->
+        <section id="api-routes">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-2);">🔌</span>
+                API Routes (32)
+            </h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Content Generation</h3>
+                    <table>
+                        <tr><td><code>/api/generate</code></td><td>POST</td><td>Main generation</td></tr>
+                        <tr><td><code>/api/generate/status/[jobId]</code></td><td>GET</td><td>Job status</td></tr>
+                        <tr><td><code>/api/generate/trigger</code></td><td>POST</td><td>Trigger.dev</td></tr>
+                        <tr><td><code>/api/article-types</code></td><td>GET</td><td>Get types</td></tr>
+                        <tr><td><code>/api/components</code></td><td>GET</td><td>Get components</td></tr>
+                        <tr><td><code>/api/structure-flows</code></td><td>GET</td><td>Get flows</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Bulk Generation</h3>
+                    <table>
+                        <tr><td><code>/api/bulk/start</code></td><td>POST</td><td>Start bulk</td></tr>
+                        <tr><td><code>/api/bulk/[jobId]</code></td><td>GET</td><td>Job details</td></tr>
+                        <tr><td><code>/api/bulk/[jobId]/cancel</code></td><td>POST</td><td>Cancel job</td></tr>
+                        <tr><td><code>/api/bulk/[jobId]/retry</code></td><td>POST</td><td>Retry failed</td></tr>
+                        <tr><td><code>/api/bulk/cluster</code></td><td>POST</td><td>Create cluster</td></tr>
+                        <tr><td><code>/api/bulk/history</code></td><td>GET</td><td>Job history</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">History & Costs</h3>
+                    <table>
+                        <tr><td><code>/api/history</code></td><td>GET</td><td>Generation history</td></tr>
+                        <tr><td><code>/api/history/[id]</code></td><td>GET</td><td>Single entry</td></tr>
+                        <tr><td><code>/api/costs</code></td><td>GET</td><td>Total costs</td></tr>
+                        <tr><td><code>/api/costs/by-article</code></td><td>GET</td><td>Costs breakdown</td></tr>
+                        <tr><td><code>/api/quota</code></td><td>GET</td><td>Quota usage</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Other</h3>
+                    <table>
+                        <tr><td><code>/api/auth/[...all]</code></td><td>ALL</td><td>Better Auth</td></tr>
+                        <tr><td><code>/api/prompts</code></td><td>CRUD</td><td>Custom prompts</td></tr>
+                        <tr><td><code>/api/wordpress/*</code></td><td>ALL</td><td>WP integration</td></tr>
+                        <tr><td><code>/api/pusher/auth</code></td><td>POST</td><td>Pusher auth</td></tr>
+                        <tr><td><code>/api/user/settings</code></td><td>GET/PUT</td><td>User settings</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Database -->
+        <section id="database">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-1);">🗄️</span>
+                Database Schema (14 Tables)
+            </h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">User Management</h3>
+                    <table>
+                        <tr><td><strong>users</strong></td><td>User accounts with affiliate tags</td></tr>
+                        <tr><td><strong>sessions</strong></td><td>Session tokens</td></tr>
+                        <tr><td><strong>accounts</strong></td><td>OAuth provider data</td></tr>
+                        <tr><td><strong>verifications</strong></td><td>Email verification</td></tr>
+                        <tr><td><strong>userSettings</strong></td><td>User preferences</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Content Tracking</h3>
+                    <table>
+                        <tr><td><strong>generationHistory</strong></td><td>Each generated article</td></tr>
+                        <tr><td><strong>articleImages</strong></td><td>Generated images in R2</td></tr>
+                        <tr><td><strong>generationJobs</strong></td><td>Background job tracking</td></tr>
+                        <tr><td><strong>bulkJobs</strong></td><td>Multi-article jobs</td></tr>
+                        <tr><td><strong>bulkJobArticles</strong></td><td>Articles in bulk jobs</td></tr>
+                        <tr><td><strong>articleClusters</strong></td><td>AI-powered clusters</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Configuration</h3>
+                    <table>
+                        <tr><td><strong>quotaUsage</strong></td><td>Daily generation limits</td></tr>
+                        <tr><td><strong>promptHistory</strong></td><td>Custom prompt attempts</td></tr>
+                        <tr><td><strong>costTracking</strong></td><td>API cost records</td></tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Key Schema File</h3>
+                    <p style="margin-bottom: 1rem;"><span class="file-path">lib/db/schema.ts</span></p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        Drizzle ORM schema with Turso/LibSQL. All tables use text IDs, timestamps, and soft deletes where applicable.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="services">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-2);">⚙️</span>
+                Services (34 Files)
+            </h2>
+            <div class="grid-3">
+                <div class="card">
+                    <h3 class="card-title">Core Orchestration</h3>
+                    <ul class="rule-list">
+                        <li>unified-orchestrator.ts (176KB)</li>
+                        <li>generator-orchestrator.ts</li>
+                        <li>structure-generator.ts</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Content Generation</h3>
+                    <ul class="rule-list">
+                        <li>content-generators.ts (128KB)</li>
+                        <li>article-assembler.ts (70KB)</li>
+                        <li>article-builder.ts</li>
+                        <li>template-hydrator.ts (47KB)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Validation & Correction</h3>
+                    <ul class="rule-list">
+                        <li>article-validator.ts (66KB)</li>
+                        <li>content-validator.ts (36KB)</li>
+                        <li>content-corrector.ts (71KB)</li>
+                        <li>grammar-checker.ts</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Images & Media</h3>
+                    <ul class="rule-list">
+                        <li>imagen.ts (102KB)</li>
+                        <li>flux-image-generator.ts</li>
+                        <li>google-image-search.ts</li>
+                        <li>product-image-generator.ts</li>
+                        <li>r2-storage.ts</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Data Management</h3>
+                    <ul class="rule-list">
+                        <li>history-service.ts</li>
+                        <li>quota-service.ts</li>
+                        <li>cost-tracking-service.ts</li>
+                        <li>email-service.ts</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Advanced Features</h3>
+                    <ul class="rule-list">
+                        <li>amazon-product-api.ts</li>
+                        <li>product-inference.ts</li>
+                        <li>badge-service.ts</li>
+                        <li>interlinking-service.ts</li>
+                        <li>keyword-expansion-service.ts</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Files -->
+        <section id="key-files">
+            <h2 class="section-title">
+                <span class="icon" style="background: var(--gradient-1);">📌</span>
+                Key Files Summary
+            </h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>File</th>
+                            <th>Purpose</th>
+                            <th>Size</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-red">Rules</span></td>
+                            <td><span class="file-path">lib/ai/rules/forbidden-content.ts</span></td>
+                            <td>AI prompt rules injection</td>
+                            <td>Core</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-red">Rules</span></td>
+                            <td><span class="file-path">data/guidelines.ts</span></td>
+                            <td>UI rules display</td>
+                            <td>3,063 lines</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-orange">Generation</span></td>
+                            <td><span class="file-path">lib/services/unified-orchestrator.ts</span></td>
+                            <td>Main generation coordinator</td>
+                            <td>176KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-orange">Generation</span></td>
+                            <td><span class="file-path">lib/services/content-generators.ts</span></td>
+                            <td>Component content generation</td>
+                            <td>128KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-yellow">Validation</span></td>
+                            <td><span class="file-path">lib/services/article-validator.ts</span></td>
+                            <td>Documentation standards</td>
+                            <td>66KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-yellow">Validation</span></td>
+                            <td><span class="file-path">lib/services/content-corrector.ts</span></td>
+                            <td>Auto-fix content</td>
+                            <td>71KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-purple">Images</span></td>
+                            <td><span class="file-path">lib/services/imagen.ts</span></td>
+                            <td>Google Imagen integration</td>
+                            <td>102KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-cyan">Assembly</span></td>
+                            <td><span class="file-path">lib/services/article-assembler.ts</span></td>
+                            <td>HTML assembly</td>
+                            <td>70KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-mint">Data</span></td>
+                            <td><span class="file-path">data/variations.ts</span></td>
+                            <td>Component variations</td>
+                            <td>176KB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-pink">Database</span></td>
+                            <td><span class="file-path">lib/db/schema.ts</span></td>
+                            <td>Drizzle ORM schema</td>
+                            <td>14 tables</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>SCAI Article Generator - Codebase Documentation</p>
+            <p style="margin-top: 0.5rem;">Generated on <span id="date"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Collapsible functionality
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('open');
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>

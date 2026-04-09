@@ -1,0 +1,127 @@
+# Engineering Standup Breakdown (Taofeek, Mustapha, Kalu)
+
+## 1) Product/Billing Decisions (Finalized for Build)
+
+### Base Plan
+- **Plan Price:** `$99/month`
+- **Included Usage Target:** `100,000 words`
+- Word usage maps to **LLM token cost** (provider charges per token).
+
+### Image Usage Assumption (for quota modeling)
+- Working assumption: **3–4 images per 1,000 words**
+  - ~1 featured image
+  - ~2–3 in-content images
+- For `100,000 words`, projected image range is roughly:
+  - `300–400 images` (strict 3–4 math)
+  - Team discussed a broader guardrail up to ~`500` as buffer.
+
+### Quota Logic
+- The `$99` cap should represent a **combined budget envelope**:
+  - text generation cost + image generation cost
+- System should enforce usage so monthly included value stays within plan economics.
+
+### Pay-As-You-Go (Overage)
+- Once user exceeds included quota, overage must follow the **same base exchange ratio** derived from:
+  - `$99 : 100,000 words : token cost model`
+- Image model switching (e.g., Flux vs Gemini image options) must preserve **equivalent margin rate**.
+- Implementation principle:
+  - normalize everything to a baseline unit cost
+  - apply model-specific multipliers
+  - keep revenue consistency regardless of model chosen
+
+---
+
+## 2) WordPress Plugin Clarifications
+
+- WordPress plugin installability is primarily **permissions-based**.
+- Users can install plugins if:
+  - plugin is available/allowed in their environment
+  - their role has sufficient permissions (admin-level typically)
+- Managed WP environments may restrict:
+  - installs outside approved/plugin directory channels
+- If user lacks permission, show explicit error:
+  - _“You don’t have permission to install plugins. Please contact your site administrator.”_
+- Requirement for this sprint:
+  - ensure plugin is visible
+  - can be installed (where authorized)
+  - can be tested end-to-end
+
+---
+
+## 3) UI/UX Feedback to Action
+
+### Settings IA / Naming
+- Rename tab label from **“Defaults”** -> **“Preferences”**
+- Keep terminology consistent across UI and saved config behavior.
+
+### Integrations Scope
+- **Integrations tab should not be WordPress-only** (prepare for multi-integration future state).
+
+### Layout Issues (High Priority UI Bug)
+- Multiple settings sections are stretching **full-width** and look unfinished.
+- Affected: General + Preferences-related layouts.
+- Need constrained content width/container structure for readability.
+
+### Additional Settings Need
+- Add/ensure **Delete Account** capability in settings (or clearly staged if pending).
+
+---
+
+## 4) Ownership for Today
+
+## @Taofeek
+**Primary Task:** Session persistence fix  
+**Acceptance Criteria:**
+- Validate both flows:
+  - `Single Article`
+  - `Bulk Generate`
+- Confirm persistence survives expected refresh/navigation/auth scenarios.
+- **Do not push without QA** (explicit regression check required).
+
+## @Mustapha
+**Primary Task:** Billing tab implementation  
+**Acceptance Criteria:**
+- Integrate Billing tab with **Stripe**
+- Reflect plan + usage model foundations (base plan + overage readiness)
+- Handle nuanced billing state cases safely (empty state, loading, subscription status).
+
+## @Kalu
+**Primary Task:** WordPress integration
+**Acceptance Criteria:**
+- Plugin discovery/visibility path works
+- Auth/authorization path validated
+- Installation + functional test path verified
+- Clear permission error messaging for insufficient access users
+
+---
+
+## 5) QA Guardrails (Mandatory Today)
+
+- No merges without direct QA evidence.
+- Focus on preventing breakages seen previously.
+- Verify variant integrity in article generation paths after fixes.
+- Validate settings pages at non-maximized browser width (layout consistency check).
+
+---
+
+## 6) Emerging Product Feedback (Next Iteration Queue)
+
+1. **“What is unique about article types?”**  
+   - Needs clearer differentiation in output structure and perceived value.
+
+2. **Beyond Amazon Affiliates connectivity**  
+   - Users asking about broader commerce pathways (e.g., TikTok Shop potential).
+   - Explore integration feasibility and content-to-commerce mapping opportunities.
+
+3. **Stabilize first, then quality iteration**  
+   - First objective: no broken variations.
+   - Next: structural/content-quality enhancements driven by feedback volume.
+
+---
+
+## 7) Quick Math Note (for internal alignment)
+
+- At 3 images / 1,000 words -> `100,000 / 1,000 * 3 = 300 images`
+- At 4 images / 1,000 words -> `100,000 / 1,000 * 4 = 400 images`
+
+Use `300–400` as core modeled range, with optional operational buffer if finance approves.

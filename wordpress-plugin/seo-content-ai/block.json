@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "scai/article",
+	"version": "1.0.0",
+	"title": "SCAI Article",
+	"category": "embed",
+	"description": "Renders an article from SEO Content Article Generator with consistent styling.",
+	"textdomain": "seo-content-ai",
+	"attributes": {
+		"variation": {
+			"type": "string",
+			"default": "clean-studio"
+		},
+		"colorTheme": {
+			"type": "string",
+			"default": "default"
+		}
+	},
+	"supports": {
+		"html": true,
+		"className": false,
+		"customClassName": false,
+		"align": [ "wide", "full" ]
+	},
+	"style": "file:./assets/scai-article.css"
+}

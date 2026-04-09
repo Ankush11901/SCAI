@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAI Internal Linking Visualization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --page: #030303;
+  --card: #0A0A0A;
+  --surface: #111111;
+  --input: #1A1A1A;
+  --border: #222222;
+  --border-bright: #333333;
+  --text: #FFFFFF;
+  --text-sec: #A3A3A3;
+  --text-muted: #666666;
+  --brand1: #40EDC3;
+  --brand2: #7FFBA9;
+  --brand3: #D3F89A;
+  --success: #059669;
+  --error: #dc2626;
+  --warning: #f59e0b;
+  --gradient: linear-gradient(90.72deg, #40EDC3 0%, #7FFBA9 49.62%, #D3F89A 100%);
+  --glow: 0 0 30px -10px rgba(64, 237, 195, 0.25);
+  --radius: 0.75rem;
+}
+
+::selection { background: rgba(64, 237, 195, 0.3); }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--page);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Fetch Form */
+.fetch-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  max-width: 500px;
+}
+.fetch-form input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--input);
+  color: var(--text);
+  font-size: 0.8125rem;
+}
+.fetch-form input:focus { outline: none; border-color: var(--brand1); }
+.fetch-form input::placeholder { color: var(--text-muted); }
+
+/* Buttons */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-sec);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { border-color: var(--brand1); color: var(--brand1); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary {
+  background: var(--brand1);
+  border-color: var(--brand1);
+  color: #000;
+}
+.btn-primary:hover { background: var(--brand2); border-color: var(--brand2); }
+
+/* Status Message */
+.status-msg {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+.status-msg.error { display: block; background: rgba(220,38,38,0.1); border: 1px solid var(--error); color: var(--error); }
+.status-msg.success { display: block; background: rgba(5,150,105,0.1); border: 1px solid var(--success); color: var(--success); }
+.status-msg.loading { display: block; background: rgba(64,237,195,0.1); border: 1px solid var(--brand1); color: var(--brand1); }
+
+/* Job Info */
+.job-info {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+.job-info.visible { display: block; }
+.job-info h3 { font-size: 0.875rem; margin-bottom: 0.5rem; }
+.job-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-sec); }
+.job-meta span { display: flex; align-items: center; gap: 0.375rem; }
+.job-meta .label { color: var(--text-muted); }
+
+/* Stats Bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+.stats-bar.visible { display: grid; }
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.875rem 1rem;
+}
+.stat-label { font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-value { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
+.stat-value.brand { color: var(--brand1); }
+
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1rem;
+}
+
+/* Graph Container */
+.graph-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+}
+.graph-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.graph-header h3 { font-size: 0.8125rem; font-weight: 600; }
+.graph-controls { display: flex; gap: 0.375rem; }
+.graph-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-sec);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+.graph-btn:hover { border-color: var(--brand1); color: var(--brand1); }
+#graph-svg {
+  width: 100%;
+  height: 500px;
+  display: block;
+}
+.graph-legend {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  gap: 1rem;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+.legend-item { display: flex; align-items: center; gap: 0.375rem; }
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.legend-dot.pillar { background: var(--brand1); }
+.legend-dot.supporting { background: var(--text-sec); }
+
+/* Sidebar */
+.sidebar { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Panel */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.panel-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.panel-body { padding: 0.75rem; }
+
+/* Article List */
+.article-list { max-height: 280px; overflow-y: auto; }
+.article-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.article-item:hover { background: var(--surface); }
+.article-item.selected { background: rgba(64, 237, 195, 0.1); }
+.article-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+.article-dot.pillar { background: var(--brand1); }
+.article-info { flex: 1; min-width: 0; }
+.article-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.article-meta { font-size: 0.625rem; color: var(--text-muted); }
+.article-links {
+  display: flex;
+  gap: 0.375rem;
+  font-size: 0.625rem;
+}
+.link-badge {
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  background: var(--surface);
+}
+.link-badge.in { color: var(--brand1); }
+.link-badge.out { color: var(--brand3); }
+
+/* Link Details */
+.link-details { font-size: 0.75rem; max-height: 300px; overflow-y: auto; }
+.link-section { margin-bottom: 0.75rem; }
+.link-section:last-child { margin-bottom: 0; }
+.link-section-title {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.link-row:last-child { border-bottom: none; }
+.link-arrow { color: var(--text-muted); font-size: 0.625rem; }
+.link-target { color: var(--brand1); font-size: 0.7rem; }
+.link-anchor {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding-left: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Matrix */
+.matrix-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-top: 1rem;
+  overflow: hidden;
+}
+.matrix-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.matrix-header h3 { font-size: 0.8125rem; font-weight: 600; }
+.matrix-scroll { overflow-x: auto; padding: 0.75rem; }
+.matrix-table {
+  border-collapse: collapse;
+  font-size: 0.6875rem;
+}
+.matrix-table th, .matrix-table td {
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.matrix-table th {
+  background: var(--surface);
+  color: var(--text-sec);
+  font-weight: 500;
+}
+.matrix-table td { background: var(--card); }
+.matrix-table td.has-link {
+  background: rgba(64, 237, 195, 0.15);
+  color: var(--brand1);
+}
+.matrix-table td.self { background: var(--surface); }
+.matrix-table th.rotate {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 0.5rem 0.25rem;
+  height: auto;
+  min-height: 60px;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+.empty-state h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-sec); }
+.empty-state p { font-size: 0.8125rem; margin-bottom: 0.5rem; }
+.empty-state code {
+  display: inline-block;
+  background: var(--surface);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--brand1);
+  margin-top: 0.5rem;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 250px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.tooltip-title { font-weight: 600; margin-bottom: 0.25rem; }
+.tooltip-meta { color: var(--text-muted); font-size: 0.625rem; }
+
+/* Main Content */
+#mainContent { display: none; }
+#mainContent.visible { display: block; }
+
+@media (max-width: 900px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .stats-bar { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .header { flex-direction: column; align-items: stretch; }
+  .fetch-form { max-width: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Internal Linking</h1>
+    <div class="fetch-form">
+      <input type="text" id="jobIdInput" placeholder="Enter Bulk Job ID (e.g., clx7abc123...)" />
+      <button class="btn btn-primary" id="fetchBtn" onclick="fetchBulkJob()">Load</button>
+      <button class="btn" onclick="loadSampleData()">Demo</button>
+    </div>
+  </div>
+
+  <!-- Status Message -->
+  <div id="statusMsg" class="status-msg"></div>
+
+  <!-- Job Info -->
+  <div id="jobInfo" class="job-info">
+    <h3 id="jobTitle">-</h3>
+    <div class="job-meta">
+      <span><span class="label">Mode:</span> <span id="jobMode">-</span></span>
+      <span><span class="label">Status:</span> <span id="jobStatus">-</span></span>
+      <span><span class="label">Articles:</span> <span id="jobArticleCount">-</span></span>
+      <span><span class="label">Words:</span> <span id="jobWordCount">-</span></span>
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-label">Articles</div>
+      <div class="stat-value" id="statArticles">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Internal Links</div>
+      <div class="stat-value brand" id="statLinks">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Links/Article</div>
+      <div class="stat-value" id="statAvg">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Link Density</div>
+      <div class="stat-value" id="statDensity">0%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Orphans</div>
+      <div class="stat-value" id="statOrphans">0</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="mainContent">
+    <div class="main-grid">
+      <!-- Graph -->
+      <div class="graph-container">
+        <div class="graph-header">
+          <h3>Link Network</h3>
+          <div class="graph-controls">
+            <button class="graph-btn" onclick="zoomIn()" title="Zoom In">+</button>
+            <button class="graph-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+            <button class="graph-btn" onclick="resetZoom()" title="Reset">⟳</button>
+          </div>
+        </div>
+        <svg id="graph-svg"></svg>
+        <div class="graph-legend">
+          <div class="legend-item"><div class="legend-dot pillar"></div> Pillar</div>
+          <div class="legend-item"><div class="legend-dot supporting"></div> Supporting</div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="panel">
+          <div class="panel-header">Articles</div>
+          <div class="panel-body">
+            <div class="article-list" id="articleList"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Link Details</div>
+          <div class="panel-body">
+            <div class="link-details" id="linkDetails">
+              <p style="color: var(--text-muted); font-size: 0.75rem;">Select an article to view links</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matrix -->
+    <div class="matrix-container">
+      <div class="matrix-header">
+        <h3>Link Matrix</h3>
+        <span style="font-size: 0.6875rem; color: var(--text-muted);">Row → links to → Column</span>
+      </div>
+      <div class="matrix-scroll">
+        <table class="matrix-table" id="linkMatrix"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="empty-state">
+    <h3>Visualize Internal Links</h3>
+    <p>Enter a bulk job ID from your SCAI dashboard to see the link network.</p>
+    <p>Find the job ID in your bulk generation history URL:</p>
+    <code>/history/bulk/[jobId]</code>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip" style="display:none;"></div>
+
+<script>
+// Configuration - Your SCAI API URL
+const API_BASE = 'https://seocontent-article-generator.vercel.app';
+
+// State
+let articles = [];
+let links = [];
+let jobData = null;
+let selectedArticle = null;
+let simulation = null;
+let svg, g, zoom;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  initGraph();
+
+  // Check URL params for jobId
+  const params = new URLSearchParams(window.location.search);
+  const jobId = params.get('jobId') || params.get('id');
+  if (jobId) {
+    document.getElementById('jobIdInput').value = jobId;
+    fetchBulkJob();
+  }
+
+  // Enter key to fetch
+  document.getElementById('jobIdInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') fetchBulkJob();
+  });
+});
+
+// Status messages
+function showStatus(message, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = message;
+  el.className = 'status-msg ' + type;
+}
+
+function hideStatus() {
+  document.getElementById('statusMsg').className = 'status-msg';
+}
+
+// Fetch from API
+async function fetchBulkJob() {
+  const jobId = document.getElementById('jobIdInput').value.trim();
+  if (!jobId) {
+    showStatus('Please enter a bulk job ID', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+  showStatus('Fetching bulk job data...', 'loading');
+
+  try {
+    const response = await fetch(`${API_BASE}/api/bulk/${jobId}`, {
+      credentials: 'include', // Include cookies for auth
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    jobData = data;
+
+    // Process the data
+    processApiResponse(data);
+    hideStatus();
+    showStatus(`Loaded ${data.articles.length} articles with ${links.length} internal links`, 'success');
+    setTimeout(hideStatus, 3000);
+
+  } catch (error) {
+    console.error('Fetch error:', error);
+    showStatus(`Error: ${error.message}. Make sure the app is running and you're logged in.`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Load';
+  }
+}
+
+// Process API response
+function processApiResponse(data) {
+  // Map API response to our format
+  // API returns: id, articleType, keyword, status, htmlContent, priority, wordCount
+  articles = data.articles
+    .filter(a => a.status === 'complete' && a.htmlContent)
+    .map((a, index) => ({
+      id: a.id,
+      title: extractTitle(a.htmlContent) || a.keyword || `Article ${index + 1}`,
+      slug: a.id, // Use ID as slug for matching
+      keyword: a.keyword,
+      articleType: a.articleType,
+      isPillar: a.priority > 0 || a.articleType === 'pillar',
+      wordCount: a.wordCount || 0,
+      htmlContent: a.htmlContent,
+      historyId: a.historyId,
+    }));
+
+  // Extract links from HTML
+  links = extractLinks(articles);
+
+  // Show UI
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('jobInfo').classList.add('visible');
+  document.getElementById('statsBar').classList.add('visible');
+  document.getElementById('mainContent').classList.add('visible');
+
+  // Update job info
+  document.getElementById('jobTitle').textContent = data.job.keyword || 'Bulk Job';
+  document.getElementById('jobMode').textContent = data.job.mode || 'cluster';
+  document.getElementById('jobStatus').textContent = data.job.status || '-';
+  document.getElementById('jobArticleCount').textContent = `${data.job.completedArticles || 0}/${data.job.totalArticles || 0}`;
+  document.getElementById('jobWordCount').textContent = (data.stats?.totalWords || 0).toLocaleString();
+
+  updateStats();
+  renderArticleList();
+  renderGraph();
+  renderMatrix();
+}
+
+// Extract title from HTML
+function extractTitle(html) {
+  if (!html) return null;
+  // Try h1 first
+  const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  if (h1Match) return h1Match[1].trim();
+  // Try title tag
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  if (titleMatch) return titleMatch[1].trim();
+  return null;
+}
+
+// Extract internal links from HTML
+function extractLinks(articles) {
+  const linkList = [];
+
+  // Match scai-internal-link class (href can be before or after class)
+  const linkRegex = /<a\s+[^>]*?href="([^"]*)"[^>]*?class="[^"]*scai-internal-link[^"]*"[^>]*>([^<]*)<\/a>|<a\s+[^>]*?class="[^"]*scai-internal-link[^"]*"[^>]*?href="([^"]*)"[^>]*>([^<]*)<\/a>/gi;
+
+  articles.forEach(article => {
+    if (!article.htmlContent) return;
+
+    let match;
+    const regex = new RegExp(linkRegex.source, 'gi'); // Reset regex
+
+    while ((match = regex.exec(article.htmlContent)) !== null) {
+      const targetUrl = match[1] || match[3];
+      const anchorText = match[2] || match[4];
+
+      if (!targetUrl || !anchorText) continue;
+
+      // Find target article by matching URL patterns
+      const targetArticle = articles.find(a => {
+        if (!targetUrl) return false;
+        // Match by slug in URL
+        const urlSlug = targetUrl.split('/').pop()?.replace(/\.html?$/, '');
+        if (urlSlug && a.slug && a.slug.includes(urlSlug)) return true;
+        if (urlSlug && a.id && a.id.includes(urlSlug)) return true;
+        // Match by keyword in URL
+        if (a.keyword && targetUrl.toLowerCase().includes(a.keyword.toLowerCase().replace(/\s+/g, '-'))) return true;
+        return false;
+      });
+
+      if (targetArticle && targetArticle.id !== article.id) {
+        linkList.push({
+          source: article.id,
+          target: targetArticle.id,
+          anchorText: anchorText.trim(),
+          url: targetUrl
+        });
+      }
+    }
+  });
+
+  return linkList;
+}
+
+function updateStats() {
+  const totalArticles = articles.length;
+  const totalLinks = links.length;
+  const avgLinks = totalArticles > 0 ? (totalLinks / totalArticles).toFixed(1) : 0;
+  const possibleLinks = totalArticles * (totalArticles - 1);
+  const density = possibleLinks > 0 ? ((totalLinks / possibleLinks) * 100).toFixed(0) : 0;
+
+  const incomingCounts = {};
+  links.forEach(l => { incomingCounts[l.target] = (incomingCounts[l.target] || 0) + 1; });
+  const orphans = articles.filter(a => !a.isPillar && !incomingCounts[a.id]).length;
+
+  document.getElementById('statArticles').textContent = totalArticles;
+  document.getElementById('statLinks').textContent = totalLinks;
+  document.getElementById('statAvg').textContent = avgLinks;
+  document.getElementById('statDensity').textContent = density + '%';
+  document.getElementById('statOrphans').textContent = orphans;
+}
+
+// Article List
+function renderArticleList() {
+  const container = document.getElementById('articleList');
+  const inCounts = {}, outCounts = {};
+  links.forEach(l => {
+    outCounts[l.source] = (outCounts[l.source] || 0) + 1;
+    inCounts[l.target] = (inCounts[l.target] || 0) + 1;
+  });
+
+  container.innerHTML = articles.map(a => `
+    <div class="article-item" data-id="${a.id}" onclick="selectArticle('${a.id}')">
+      <div class="article-dot ${a.isPillar ? 'pillar' : ''}"></div>
+      <div class="article-info">
+        <div class="article-title" title="${a.title}">${a.title}</div>
+        <div class="article-meta">${a.wordCount.toLocaleString()} words${a.articleType ? ' • ' + a.articleType : ''}</div>
+      </div>
+      <div class="article-links">
+        <span class="link-badge in" title="Incoming">↓${inCounts[a.id] || 0}</span>
+        <span class="link-badge out" title="Outgoing">↑${outCounts[a.id] || 0}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectArticle(id) {
+  selectedArticle = id;
+  document.querySelectorAll('.article-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === id);
+  });
+
+  const article = articles.find(a => a.id === id);
+  const outgoing = links.filter(l => l.source === id);
+  const incoming = links.filter(l => l.target === id);
+
+  const details = document.getElementById('linkDetails');
+  details.innerHTML = `
+    <div class="link-section">
+      <div class="link-section-title">Outgoing (${outgoing.length})</div>
+      ${outgoing.length ? outgoing.map(l => {
+        const target = articles.find(a => a.id === l.target);
+        return `
+          <div class="link-row">
+            <span class="link-arrow">→</span>
+            <span class="link-target">${target?.title || 'Unknown'}</span>
+          </div>
+          <div class="link-anchor">"${l.anchorText}"</div>
+        `;
+      }).join('') : '<p style="color:var(--text-muted)">No outgoing links</p>'}
+    </div>
+    <div class="link-section">
+      <div class="link-section-title">Incoming (${incoming.length})</div>
+      ${incoming.length ? incoming.map(l => {
+        const source = articles.find(a => a.id === l.source);
+        return `
+          <div class="link-row">
+            <span class="link-arrow">←</span>
+            <span class="link-target">${source?.title || 'Unknown'}</span>
+          </div>
+          <div class="link-anchor">"${l.anchorText}"</div>
+        `;
+      }).join('') : '<p style="color:var(--text-muted)">No incoming links</p>'}
+    </div>
+  `;
+
+  highlightNode(id);
+}
+
+// Graph
+function initGraph() {
+  svg = d3.select('#graph-svg');
+  const container = svg.node().parentElement;
+  const width = container.clientWidth;
+  const height = 500;
+
+  svg.attr('viewBox', [0, 0, width, height]);
+
+  g = svg.append('g');
+
+  zoom = d3.zoom()
+    .scaleExtent([0.3, 3])
+    .on('zoom', (e) => g.attr('transform', e.transform));
+
+  svg.call(zoom);
+
+  // Arrowhead marker
+  svg.append('defs').append('marker')
+    .attr('id', 'arrowhead')
+    .attr('viewBox', '-0 -5 10 10')
+    .attr('refX', 20)
+    .attr('refY', 0)
+    .attr('orient', 'auto')
+    .attr('markerWidth', 6)
+    .attr('markerHeight', 6)
+    .append('path')
+    .attr('d', 'M 0,-5 L 10,0 L 0,5')
+    .attr('fill', '#40EDC3');
+}
+
+function renderGraph() {
+  g.selectAll('*').remove();
+
+  const container = svg.node().parentElement;
+  const width = container.clientWidth;
+  const height = 500;
+
+  const nodes = articles.map(a => ({ ...a }));
+  const edges = links.map(l => ({ source: l.source, target: l.target, anchorText: l.anchorText }));
+
+  simulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(edges).id(d => d.id).distance(100))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collision', d3.forceCollide().radius(35));
+
+  const link = g.append('g')
+    .selectAll('line')
+    .data(edges)
+    .join('line')
+    .attr('stroke', '#333')
+    .attr('stroke-width', 1.5)
+    .attr('marker-end', 'url(#arrowhead)');
+
+  const node = g.append('g')
+    .selectAll('g')
+    .data(nodes)
+    .join('g')
+    .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended));
+
+  node.append('circle')
+    .attr('r', d => d.isPillar ? 14 : 10)
+    .attr('fill', d => d.isPillar ? '#40EDC3' : '#333')
+    .attr('stroke', d => d.isPillar ? '#40EDC3' : '#555')
+    .attr('stroke-width', 2)
+    .style('cursor', 'pointer');
+
+  node.append('text')
+    .text(d => d.title.substring(0, 12) + (d.title.length > 12 ? '..' : ''))
+    .attr('dy', 24)
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#A3A3A3')
+    .attr('font-size', '9px')
+    .style('pointer-events', 'none');
+
+  node.on('click', (e, d) => selectArticle(d.id))
+    .on('mouseenter', (e, d) => showTooltip(e, d))
+    .on('mouseleave', hideTooltip);
+
+  simulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  function dragstarted(e) {
+    if (!e.active) simulation.alphaTarget(0.3).restart();
+    e.subject.fx = e.subject.x;
+    e.subject.fy = e.subject.y;
+  }
+
+  function dragged(e) {
+    e.subject.fx = e.x;
+    e.subject.fy = e.y;
+  }
+
+  function dragended(e) {
+    if (!e.active) simulation.alphaTarget(0);
+    e.subject.fx = null;
+    e.subject.fy = null;
+  }
+}
+
+function highlightNode(id) {
+  g.selectAll('circle')
+    .attr('stroke', d => d.id === id ? '#40EDC3' : (d.isPillar ? '#40EDC3' : '#555'))
+    .attr('stroke-width', d => d.id === id ? 3 : 2);
+
+  g.selectAll('line')
+    .attr('stroke', d => (d.source.id === id || d.target.id === id) ? '#40EDC3' : '#333')
+    .attr('stroke-width', d => (d.source.id === id || d.target.id === id) ? 2 : 1.5);
+}
+
+function showTooltip(e, d) {
+  const outCount = links.filter(l => l.source === d.id || l.source.id === d.id).length;
+  const inCount = links.filter(l => l.target === d.id || l.target.id === d.id).length;
+
+  const tooltip = document.getElementById('tooltip');
+  tooltip.innerHTML = `
+    <div class="tooltip-title">${d.title}</div>
+    <div class="tooltip-meta">${d.isPillar ? 'Pillar • ' : ''}${d.wordCount.toLocaleString()} words</div>
+    <div class="tooltip-meta" style="margin-top:4px">↓${inCount} in • ↑${outCount} out</div>
+  `;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (e.pageX + 10) + 'px';
+  tooltip.style.top = (e.pageY - 10) + 'px';
+}
+
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+}
+
+function zoomIn() { svg.transition().call(zoom.scaleBy, 1.3); }
+function zoomOut() { svg.transition().call(zoom.scaleBy, 0.7); }
+function resetZoom() { svg.transition().call(zoom.transform, d3.zoomIdentity); }
+
+// Matrix
+function renderMatrix() {
+  const table = document.getElementById('linkMatrix');
+  const linkMap = {};
+  links.forEach(l => { linkMap[`${l.source}-${l.target}`] = true; });
+
+  let html = '<thead><tr><th></th>';
+  articles.forEach((a, i) => {
+    html += `<th class="rotate" title="${a.title}">${i + 1}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  articles.forEach((row, i) => {
+    html += `<tr><th title="${row.title}">${i + 1}</th>`;
+    articles.forEach((col, j) => {
+      if (i === j) {
+        html += '<td class="self">-</td>';
+      } else if (linkMap[`${row.id}-${col.id}`]) {
+        html += '<td class="has-link">✓</td>';
+      } else {
+        html += '<td></td>';
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+
+  table.innerHTML = html;
+}
+
+// Sample data for demo
+function loadSampleData() {
+  const sampleData = {
+    job: {
+      keyword: 'Home Gym Equipment',
+      mode: 'cluster',
+      status: 'completed',
+      totalArticles: 8,
+      completedArticles: 8
+    },
+    articles: [
+      { id: "1", keyword: "home gym setup", articleType: "pillar", status: "complete", priority: 1, wordCount: 2500, htmlContent: '<h1>Complete Home Gym Setup Guide</h1><p>Setting up a <a href="/fitness/best-dumbbells" class="scai-internal-link">home gym with quality dumbbells</a> requires planning. Consider your <a href="/fitness/workout-bench" class="scai-internal-link">workout bench options</a> and <a href="/fitness/cardio-equipment" class="scai-internal-link">cardio equipment needs</a>.</p>' },
+      { id: "2", keyword: "best dumbbells", articleType: "supporting", status: "complete", priority: 0, wordCount: 1800, htmlContent: '<h1>Best Dumbbells for Home Gym</h1><p>Quality dumbbells are essential for your <a href="/fitness/home-gym-setup" class="scai-internal-link">complete home gym setup</a>. Pair them with a <a href="/fitness/workout-bench" class="scai-internal-link">sturdy workout bench</a>.</p>' },
+      { id: "3", keyword: "workout bench", articleType: "supporting", status: "complete", priority: 0, wordCount: 1600, htmlContent: '<h1>Choosing the Right Workout Bench</h1><p>A good bench complements your <a href="/fitness/home-gym-setup" class="scai-internal-link">home gym</a>. Use it with <a href="/fitness/best-dumbbells" class="scai-internal-link">adjustable dumbbells</a>.</p>' },
+      { id: "4", keyword: "cardio equipment", articleType: "supporting", status: "complete", priority: 0, wordCount: 2000, htmlContent: '<h1>Home Cardio Equipment Guide</h1><p>Cardio is vital for any <a href="/fitness/home-gym-setup" class="scai-internal-link">home gym setup</a>. Balance with <a href="/fitness/strength-training" class="scai-internal-link">strength training</a>.</p>' },
+      { id: "5", keyword: "strength training", articleType: "supporting", status: "complete", priority: 0, wordCount: 1900, htmlContent: '<h1>Strength Training Basics</h1><p>Start strength training with <a href="/fitness/best-dumbbells" class="scai-internal-link">basic dumbbells</a>. See our <a href="/fitness/home-gym-setup" class="scai-internal-link">complete guide</a>.</p>' },
+      { id: "6", keyword: "gym flooring", articleType: "supporting", status: "complete", priority: 0, wordCount: 1400, htmlContent: '<h1>Home Gym Flooring Options</h1><p>Protect your floors when building your <a href="/fitness/home-gym-setup" class="scai-internal-link">home gym</a>. Essential for <a href="/fitness/best-dumbbells" class="scai-internal-link">free weight areas</a>.</p>' },
+      { id: "7", keyword: "budget gym", articleType: "supporting", status: "complete", priority: 0, wordCount: 1700, htmlContent: '<h1>Budget Home Gym Ideas</h1><p>Build an affordable <a href="/fitness/home-gym-setup" class="scai-internal-link">home gym</a> starting with <a href="/fitness/best-dumbbells" class="scai-internal-link">dumbbells</a> and <a href="/fitness/workout-bench" class="scai-internal-link">a bench</a>.</p>' },
+      { id: "8", keyword: "gym storage", articleType: "supporting", status: "complete", priority: 0, wordCount: 1300, htmlContent: '<h1>Home Gym Storage Solutions</h1><p>Keep your <a href="/fitness/home-gym-setup" class="scai-internal-link">home gym</a> organized. Store <a href="/fitness/best-dumbbells" class="scai-internal-link">dumbbells</a> properly.</p>' },
+    ],
+    stats: { totalWords: 14200 }
+  };
+
+  processApiResponse(sampleData);
+  showStatus('Loaded demo data with 8 articles', 'success');
+  setTimeout(hideStatus, 3000);
+}
+</script>
+
+</body>
+</html>

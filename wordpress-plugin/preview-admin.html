@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCAI Connector &lsaquo; WordPress Admin Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════════════
+       WORDPRESS ADMIN CHROME (simulated)
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      background: #f0f0f1;
+      color: #1e1e1e;
+      min-height: 100vh;
+    }
+
+    /* Admin Bar */
+    .wp-admin-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 32px;
+      background: #1d2327;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+    }
+    .wp-admin-bar-logo { display: flex; align-items: center; padding: 0 10px; height: 100%; }
+    .wp-admin-bar-logo svg { width: 20px; height: 20px; fill: #c3c4c7; }
+    .wp-admin-bar-site { color: #c3c4c7; font-size: 13px; padding: 0 10px; text-decoration: none; }
+    .wp-admin-bar-right { margin-left: auto; display: flex; align-items: center; height: 100%; }
+    .wp-admin-bar-user { color: #c3c4c7; padding: 0 10px; display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .wp-admin-bar-avatar { width: 16px; height: 16px; border-radius: 50%; background: #50575e; }
+
+    /* Sidebar */
+    .wp-sidebar {
+      position: fixed;
+      top: 32px;
+      left: 0;
+      bottom: 0;
+      width: 160px;
+      background: #1d2327;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .wp-sidebar-menu { list-style: none; }
+    .wp-menu-item > a {
+      display: block;
+      padding: 8px 0 8px 36px;
+      color: #f0f0f1;
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 18px;
+      position: relative;
+    }
+    .wp-menu-item > a .dashicon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      fill: rgba(240, 246, 252, 0.6);
+    }
+    .wp-menu-item > a:hover { background: #2c3338; color: #72aee6; }
+    .wp-menu-item > a:hover .dashicon { fill: #72aee6; }
+    .wp-menu-separator { height: 5px; border-bottom: 1px solid #3c434a; }
+    .wp-menu-item.active > a { background: #2271b1; color: #fff; }
+    .wp-menu-item.active > a .dashicon { fill: #fff; }
+
+    .scai-menu-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+    }
+    .scai-menu-icon svg { width: 20px; height: 20px; }
+
+    .wp-submenu {
+      list-style: none;
+      padding: 8px 0;
+      background: #2c3338;
+    }
+    .wp-submenu li a {
+      display: block;
+      padding: 5px 0 5px 12px;
+      color: rgba(240, 246, 252, 0.7);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .wp-submenu li a:hover { color: #72aee6; }
+    .wp-submenu li.active a { color: #fff; }
+
+    /* Content area */
+    .wp-content {
+      margin-left: 160px;
+      margin-top: 32px;
+      min-height: calc(100vh - 32px);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SCAI ADMIN CSS (from assets/scai-admin.css)
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+    .scai-wrap {
+      --scai-brand-1: #40EDC3;
+      --scai-brand-2: #7FFBA9;
+      --scai-brand-3: #D3F89A;
+      --gradient-primary: linear-gradient(90.72deg, #40EDC3 0%, #7FFBA9 49.62%, #D3F89A 100%);
+      --scai-page: #030303;
+      --scai-card: #0A0A0A;
+      --scai-surface: #111111;
+      --scai-input: #1A1A1A;
+      --scai-border: #222222;
+      --scai-border-bright: #333333;
+      --scai-text: #FFFFFF;
+      --scai-text-sec: #A3A3A3;
+      --scai-text-muted: #666666;
+      --success: #00a32a;
+      --error: #d63638;
+      --warning: #dba617;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .scai-panel {
+      background: var(--scai-page);
+      min-height: calc(100vh - 32px);
+      color: var(--scai-text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Panel Header */
+    .scai-panel-header {
+      background: var(--scai-card);
+      border-bottom: 1px solid var(--scai-border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .scai-panel-logo { display: flex; align-items: center; gap: 12px; }
+    .scai-panel-logo-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .scai-panel-logo-icon svg { width: 32px; height: 32px; }
+    .scai-panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .scai-panel-version { font-size: 11px; color: var(--scai-text-muted); margin-left: 8px; }
+
+    /* Tab Navigation */
+    .scai-panel-nav {
+      background: var(--scai-card);
+      border-bottom: 1px solid var(--scai-border);
+      padding: 0 32px;
+      display: flex;
+      gap: 0;
+    }
+    .scai-tab {
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--scai-text-sec);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 0.15s;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .scai-tab:hover { color: var(--scai-text); }
+    .scai-tab.active { color: var(--scai-brand-1); border-bottom-color: var(--scai-brand-1); }
+
+    /* Page Content */
+    .scai-panel-content { padding: 32px; }
+    .scai-page { display: none; }
+    .scai-page.active { display: block; }
+    .scai-page-title { font-size: 24px; font-weight: 700; color: var(--scai-text); margin-bottom: 8px; }
+    .scai-page-desc { font-size: 14px; color: var(--scai-text-sec); margin-bottom: 24px; }
+
+    /* Stats Cards */
+    .scai-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .scai-stat { background: var(--scai-card); border: 1px solid var(--scai-border); border-radius: 12px; padding: 20px; }
+    .scai-stat-label { font-size: 11px; font-weight: 600; color: var(--scai-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .scai-stat-value { font-size: 32px; font-weight: 700; color: var(--scai-text); }
+    .scai-stat-value.gradient { background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* Cards */
+    .scai-card { background: var(--scai-card); border: 1px solid var(--scai-border); border-radius: 12px; margin-bottom: 24px; }
+    .scai-card-header { padding: 20px 24px; border-bottom: 1px solid var(--scai-border); display: flex; align-items: center; justify-content: space-between; }
+    .scai-card-title { font-size: 16px; font-weight: 600; color: var(--scai-text); }
+    .scai-card-body { padding: 24px; }
+
+    /* Table */
+    .scai-table-wrap { overflow-x: auto; }
+    .scai-table { width: 100%; border-collapse: collapse; }
+    .scai-table th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--scai-text-muted); text-transform: uppercase; letter-spacing: 0.04em; background: var(--scai-surface); border-bottom: 1px solid var(--scai-border); white-space: nowrap; }
+    .scai-table td { padding: 14px 16px; font-size: 14px; color: var(--scai-text-sec); border-bottom: 1px solid var(--scai-border); vertical-align: middle; }
+    .scai-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .scai-table-title { color: var(--scai-text); font-weight: 500; }
+    .scai-table-title a { color: inherit; text-decoration: none; }
+    .scai-table-title a:hover { color: var(--scai-brand-1); }
+
+    /* Badges */
+    .scai-badge { display: inline-block; padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: 4px; text-transform: capitalize; border: 1px solid; }
+    .scai-badge-affiliate { background: rgba(64, 237, 195, 0.08); color: #40EDC3; border-color: rgba(64, 237, 195, 0.25); }
+    .scai-badge-review { background: rgba(251, 191, 36, 0.08); color: #FBBF24; border-color: rgba(251, 191, 36, 0.25); }
+    .scai-badge-howto { background: rgba(96, 165, 250, 0.08); color: #60A5FA; border-color: rgba(96, 165, 250, 0.25); }
+    .scai-badge-comparison { background: rgba(167, 139, 250, 0.08); color: #A78BFA; border-color: rgba(167, 139, 250, 0.25); }
+    .scai-badge-informational { background: rgba(127, 251, 169, 0.08); color: #7FFBA9; border-color: rgba(127, 251, 169, 0.25); }
+    .scai-badge-recipe { background: rgba(251, 146, 60, 0.08); color: #FB923C; border-color: rgba(251, 146, 60, 0.25); }
+    .scai-badge-local { background: rgba(244, 114, 182, 0.08); color: #F472B6; border-color: rgba(244, 114, 182, 0.25); }
+    .scai-badge-listicle { background: rgba(211, 248, 154, 0.08); color: #D3F89A; border-color: rgba(211, 248, 154, 0.25); }
+    .scai-badge-commercial { background: rgba(34, 211, 238, 0.08); color: #22D3EE; border-color: rgba(34, 211, 238, 0.25); }
+    .scai-badge-published { background: rgba(64, 237, 195, 0.1); color: #40EDC3; border-color: rgba(64, 237, 195, 0.3); }
+    .scai-badge-draft { background: rgba(163, 163, 163, 0.1); color: #A3A3A3; border-color: rgba(163, 163, 163, 0.3); }
+
+    /* Buttons */
+    .scai-btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; font-family: inherit; border-radius: 6px; cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap; text-decoration: none; }
+    .scai-btn svg { width: 14px; height: 14px; }
+    .scai-btn-primary { background: var(--gradient-primary); color: #030303; }
+    .scai-btn-primary:hover { box-shadow: 0 0 20px -5px rgba(64, 237, 195, 0.4); }
+    .scai-btn-secondary { background: var(--scai-surface); color: var(--scai-text); border: 1px solid var(--scai-border); }
+    .scai-btn-secondary:hover { border-color: var(--scai-brand-1); color: var(--scai-brand-1); }
+    .scai-btn-ghost { background: transparent; color: var(--scai-text-sec); padding: 0 12px; }
+    .scai-btn-ghost:hover { color: var(--scai-text); background: var(--scai-surface); }
+    .scai-btn-danger { background: rgba(214, 54, 56, 0.1); color: var(--error); border: 1px solid rgba(214, 54, 56, 0.3); }
+    .scai-btn-danger:hover { background: rgba(214, 54, 56, 0.2); }
+    .scai-btn-sm { height: 30px; padding: 0 12px; font-size: 12px; }
+    .scai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Toolbar / Search / Bulk / Table Actions / Pagination (Articles tab) */
+    .scai-toolbar { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .scai-toolbar-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .scai-toolbar-right { display: flex; align-items: center; gap: 12px; }
+    .scai-search { position: relative; width: 280px; }
+    .scai-search-input { width: 100%; height: 40px; padding: 0 16px 0 42px; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 8px; color: var(--scai-text); font-size: 14px; font-family: inherit; }
+    .scai-search-input:focus { outline: none; border-color: var(--scai-brand-1); box-shadow: 0 0 0 3px rgba(64, 237, 195, 0.1); }
+    .scai-search-input::placeholder { color: var(--scai-text-muted); }
+    .scai-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--scai-text-muted); pointer-events: none; }
+    .scai-bulk-bar { display: none; align-items: center; gap: 16px; padding: 12px 20px; background: linear-gradient(90deg, rgba(64, 237, 195, 0.1) 0%, rgba(127, 251, 169, 0.05) 100%); border: 1px solid rgba(64, 237, 195, 0.3); border-radius: 10px; margin-bottom: 20px; }
+    .scai-bulk-bar.visible { display: flex; }
+    .scai-bulk-count { font-size: 14px; font-weight: 600; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .scai-bulk-actions { display: flex; gap: 8px; margin-left: auto; }
+    .scai-table-link { color: var(--scai-text-muted); font-size: 12px; text-decoration: none; }
+    .scai-table-link:hover { color: var(--scai-brand-1); text-decoration: underline; }
+    .scai-table-actions { display: flex; gap: 6px; }
+    .scai-action-btn { display: inline-flex; align-items: center; height: 28px; padding: 0 10px; font-size: 12px; font-weight: 500; font-family: inherit; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 4px; color: var(--scai-text-sec); cursor: pointer; transition: all 0.15s; text-decoration: none; white-space: nowrap; }
+    .scai-action-btn:hover { border-color: var(--scai-brand-1); color: var(--scai-brand-1); }
+    .scai-action-btn.danger:hover { border-color: var(--error); color: var(--error); }
+    .scai-table-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--scai-brand-1); }
+    .scai-pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top: 1px solid var(--scai-border); font-size: 13px; color: var(--scai-text-sec); }
+    .scai-pagination-pages { display: flex; gap: 4px; }
+    .scai-pagination-btn { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 4px; color: var(--scai-text-sec); font-size: 13px; cursor: pointer; text-decoration: none; font-family: inherit; }
+    .scai-pagination-btn:hover { border-color: var(--scai-brand-1); color: var(--scai-brand-1); }
+    .scai-pagination-btn.active { background: var(--scai-brand-1); border-color: var(--scai-brand-1); color: #000; }
+
+    /* Forms */
+    .scai-form-row { margin-bottom: 24px; }
+    .scai-form-row:last-child { margin-bottom: 0; }
+    .scai-label { display: block; font-size: 13px; font-weight: 600; color: var(--scai-text); margin-bottom: 8px; }
+    .scai-input { width: 100%; height: 42px; padding: 0 14px; background: var(--scai-input); border: 1px solid var(--scai-border); border-radius: 8px; color: var(--scai-text); font-size: 14px; font-family: inherit; }
+    .scai-input:focus { outline: none; border-color: var(--scai-brand-1); box-shadow: 0 0 0 3px rgba(64, 237, 195, 0.1); }
+    .scai-input::placeholder { color: var(--scai-text-muted); }
+    .scai-help { font-size: 12px; color: var(--scai-text-muted); margin-top: 6px; }
+
+    /* Select */
+    .scai-filter { height: 40px; padding: 0 36px 0 14px; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 8px; color: var(--scai-text); font-size: 13px; font-family: inherit; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+    .scai-filter:focus { outline: none; border-color: var(--scai-brand-1); }
+
+    /* Toggle */
+    .scai-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--scai-border); }
+    .scai-toggle-row:last-child { border-bottom: none; }
+    .scai-toggle-label { font-size: 14px; color: var(--scai-text); font-weight: 500; }
+    .scai-toggle-desc { font-size: 12px; color: var(--scai-text-muted); margin-top: 2px; }
+    .scai-toggle { position: relative; width: 44px; height: 24px; background: var(--scai-input); border: 1px solid var(--scai-border); border-radius: 12px; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+    .scai-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: all 0.2s; }
+    .scai-toggle.active { background: var(--scai-brand-1); border-color: var(--scai-brand-1); }
+    .scai-toggle.active::after { left: 22px; }
+
+    /* Styling Layout */
+    .scai-styling-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; }
+    .scai-styling-sidebar { background: var(--scai-card); border: 1px solid var(--scai-border); border-radius: 12px; padding: 8px; height: fit-content; position: sticky; top: 64px; }
+    .scai-styling-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--scai-text-sec); cursor: pointer; transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
+    .scai-styling-nav-item:hover { background: var(--scai-surface); color: var(--scai-text); }
+    .scai-styling-nav-item.active { background: rgba(64, 237, 195, 0.1); color: var(--scai-brand-1); }
+    .scai-styling-nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .scai-styling-section { display: none; }
+    .scai-styling-section.active { display: block; }
+    .scai-styling-section-title { font-size: 18px; font-weight: 600; color: var(--scai-text); margin-bottom: 8px; }
+    .scai-styling-section-desc { font-size: 13px; color: var(--scai-text-sec); margin-bottom: 20px; }
+
+    /* Variation Cards */
+    .scai-variation-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+    .scai-variation-card { background: var(--scai-surface); border: 2px solid var(--scai-border); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+    .scai-variation-card:hover { border-color: var(--scai-border-bright); }
+    .scai-variation-card.selected { border-color: var(--scai-brand-1); box-shadow: 0 0 0 3px rgba(64, 237, 195, 0.12); }
+    .scai-variation-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .scai-variation-name { font-size: 14px; font-weight: 600; color: var(--scai-text); }
+    .scai-variation-check { width: 18px; height: 18px; border: 2px solid var(--scai-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .scai-variation-card.selected .scai-variation-check { background: var(--scai-brand-1); border-color: var(--scai-brand-1); }
+    .scai-variation-card.selected .scai-variation-check svg { display: block; }
+    .scai-variation-check svg { display: none; width: 10px; height: 10px; stroke: #000; }
+    .scai-variation-preview { background: #fff; border-radius: 6px; padding: 12px; min-height: 64px; }
+
+    /* Font Settings */
+    .scai-font-row { display: flex; flex-direction: column; gap: 16px; }
+    .scai-font-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 8px; }
+    .scai-font-item-label { display: flex; flex-direction: column; gap: 4px; }
+    .scai-font-item-title { font-size: 14px; font-weight: 500; color: var(--scai-text); }
+    .scai-font-item-desc { font-size: 12px; color: var(--scai-text-muted); }
+    .scai-font-select { width: 200px; }
+
+    /* Color Settings */
+    .scai-color-grid { display: flex; flex-direction: column; gap: 12px; }
+    .scai-color-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 8px; }
+    .scai-color-label { display: flex; flex-direction: column; gap: 2px; }
+    .scai-color-title { font-size: 14px; font-weight: 500; color: var(--scai-text); }
+    .scai-color-desc { font-size: 12px; color: var(--scai-text-muted); }
+    .scai-color-controls { display: flex; align-items: center; gap: 12px; }
+    .scai-color-swatch { width: 32px; height: 32px; border-radius: 6px; border: 2px solid var(--scai-border); cursor: pointer; padding: 0; }
+    .scai-color-input { width: 90px; height: 32px; padding: 0 10px; background: var(--scai-input); border: 1px solid var(--scai-border); border-radius: 6px; color: var(--scai-text); font-size: 12px; font-family: monospace; }
+
+    /* API Box & Connection */
+    .scai-api-box { background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+    .scai-api-key { flex: 1; font-family: monospace; font-size: 13px; color: var(--scai-text); letter-spacing: 0.03em; word-break: break-all; }
+    .scai-api-key.masked { color: var(--scai-text-muted); }
+    .scai-connection-test { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--scai-surface); border: 1px solid var(--scai-border); border-radius: 8px; margin-top: 16px; }
+    .scai-connection-status { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--scai-text-sec); }
+    .scai-connection-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--scai-text-muted); flex-shrink: 0; }
+    .scai-connection-dot.connected { background: var(--success); animation: scai-pulse 2s ease-in-out infinite; }
+    .scai-connection-dot.error { background: var(--error); }
+    @keyframes scai-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .scai-card.danger { border-color: rgba(214, 54, 56, 0.3); }
+    .scai-card.danger .scai-card-title { color: var(--error); }
+
+    .scai-notice { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .scai-notice-success { background: rgba(0, 163, 42, 0.1); border: 1px solid rgba(0, 163, 42, 0.3); color: #4ade80; }
+    .scai-notice-info { background: rgba(64, 237, 195, 0.08); border: 1px solid rgba(64, 237, 195, 0.25); color: var(--scai-brand-1); }
+
+    /* Responsive */
+    @media (max-width: 1200px) { .scai-stats { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 1100px) {
+      .scai-variation-grid { grid-template-columns: 1fr; }
+      .scai-styling-layout { grid-template-columns: 1fr; }
+      .scai-styling-sidebar { position: static; display: flex; gap: 8px; flex-wrap: wrap; }
+      .scai-styling-nav-item { flex: 0 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WordPress Admin Bar -->
+  <div class="wp-admin-bar">
+    <a href="#" class="wp-admin-bar-logo">
+      <svg viewBox="0 0 20 20"><path d="M20 10c0-5.51-4.49-10-10-10C4.48 0 0 4.49 0 10c0 5.52 4.48 10 10 10 5.51 0 10-4.48 10-10zM10 1.01c4.97 0 8.99 4.02 8.99 8.99 0 4.97-4.02 8.99-8.99 8.99-4.97 0-8.99-4.02-8.99-8.99 0-4.97 4.02-8.99 8.99-8.99z"/></svg>
+    </a>
+    <a href="#" class="wp-admin-bar-site">My WordPress Site</a>
+    <div class="wp-admin-bar-right">
+      <div class="wp-admin-bar-user">
+        <div class="wp-admin-bar-avatar"></div>
+        Howdy, Admin
+      </div>
+    </div>
+  </div>
+
+  <!-- WordPress Sidebar -->
+  <nav class="wp-sidebar">
+    <ul class="wp-sidebar-menu">
+      <li class="wp-menu-item">
+        <a href="#">
+          <svg class="dashicon" viewBox="0 0 20 20"><path d="M3.33 11H0v4h3.33V11zM0 0v9h5V0H0zm7 0v5h6V0H7zm6 7h-6v13h6V7zm2-7v9h5V0h-5zm5 11h-5v5h5v-5z"/></svg>
+          Dashboard
+        </a>
+      </li>
+      <li class="wp-menu-separator"></li>
+      <li class="wp-menu-item"><a href="#"><svg class="dashicon" viewBox="0 0 20 20"><path d="M10.44 3.02l1.82-1.82 6.36 6.35-1.83 1.82c-1.05-.68-2.48-.57-3.41.36l-.75.75c-.92.93-1.04 2.35-.35 3.41l-1.83 1.82-2.41-2.41-2.8 2.79c-.42.42-3.38 2.71-3.8 2.29s1.86-3.39 2.28-3.81l2.79-2.79L4.1 9.36l1.83-1.82c1.05.69 2.48.57 3.4-.36l.75-.75c.93-.92 1.05-2.35.36-3.41z"/></svg>Posts</a></li>
+      <li class="wp-menu-item"><a href="#"><svg class="dashicon" viewBox="0 0 20 20"><path d="M6 5V2h3L8 1H5v4zm7-3h-2l-1 1h3z"/></svg>Media</a></li>
+      <li class="wp-menu-item"><a href="#"><svg class="dashicon" viewBox="0 0 20 20"><path d="M2 3h11v1H2V3zm0 4h12v1H2V7zm0 4h10v1H2v-1zm0 4h14v1H2v-1z"/></svg>Pages</a></li>
+      <li class="wp-menu-separator"></li>
+      <li class="wp-menu-item"><a href="#">Appearance</a></li>
+      <li class="wp-menu-item"><a href="#">Plugins</a></li>
+      <li class="wp-menu-item"><a href="#">Settings</a></li>
+      <li class="wp-menu-separator"></li>
+      <li class="wp-menu-item active">
+        <a href="#">
+          <span class="scai-menu-icon">
+            <svg viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="scaiGrad" x1="0" y1="0" x2="35" y2="35" gradientUnits="userSpaceOnUse"><stop stop-color="#40EDC3"/><stop offset="1" stop-color="#B8F6A1"/></linearGradient></defs>
+              <path d="M30.9 30.9H4.1V4.1H28V0H0V35H35V7H30.9V30.9Z" fill="url(#scaiGrad)"/>
+              <path d="M30.8 0V4.1H35V0H30.8Z" fill="#40EDC3"/>
+              <rect x="8" y="8" width="9" height="4" fill="url(#scaiGrad)"/>
+              <rect x="8" y="15.5" width="19" height="4" fill="url(#scaiGrad)"/>
+              <rect x="18" y="23" width="9" height="4" fill="url(#scaiGrad)"/>
+            </svg>
+          </span>
+          SCAI Connector
+        </a>
+        <ul class="wp-submenu">
+          <li class="active"><a href="#" data-tab="dashboard">Dashboard</a></li>
+          <li><a href="#" data-tab="articles">Articles</a></li>
+          <li><a href="#" data-tab="styling">Styling</a></li>
+          <li><a href="#" data-tab="settings">Settings</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="wp-content">
+    <div class="scai-wrap">
+      <div class="scai-panel">
+
+        <!-- Panel Header -->
+        <header class="scai-panel-header">
+          <div class="scai-panel-logo">
+            <div class="scai-panel-logo-icon">
+              <svg viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:32px;">
+                <defs><linearGradient id="scaiGradPanel" x1="0" y1="0" x2="35" y2="35" gradientUnits="userSpaceOnUse"><stop stop-color="#40EDC3"/><stop offset="1" stop-color="#B8F6A1"/></linearGradient></defs>
+                <path d="M30.9 30.9H4.1V4.1H28V0H0V35H35V7H30.9V30.9Z" fill="url(#scaiGradPanel)"/>
+                <path d="M30.8 0V4.1H35V0H30.8Z" fill="#40EDC3"/>
+                <rect x="8" y="8" width="9" height="4" fill="url(#scaiGradPanel)"/>
+                <rect x="8" y="15.5" width="19" height="4" fill="url(#scaiGradPanel)"/>
+                <rect x="18" y="23" width="9" height="4" fill="url(#scaiGradPanel)"/>
+              </svg>
+            </div>
+            <span class="scai-panel-title">SCAI Connector</span>
+            <span class="scai-panel-version">v1.0.0</span>
+          </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="scai-panel-nav">
+          <button class="scai-tab active" data-tab="dashboard">Dashboard</button>
+          <button class="scai-tab" data-tab="articles">Articles</button>
+          <button class="scai-tab" data-tab="styling">Styling</button>
+          <button class="scai-tab" data-tab="settings">Settings</button>
+        </nav>
+
+        <!-- Panel Content -->
+        <div class="scai-panel-content">
+
+          <div class="scai-notice scai-notice-info" style="margin-bottom:24px;">
+            This is a static preview. In WordPress this page appears under the SCAI Connector menu item.
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               DASHBOARD
+               ═══════════════════════════════════════════════════════════ -->
+          <div class="scai-page active" id="page-dashboard">
+            <h1 class="scai-page-title">Dashboard</h1>
+            <p class="scai-page-desc">Overview of your imported SCAI content</p>
+
+            <div class="scai-stats">
+              <div class="scai-stat">
+                <div class="scai-stat-label">Total Articles</div>
+                <div class="scai-stat-value gradient">24</div>
+              </div>
+              <div class="scai-stat">
+                <div class="scai-stat-label">Published</div>
+                <div class="scai-stat-value">19</div>
+              </div>
+              <div class="scai-stat">
+                <div class="scai-stat-label">Drafts</div>
+                <div class="scai-stat-value">5</div>
+              </div>
+              <div class="scai-stat">
+                <div class="scai-stat-label">Total Words</div>
+                <div class="scai-stat-value">48,320</div>
+              </div>
+            </div>
+
+            <div class="scai-card">
+              <div class="scai-card-header">
+                <h2 class="scai-card-title">Recent Imports</h2>
+              </div>
+              <div class="scai-table-wrap">
+                <table class="scai-table">
+                  <thead>
+                    <tr><th>Title</th><th>Type</th><th>Words</th><th>Status</th><th>Imported</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="scai-table-title"><a href="#">Best Wireless Earbuds Under $100 for 2026</a></td>
+                      <td><span class="scai-badge scai-badge-affiliate">Affiliate</span></td>
+                      <td>2,340</td>
+                      <td><span class="scai-badge scai-badge-published">Published</span></td>
+                      <td>2 hours ago</td>
+                    </tr>
+                    <tr>
+                      <td class="scai-table-title"><a href="#">How to Clean Your Mechanical Keyboard</a></td>
+                      <td><span class="scai-badge scai-badge-howto">How-To</span></td>
+                      <td>1,850</td>
+                      <td><span class="scai-badge scai-badge-published">Published</span></td>
+                      <td>5 hours ago</td>
+                    </tr>
+                    <tr>
+                      <td class="scai-table-title"><a href="#">iPhone 16 Pro vs Galaxy S25 Ultra Comparison</a></td>
+                      <td><span class="scai-badge scai-badge-comparison">Comparison</span></td>
+                      <td>3,120</td>
+                      <td><span class="scai-badge scai-badge-draft">Draft</span></td>
+                      <td>Yesterday</td>
+                    </tr>
+                    <tr>
+                      <td class="scai-table-title"><a href="#">What is Machine Learning? A Beginner's Guide</a></td>
+                      <td><span class="scai-badge scai-badge-informational">Informational</span></td>
+                      <td>2,890</td>
+                      <td><span class="scai-badge scai-badge-published">Published</span></td>
+                      <td>2 days ago</td>
+                    </tr>
+                    <tr>
+                      <td class="scai-table-title"><a href="#">Easy Homemade Pizza Dough Recipe</a></td>
+                      <td><span class="scai-badge scai-badge-recipe">Recipe</span></td>
+                      <td>1,650</td>
+                      <td><span class="scai-badge scai-badge-published">Published</span></td>
+                      <td>3 days ago</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               ARTICLES
+               ═══════════════════════════════════════════════════════════ -->
+          <div class="scai-page" id="page-articles">
+            <h1 class="scai-page-title">Imported Articles</h1>
+            <p class="scai-page-desc">Manage all articles imported from SEO Content AI</p>
+
+            <div class="scai-toolbar">
+              <div class="scai-toolbar-left">
+                <div class="scai-search">
+                  <svg class="scai-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                  </svg>
+                  <input type="text" class="scai-search-input" placeholder="Search articles..." id="preview-search">
+                </div>
+                <select class="scai-filter" id="preview-type-filter">
+                  <option value="">All Types</option>
+                  <option value="affiliate">Affiliate</option>
+                  <option value="review">Review</option>
+                  <option value="howto">How-To</option>
+                  <option value="informational">Informational</option>
+                  <option value="comparison">Comparison</option>
+                  <option value="recipe">Recipe</option>
+                  <option value="local">Local</option>
+                  <option value="listicle">Listicle</option>
+                  <option value="commercial">Commercial</option>
+                </select>
+                <select class="scai-filter" id="preview-status-filter">
+                  <option value="">All Status</option>
+                  <option value="published">Published</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+              <div class="scai-toolbar-right">
+                <span id="preview-article-count" style="color:var(--scai-text-sec);font-size:13px;">24 articles</span>
+              </div>
+            </div>
+
+            <div class="scai-bulk-bar" id="preview-bulk-bar">
+              <span class="scai-bulk-count"><span id="preview-selected-count">0</span> selected</span>
+              <div class="scai-bulk-actions">
+                <button class="scai-btn scai-btn-secondary scai-btn-sm" onclick="alert('Bulk publish (preview only)')">Publish</button>
+                <button class="scai-btn scai-btn-secondary scai-btn-sm" onclick="alert('Bulk draft (preview only)')">Move to Draft</button>
+                <button class="scai-btn scai-btn-danger scai-btn-sm" onclick="alert('Bulk delete (preview only)')">Delete</button>
+              </div>
+            </div>
+
+            <div class="scai-card" style="padding:0;">
+              <div class="scai-table-wrap">
+                <table class="scai-table">
+                  <thead>
+                    <tr>
+                      <th style="width:40px;"><input type="checkbox" class="scai-table-checkbox" id="preview-select-all"></th>
+                      <th>Title</th>
+                      <th>Type</th>
+                      <th>Words</th>
+                      <th>Status</th>
+                      <th>Imported</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="preview-articles-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="scai-pagination" id="preview-pagination">
+                <span id="preview-pagination-info">Showing 1-20 of 24 articles</span>
+                <div class="scai-pagination-pages" id="preview-pagination-pages"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               STYLING
+               ═══════════════════════════════════════════════════════════ -->
+          <div class="scai-page" id="page-styling">
+            <h1 class="scai-page-title">Styling Settings</h1>
+            <p class="scai-page-desc">Customize how imported articles appear on your site</p>
+
+            <div class="scai-styling-layout">
+              <!-- Sidebar Nav -->
+              <nav class="scai-styling-sidebar">
+                <button class="scai-styling-nav-item active" data-style-tab="components">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  Component Styles
+                </button>
+                <button class="scai-styling-nav-item" data-style-tab="typography">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                  Typography
+                </button>
+                <button class="scai-styling-nav-item" data-style-tab="colors">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22a9 9 0 0 0 9-9c0-5-4-12-9-12S3 8 3 13a9 9 0 0 0 9 9z"/></svg>
+                  Colors
+                </button>
+              </nav>
+
+              <div class="scai-styling-main">
+                <!-- Components -->
+                <div class="scai-styling-section active" id="style-section-components">
+                  <h3 class="scai-styling-section-title">Component Design Variation</h3>
+                  <p class="scai-styling-section-desc">Select a visual theme for article components. This affects Table of Contents, FAQ, Product Cards, Pro Tips, Key Takeaways, and other styled elements.</p>
+
+                  <div class="scai-variation-grid">
+                    <div class="scai-variation-card selected" data-variation="clean-studio">
+                      <div class="scai-variation-header">
+                        <span class="scai-variation-name">Clean Studio</span>
+                        <span class="scai-variation-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                      </div>
+                      <div class="scai-variation-preview">
+                        <div style="height:10px;width:50%;background:#e5e5e5;border-radius:2px;margin-bottom:8px;"></div>
+                        <div style="height:6px;width:100%;background:#f5f5f5;border-radius:2px;margin-bottom:4px;"></div>
+                        <div style="height:6px;width:80%;background:#f5f5f5;border-radius:2px;"></div>
+                      </div>
+                    </div>
+                    <div class="scai-variation-card" data-variation="airy-premium">
+                      <div class="scai-variation-header">
+                        <span class="scai-variation-name">Airy Premium</span>
+                        <span class="scai-variation-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                      </div>
+                      <div class="scai-variation-preview" style="border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.05);">
+                        <div style="height:10px;width:50%;background:#e5e5e5;border-radius:2px;margin-bottom:8px;"></div>
+                        <div style="height:6px;width:100%;background:#f5f5f5;border-radius:2px;margin-bottom:4px;"></div>
+                        <div style="height:6px;width:80%;background:#f5f5f5;border-radius:2px;"></div>
+                      </div>
+                    </div>
+                    <div class="scai-variation-card" data-variation="gradient-glow">
+                      <div class="scai-variation-header">
+                        <span class="scai-variation-name">Gradient Glow</span>
+                        <span class="scai-variation-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                      </div>
+                      <div class="scai-variation-preview" style="border:2px solid #d4d4d4;background:linear-gradient(to bottom right,#fff,#fafafa);">
+                        <div style="height:10px;width:50%;background:linear-gradient(90deg,#a3a3a3,#737373);border-radius:2px;margin-bottom:8px;"></div>
+                        <div style="height:6px;width:100%;background:#f0f0f0;border-radius:2px;margin-bottom:4px;"></div>
+                        <div style="height:6px;width:80%;background:#f0f0f0;border-radius:2px;"></div>
+                      </div>
+                    </div>
+                    <div class="scai-variation-card" data-variation="soft-stone">
+                      <div class="scai-variation-header">
+                        <span class="scai-variation-name">Soft Stone</span>
+                        <span class="scai-variation-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                      </div>
+                      <div class="scai-variation-preview" style="background:#fafaf9;">
+                        <div style="height:10px;width:50%;background:#a8a29e;border-radius:2px;margin-bottom:8px;"></div>
+                        <div style="height:6px;width:100%;background:#e7e5e4;border-radius:2px;margin-bottom:4px;"></div>
+                        <div style="height:6px;width:80%;background:#e7e5e4;border-radius:2px;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p style="color:var(--scai-text-muted);font-size:12px;">This variation applies to: Table of Contents, FAQ, Product Cards, Pro Tips, Key Takeaways, and other styled components.</p>
+                </div>
+
+                <!-- Typography -->
+                <div class="scai-styling-section" id="style-section-typography">
+                  <h3 class="scai-styling-section-title">Typography</h3>
+                  <p class="scai-styling-section-desc">Configure fonts for article headings and body text.</p>
+                  <div class="scai-font-row">
+                    <div class="scai-font-item">
+                      <div class="scai-font-item-label">
+                        <span class="scai-font-item-title">Heading Font</span>
+                        <span class="scai-font-item-desc">Used for H1, H2, H3 headings</span>
+                      </div>
+                      <select class="scai-filter scai-font-select">
+                        <option>Theme Default</option><option>Inter</option><option>Georgia</option><option>Playfair Display</option><option>Montserrat</option><option>Poppins</option><option>Merriweather</option>
+                      </select>
+                    </div>
+                    <div class="scai-font-item">
+                      <div class="scai-font-item-label">
+                        <span class="scai-font-item-title">Body Font</span>
+                        <span class="scai-font-item-desc">Used for paragraphs and general text</span>
+                      </div>
+                      <select class="scai-filter scai-font-select">
+                        <option>Theme Default</option><option>Georgia</option><option>Inter</option><option>Merriweather</option><option>Lora</option><option>Source Serif Pro</option><option>Noto Serif</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Colors -->
+                <div class="scai-styling-section" id="style-section-colors">
+                  <h3 class="scai-styling-section-title">Article Colors</h3>
+                  <p class="scai-styling-section-desc">Override text and background colors for imported articles.</p>
+                  <div class="scai-color-grid">
+                    <div class="scai-color-row">
+                      <div class="scai-color-label"><span class="scai-color-title">Text Color</span><span class="scai-color-desc">Main body text color</span></div>
+                      <div class="scai-color-controls"><input type="color" class="scai-color-swatch" value="#374151"><input type="text" class="scai-color-input" value="#374151"></div>
+                    </div>
+                    <div class="scai-color-row">
+                      <div class="scai-color-label"><span class="scai-color-title">Heading Color</span><span class="scai-color-desc">H1, H2, H3 heading color</span></div>
+                      <div class="scai-color-controls"><input type="color" class="scai-color-swatch" value="#1a1a1a"><input type="text" class="scai-color-input" value="#1a1a1a"></div>
+                    </div>
+                    <div class="scai-color-row">
+                      <div class="scai-color-label"><span class="scai-color-title">Background Color</span><span class="scai-color-desc">Article container background</span></div>
+                      <div class="scai-color-controls"><input type="color" class="scai-color-swatch" value="#ffffff"><input type="text" class="scai-color-input" value="#ffffff"></div>
+                    </div>
+                    <div class="scai-color-row">
+                      <div class="scai-color-label"><span class="scai-color-title">Link Color</span><span class="scai-color-desc">Hyperlink text color</span></div>
+                      <div class="scai-color-controls"><input type="color" class="scai-color-swatch" value="#2563eb"><input type="text" class="scai-color-input" value="#2563eb"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="scai-btn scai-btn-primary" style="margin-top:24px;" onclick="alert('Styling saved! (preview only)')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                  Save Styling
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               SETTINGS
+               ═══════════════════════════════════════════════════════════ -->
+          <div class="scai-page" id="page-settings">
+            <h1 class="scai-page-title">Settings</h1>
+            <p class="scai-page-desc">Configure your SCAI Connector plugin</p>
+
+            <!-- API Connection -->
+            <div class="scai-card">
+              <div class="scai-card-header">
+                <h2 class="scai-card-title">API Connection</h2>
+              </div>
+              <div class="scai-card-body">
+                <p style="color:var(--scai-text-sec);margin-bottom:16px;font-size:14px;">Enter the API key from your SEO Content AI account to connect this WordPress site.</p>
+                <div class="scai-form-row">
+                  <label class="scai-label">API Key</label>
+                  <div class="scai-api-box">
+                    <span class="scai-api-key masked" id="apiKeyDisplay">scai_sk_a8f2k9d4e7b1••••••••••••••••</span>
+                    <button class="scai-btn scai-btn-ghost scai-btn-sm" onclick="toggleApiKey()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      Show
+                    </button>
+                    <button class="scai-btn scai-btn-ghost scai-btn-sm" onclick="alert('Copied! (preview only)')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      Copy
+                    </button>
+                  </div>
+                  <p class="scai-help">Get your API key from the SEO Content AI application settings</p>
+                </div>
+
+                <div class="scai-connection-test">
+                  <div class="scai-connection-status">
+                    <span class="scai-connection-dot" id="connectionDot"></span>
+                    <span id="connectionText">Not tested</span>
+                  </div>
+                  <button class="scai-btn scai-btn-secondary scai-btn-sm" style="margin-left:auto;" onclick="testConnection()">Test Connection</button>
+                </div>
+
+                <hr style="border:none;border-top:1px solid var(--scai-border);margin:24px 0;">
+
+                <div class="scai-form-row">
+                  <label class="scai-label">Default Post Status</label>
+                  <select class="scai-filter" style="width:auto;">
+                    <option>Draft</option><option>Published</option><option>Pending Review</option>
+                  </select>
+                  <p class="scai-help">Status for newly imported articles</p>
+                </div>
+
+                <button class="scai-btn scai-btn-primary" onclick="alert('Settings saved! (preview only)')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                  Save Settings
+                </button>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="scai-card danger">
+              <div class="scai-card-header">
+                <h2 class="scai-card-title">Danger Zone</h2>
+              </div>
+              <div class="scai-card-body">
+                <p style="color:var(--scai-text-sec);margin-bottom:16px;font-size:14px;">Disconnecting will remove the API connection. Existing imported articles will remain on your site.</p>
+                <button class="scai-btn scai-btn-danger" onclick="alert('Disconnected! (preview only)')">Disconnect from SEO Content AI</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════════
+       TAB NAVIGATION
+       ═══════════════════════════════════════════════════════════════ */
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.scai-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.scai-page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.wp-submenu li').forEach(l => l.classList.remove('active'));
+
+      document.querySelector('.scai-tab[data-tab="' + tabName + '"]').classList.add('active');
+      document.getElementById('page-' + tabName).classList.add('active');
+      var submenuLink = document.querySelector('.wp-submenu a[data-tab="' + tabName + '"]');
+      if (submenuLink) submenuLink.parentElement.classList.add('active');
+    }
+
+    document.querySelectorAll('.scai-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    });
+
+    document.querySelectorAll('.wp-submenu a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        if (link.dataset.tab) switchTab(link.dataset.tab);
+      });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       STYLING SUB-TABS
+       ═══════════════════════════════════════════════════════════════ */
+
+    document.querySelectorAll('.scai-styling-nav-item').forEach(btn => {
+      btn.addEventListener('click', function () {
+        var tab = this.getAttribute('data-style-tab');
+        if (!tab) return;
+        document.querySelectorAll('.scai-styling-nav-item').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.scai-styling-section').forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+        var section = document.getElementById('style-section-' + tab);
+        if (section) section.classList.add('active');
+      });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       VARIATION CARDS
+       ═══════════════════════════════════════════════════════════════ */
+
+    document.querySelectorAll('.scai-variation-card').forEach(card => {
+      card.addEventListener('click', function () {
+        document.querySelectorAll('.scai-variation-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       COLOR SWATCH SYNC
+       ═══════════════════════════════════════════════════════════════ */
+
+    document.querySelectorAll('.scai-color-swatch').forEach(swatch => {
+      swatch.addEventListener('input', function () {
+        var textInput = this.parentElement.querySelector('.scai-color-input');
+        if (textInput) textInput.value = this.value;
+      });
+    });
+
+    document.querySelectorAll('.scai-color-input').forEach(input => {
+      input.addEventListener('input', function () {
+        var swatch = this.parentElement.querySelector('.scai-color-swatch');
+        if (swatch && /^#[0-9A-Fa-f]{6}$/.test(this.value)) swatch.value = this.value;
+      });
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       API KEY + CONNECTION
+       ═══════════════════════════════════════════════════════════════ */
+
+    var apiKeyVisible = false;
+    function toggleApiKey() {
+      var el = document.getElementById('apiKeyDisplay');
+      if (apiKeyVisible) {
+        el.textContent = 'scai_sk_a8f2k9d4e7b1\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022';
+        el.classList.add('masked');
+      } else {
+        el.textContent = 'scai_sk_a8f2k9d4e7b1c5f3g6h0i2j8l4m7n9p1q3r5s8t0u2v4w6x9y1z3';
+        el.classList.remove('masked');
+      }
+      apiKeyVisible = !apiKeyVisible;
+    }
+
+    function testConnection() {
+      var dot = document.getElementById('connectionDot');
+      var text = document.getElementById('connectionText');
+      dot.className = 'scai-connection-dot';
+      text.textContent = 'Testing...';
+      setTimeout(function () {
+        dot.classList.add('connected');
+        text.textContent = 'Connected to SEO Content AI';
+      }, 1200);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       ARTICLES TABLE (sample data)
+       ═══════════════════════════════════════════════════════════════ */
+
+    (function () {
+      var types = ['affiliate','review','howto','informational','comparison','recipe','local','listicle','commercial'];
+      var titles = [
+        'Best Wireless Earbuds Under $100 for 2026',
+        'How to Clean Your Mechanical Keyboard Properly',
+        'iPhone 16 Pro vs Samsung Galaxy S25 Ultra Comparison',
+        'What is Machine Learning? A Complete Beginner\'s Guide',
+        'Easy Homemade Pizza Dough Recipe',
+        'Top 10 Budget Gaming Monitors Worth Buying',
+        'Sony WH-1000XM6 Review: Still the Best?',
+        'How to Start a Podcast in 2026',
+        'Best Coffee Makers for Home Baristas',
+        'Complete Guide to Home Network Setup',
+        'Instant Pot Chicken Tikka Masala Recipe',
+        'MacBook Pro M4 vs Dell XPS 16 Comparison',
+        'Best Standing Desks for Your Home Office',
+        'How to Build a PC for Beginners',
+        'Top Electric Toothbrushes Reviewed',
+        'What is Blockchain Technology?',
+        'Best Local Pizza Places in Brooklyn',
+        '15 Must-Have Kitchen Gadgets',
+        'Dyson V15 Detect Review',
+        'How to Train Your Dog at Home',
+        'Best Noise Cancelling Headphones 2026',
+        'Samsung Galaxy Watch 7 Full Review',
+        'Quick Weeknight Dinner Ideas',
+        'PS5 Pro vs Xbox Series X Comparison'
+      ];
+
+      var articles = [];
+      for (var i = 0; i < 24; i++) {
+        var daysAgo = Math.floor(i / 2);
+        articles.push({
+          id: i + 1,
+          title: titles[i % titles.length],
+          type: types[i % types.length],
+          status: i < 19 ? 'published' : 'draft',
+          words: 1200 + Math.floor(Math.random() * 2000),
+          date: daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago',
+          slug: titles[i % titles.length].toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)
+        });
+      }
+
+      var perPage = 20;
+      var currentPage = 1;
+
+      function getFiltered() {
+        var search = (document.getElementById('preview-search').value || '').toLowerCase();
+        var typeF = document.getElementById('preview-type-filter').value;
+        var statusF = document.getElementById('preview-status-filter').value;
+        return articles.filter(function (a) {
+          if (search && a.title.toLowerCase().indexOf(search) === -1) return false;
+          if (typeF && a.type !== typeF) return false;
+          if (statusF && a.status !== statusF) return false;
+          return true;
+        });
+      }
+
+      function renderArticles() {
+        var filtered = getFiltered();
+        var total = filtered.length;
+        var totalPages = Math.max(1, Math.ceil(total / perPage));
+        if (currentPage > totalPages) currentPage = totalPages;
+        var start = (currentPage - 1) * perPage;
+        var pageItems = filtered.slice(start, start + perPage);
+
+        document.getElementById('preview-article-count').textContent = total + ' article' + (total !== 1 ? 's' : '');
+
+        var tbody = document.getElementById('preview-articles-body');
+        if (!pageItems.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--scai-text-muted);padding:32px;">No articles match your filters.</td></tr>';
+        } else {
+          tbody.innerHTML = pageItems.map(function (a) {
+            var isPub = a.status === 'published';
+            return '<tr>' +
+              '<td><input type="checkbox" class="scai-table-checkbox preview-article-cb" data-id="' + a.id + '"></td>' +
+              '<td><div class="scai-table-title"><a href="#">' + a.title + '</a></div>' +
+              (isPub ? '<a href="#" class="scai-table-link">example.com/blog/' + a.slug + '</a>' : '') +
+              '</td>' +
+              '<td><span class="scai-badge scai-badge-' + a.type + '">' + a.type.charAt(0).toUpperCase() + a.type.slice(1) + '</span></td>' +
+              '<td>' + a.words.toLocaleString() + '</td>' +
+              '<td><span class="scai-badge scai-badge-' + a.status + '">' + (isPub ? 'Published' : 'Draft') + '</span></td>' +
+              '<td>' + a.date + '</td>' +
+              '<td><div class="scai-table-actions">' +
+              (isPub ? '<a href="#" class="scai-action-btn">View</a>' : '') +
+              '<a href="#" class="scai-action-btn">Edit</a>' +
+              '<button class="scai-action-btn danger" onclick="alert(\'Delete (preview only)\')">Delete</button>' +
+              '</div></td></tr>';
+          }).join('');
+        }
+
+        // Pagination info
+        var info = document.getElementById('preview-pagination-info');
+        info.textContent = total > 0 ? 'Showing ' + (start + 1) + '-' + Math.min(start + perPage, total) + ' of ' + total + ' articles' : '0 articles';
+
+        // Pagination buttons
+        var pagesEl = document.getElementById('preview-pagination-pages');
+        var btns = '';
+        for (var p = 1; p <= totalPages; p++) {
+          btns += '<button class="scai-pagination-btn' + (p === currentPage ? ' active' : '') + '" data-page="' + p + '">' + p + '</button>';
+        }
+        pagesEl.innerHTML = btns;
+
+        // Bind page buttons
+        pagesEl.querySelectorAll('.scai-pagination-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            currentPage = parseInt(this.getAttribute('data-page'));
+            renderArticles();
+          });
+        });
+
+        // Re-bind checkboxes
+        bindCheckboxes();
+      }
+
+      function bindCheckboxes() {
+        var bulkBar = document.getElementById('preview-bulk-bar');
+        var counter = document.getElementById('preview-selected-count');
+        document.querySelectorAll('.preview-article-cb').forEach(function (cb) {
+          cb.addEventListener('change', function () {
+            var checked = document.querySelectorAll('.preview-article-cb:checked').length;
+            if (checked > 0) {
+              bulkBar.classList.add('visible');
+              counter.textContent = checked;
+            } else {
+              bulkBar.classList.remove('visible');
+            }
+          });
+        });
+      }
+
+      // Select all
+      document.getElementById('preview-select-all').addEventListener('change', function () {
+        var checked = this.checked;
+        document.querySelectorAll('.preview-article-cb').forEach(function (cb) { cb.checked = checked; });
+        var bulkBar = document.getElementById('preview-bulk-bar');
+        var counter = document.getElementById('preview-selected-count');
+        var count = document.querySelectorAll('.preview-article-cb:checked').length;
+        if (count > 0) { bulkBar.classList.add('visible'); counter.textContent = count; }
+        else { bulkBar.classList.remove('visible'); }
+      });
+
+      // Filter events
+      document.getElementById('preview-search').addEventListener('input', function () { currentPage = 1; renderArticles(); });
+      document.getElementById('preview-type-filter').addEventListener('change', function () { currentPage = 1; renderArticles(); });
+      document.getElementById('preview-status-filter').addEventListener('change', function () { currentPage = 1; renderArticles(); });
+
+      renderArticles();
+    })();
+  </script>
+
+</body>
+</html>

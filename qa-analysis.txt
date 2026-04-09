@@ -1,0 +1,53 @@
+≡ƒôé Reading articles from: C:\Users\USER\Downloads\Exported HTML Articles
+
+Γ£ô affiliate/Question: 1089 words, 20 components detected
+Γ£ô affiliate/Statement: 1080 words, 20 components detected
+Γùï affiliate/Listicle: not found
+Γ£ô commercial/Question: 1100 words, 22 components detected
+Γ£ô commercial/Statement: 1050 words, 22 components detected
+Γùï commercial/Listicle: not found
+Γ£ô comparison/Question: 1225 words, 21 components detected
+Γ£ô comparison/Statement: 1204 words, 21 components detected
+Γùï comparison/Listicle: not found
+Γ£ô how-to/Question: 1179 words, 21 components detected
+Γ£ô how-to/Statement: 1187 words, 21 components detected
+Γùï how-to/Listicle: not found
+Γ£ô informational/Question: 1047 words, 21 components detected
+Γ£ô informational/Statement: 1027 words, 21 components detected
+Γùï informational/Listicle: not found
+Γ£ô listicle/Question: 1571 words, 21 components detected
+Γ£ô listicle/Statement: 1535 words, 21 components detected
+Γùï listicle/Listicle: not found
+Γ£ô local/Question: 1041 words, 20 components detected
+Γ£ô local/Statement: 1031 words, 20 components detected
+Γùï local/Listicle: not found
+Γ£ô recipe/Question: 1007 words, 20 components detected
+Γ£ô recipe/Statement: 1059 words, 20 components detected
+Γùï recipe/Listicle: not found
+Γ£ô review/Question: 1221 words, 22 components detected
+Γ£ô review/Statement: 1246 words, 21 components detected
+Γùï review/Listicle: not found
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+              QA EXPORT SUMMARY                    
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+Type            | Question  | Statement | Listicle
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+affiliate       |    1089w |    1080w |     ---w
+commercial      |    1100w |    1050w |     ---w
+comparison      |    1225w |    1204w |     ---w
+how-to          |    1179w |    1187w |     ---w
+informational   |    1047w |    1027w |     ---w
+listicle        |    1571w |    1535w |     ---w
+local           |    1041w |    1031w |     ---w
+recipe          |    1007w |    1059w |     ---w
+review          |    1221w |    1246w |     ---w
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Total: 18/27 articles, 20,899 words
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+≡ƒôè Data ready for QA export!
+   You have Question and Statement variations for all 9 types.
+   Generate Listicle variations to complete all 27 articles.
+

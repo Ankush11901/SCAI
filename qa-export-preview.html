@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAI QA Matrix Export</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --page: #030303;
+    --card: #0A0A0A;
+    --surface: #111111;
+    --input: #1A1A1A;
+    --border: #222222;
+    --border-dim: #1A1A1A;
+    --border-bright: #333333;
+    --text: #FFFFFF;
+    --text-sec: #A3A3A3;
+    --text-muted: #888888;
+    --brand1: #40EDC3;
+    --brand2: #7FFBA9;
+    --brand3: #D3F89A;
+    --success: #059669;
+    --error: #dc2626;
+    --warning: #f59e0b;
+    --gradient: linear-gradient(90.72deg, #40EDC3 0%, #7FFBA9 49.62%, #D3F89A 100%);
+    --glow: 0 0 30px -10px rgba(64, 237, 195, 0.25);
+    --glow-sm: 0 0 16px -4px rgba(64, 237, 195, 0.2);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.625rem;
+    --radius-xl: 0.75rem;
+    --sidebar-width: 300px;
+    --transition-fast: 0.12s ease;
+    --transition-base: 0.2s ease;
+  }
+
+  ::selection { background: rgba(64, 237, 195, 0.3); color: #fff; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--page);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--page); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+  /* Layout */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+  .main-content {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    padding-left: calc(var(--sidebar-width) + 1.25rem);
+    transition: padding-left var(--transition-base);
+  }
+  .layout.sidebar-collapsed .main-content {
+    padding-left: calc(48px + 1.25rem);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    transition: width var(--transition-base), transform var(--transition-base);
+  }
+  .layout.sidebar-collapsed .sidebar {
+    width: 48px;
+  }
+  .sidebar-toggle {
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
+    z-index: 101;
+  }
+  .sidebar-toggle:hover {
+    background: var(--card);
+    color: var(--brand1);
+    border-color: var(--brand1);
+  }
+  .sidebar-toggle svg {
+    width: 14px;
+    height: 14px;
+    transition: transform var(--transition-fast);
+  }
+  .layout.sidebar-collapsed .sidebar-toggle svg {
+    transform: rotate(180deg);
+  }
+  .sidebar-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--surface) 0%, var(--card) 100%);
+    overflow: hidden;
+    transition: padding var(--transition-base);
+  }
+  .layout.sidebar-collapsed .sidebar-header {
+    padding: 0.75rem 0.5rem;
+  }
+  .sidebar-brand {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+    transition: opacity var(--transition-fast);
+  }
+  .layout.sidebar-collapsed .sidebar-brand {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 0.5rem;
+  }
+  .sidebar-nav {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: opacity var(--transition-fast), max-height var(--transition-base);
+    max-height: 400px;
+    overflow: hidden;
+  }
+  .layout.sidebar-collapsed .sidebar-nav {
+    opacity: 0;
+    max-height: 0;
+    padding: 0;
+    border: none;
+  }
+  /* Sidebar Filters */
+  .sidebar-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .sidebar-filter-label {
+    font-size: 0.625rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .sidebar-filter-label::before {
+    content: '';
+    width: 2px;
+    height: 10px;
+    background: var(--gradient);
+    border-radius: 1px;
+  }
+  .sidebar-filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .sidebar-filter-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.5625rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-sec);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .sidebar-filter-btn:hover {
+    border-color: var(--border-bright);
+    background: var(--input);
+  }
+  .sidebar-filter-btn.active {
+    border-color: var(--brand1);
+    background: rgba(64, 237, 195, 0.1);
+    color: var(--brand1);
+    box-shadow: var(--glow-sm);
+  }
+  .sidebar-filter-btn svg {
+    width: 10px;
+    height: 10px;
+  }
+  .sidebar-filter-btn.active.q { border-color: var(--brand1); color: var(--brand1); background: rgba(64, 237, 195, 0.1); }
+  .sidebar-filter-btn.active.s { border-color: var(--brand2); color: var(--brand2); background: rgba(127, 251, 169, 0.1); }
+  .sidebar-filter-btn.active.l { border-color: var(--brand3); color: var(--brand3); background: rgba(211, 248, 154, 0.1); }
+  .sidebar-current-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-dim);
+    transition: opacity var(--transition-fast);
+  }
+  .layout.sidebar-collapsed .sidebar-current-type {
+    opacity: 0;
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .current-type-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--brand1);
+  }
+  .current-type-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .current-type-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+  }
+  .sidebar-matrix {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem;
+    transition: opacity var(--transition-fast);
+  }
+  .layout.sidebar-collapsed .sidebar-matrix {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .sidebar-collapsed-indicator {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 0.25rem;
+    flex: 1;
+  }
+  .layout.sidebar-collapsed .sidebar-collapsed-indicator {
+    display: flex;
+  }
+  .collapsed-type-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: var(--brand1);
+    opacity: 0.9;
+  }
+  .collapsed-type-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .collapsed-type-name {
+    font-size: 0.5rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .collapsed-divider {
+    width: 20px;
+    height: 1px;
+    background: var(--border-dim);
+  }
+  .collapsed-scores {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .collapsed-score {
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    transition: all var(--transition-fast);
+  }
+  .collapsed-score.q { background: rgba(64, 237, 195, 0.15); color: var(--brand1); }
+  .collapsed-score.s { background: rgba(127, 251, 169, 0.15); color: var(--brand2); }
+  .collapsed-score.l { background: rgba(211, 248, 154, 0.15); color: var(--brand3); }
+  .collapsed-score.pass { box-shadow: 0 0 8px -2px currentColor; }
+  .collapsed-score.fail { opacity: 0.5; }
+  .collapsed-score.skip { background: rgba(255, 255, 255, 0.03); color: var(--text-muted); opacity: 0.4; }
+
+  /* Matrix Table */
+  .matrix-legend {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.5625rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-dim);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .legend-dot.required { background: var(--text-sec); }
+  .legend-dot.optional { border: 1px solid var(--text-muted); background: transparent; }
+  .legend-badge {
+    font-size: 0.5rem;
+    padding: 0 0.2rem;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+  .legend-badge.universal { background: rgba(64, 237, 195, 0.2); color: var(--brand1); }
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.6875rem;
+  }
+  .matrix-table th {
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+  .matrix-table th.comp-col {
+    text-align: left;
+    color: var(--text-muted);
+  }
+  .matrix-table th.q-col { color: var(--brand1); }
+  .matrix-table th.s-col { color: var(--brand2); }
+  .matrix-table th.l-col { color: var(--brand3); }
+  .matrix-group-header {
+    padding: 0.375rem 0.5rem;
+    background: var(--surface);
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-dim);
+  }
+  .matrix-group-header.universal { color: var(--brand1); }
+  .matrix-group-header.unique { color: var(--brand2); }
+  .matrix-table tr {
+    transition: background var(--transition-fast);
+  }
+  .matrix-table tbody tr:hover {
+    background: rgba(64, 237, 195, 0.03);
+  }
+  .matrix-table td {
+    padding: 0.375rem 0.25rem;
+    border-bottom: 1px solid var(--border-dim);
+  }
+  .matrix-table td.comp-name {
+    font-weight: 500;
+    color: var(--text-sec);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .comp-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .comp-indicator.required { background: var(--text-sec); }
+  .comp-indicator.optional { border: 1px solid var(--text-muted); background: transparent; }
+  .loop-badge {
+    font-size: 0.5rem;
+    padding: 0 0.25rem;
+    border-radius: 2px;
+    background: rgba(127, 251, 169, 0.15);
+    color: var(--brand2);
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .matrix-table td.status {
+    text-align: center;
+  }
+  .status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-xs);
+    font-size: 0.625rem;
+    font-weight: 700;
+    transition: transform var(--transition-fast);
+  }
+  .status-icon:hover {
+    transform: scale(1.1);
+  }
+  .status-icon.pass {
+    background: rgba(64, 237, 195, 0.15);
+    color: var(--brand1);
+    box-shadow: 0 0 8px -2px rgba(64, 237, 195, 0.3);
+  }
+  .status-icon.fail {
+    background: rgba(220, 38, 38, 0.15);
+    color: var(--error);
+  }
+  .status-icon.skip {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .status-icon.na {
+    background: var(--surface);
+    color: var(--text-muted);
+  }
+
+  /* Matrix Score */
+  .matrix-footer {
+    padding: 0.75rem;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--card) 0%, var(--surface) 100%);
+    transition: opacity var(--transition-fast), padding var(--transition-base);
+  }
+  .layout.sidebar-collapsed .matrix-footer {
+    opacity: 0;
+    padding: 0;
+    border: none;
+    height: 0;
+    overflow: hidden;
+  }
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.6875rem;
+  }
+  .score-label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .score-badges {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .score-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius-xs);
+    transition: transform var(--transition-fast);
+  }
+  .score-badge:hover {
+    transform: scale(1.05);
+  }
+  .score-badge.q { background: rgba(64, 237, 195, 0.15); color: var(--brand1); }
+  .score-badge.s { background: rgba(127, 251, 169, 0.15); color: var(--brand2); }
+  .score-badge.l { background: rgba(211, 248, 154, 0.15); color: var(--brand3); }
+  .score-badge.complete {
+    box-shadow: 0 0 8px -2px currentColor;
+  }
+  .score-badge.skip { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+  .collapsed-score.skip { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 1.5rem 0 1.25rem;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 350px;
+    background: radial-gradient(ellipse, rgba(64,237,195,0.12) 0%, rgba(127,251,169,0.06) 30%, transparent 60%);
+    pointer-events: none;
+    filter: blur(20px);
+  }
+  .hero h1 {
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 40px rgba(64, 237, 195, 0.3);
+  }
+  .hero .meta { 
+    color: var(--text-sec); 
+    font-size: 0.875rem; 
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--card);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+  }
+  .hero .meta strong { color: var(--brand1); font-weight: 600; }
+  .hero .meta-sep { color: var(--text-muted); opacity: 0.5; }
+  .zoom-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding-left: 0.75rem;
+    margin-left: 0.25rem;
+    border-left: 1px solid var(--border);
+  }
+  .zoom-label {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+  .zoom-controls input[type="range"] {
+    width: 100px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .zoom-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--brand1);
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(64, 237, 195, 0.4);
+  }
+  .zoom-controls input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--brand1);
+    cursor: pointer;
+    border: none;
+  }
+  .zoom-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    color: var(--brand1);
+    font-weight: 600;
+    min-width: 32px;
+  }
+
+  /* Article Section */
+  .article-section {
+    margin-bottom: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+  .article-section:hover {
+    border-color: var(--border-bright);
+    box-shadow: var(--shadow-lg);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(180deg, var(--surface) 0%, rgba(17, 17, 17, 0.5) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--brand1);
+    flex-shrink: 0;
+  }
+  .section-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .section-header h2 {
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .section-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .section-zoom-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .section-zoom-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+  .section-zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--brand1);
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(64, 237, 195, 0.5);
+  }
+  .section-zoom-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--brand1);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 4px rgba(64, 237, 195, 0.5);
+  }
+  .section-zoom-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--brand1);
+    min-width: 32px;
+  }
+  .section-status {
+    display: flex;
+    gap: 0.375rem;
+  }
+  .status-pill {
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .status-pill:hover {
+    transform: scale(1.05);
+  }
+  .status-pill.pass { 
+    background: rgba(64, 237, 195, 0.15); 
+    color: var(--brand1); 
+    box-shadow: 0 0 8px -2px rgba(64, 237, 195, 0.3);
+  }
+  .status-pill.fail { background: rgba(220, 38, 38, 0.15); color: var(--error); }
+  .status-pill.skip { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+  .status-pill.q { border: 1px solid rgba(64, 237, 195, 0.3); }
+  .status-pill.s { border: 1px solid rgba(127, 251, 169, 0.3); }
+  .status-pill.l { border: 1px solid rgba(211, 248, 154, 0.3); }
+
+  /* Grid */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding: 0.75rem;
+    align-items: start;
+  }
+
+  /* Missing placeholder */
+  .iframe-wrapper.missing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    min-height: 200px;
+    flex: 1;
+  }
+  .missing-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  .missing-icon {
+    font-size: 1.5rem;
+    opacity: 0.5;
+  }
+
+  /* Variant Column */
+  .variant-column {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .variant-column:hover {
+    border-color: var(--border-bright);
+    box-shadow: var(--shadow-sm);
+  }
+  .variant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border-dim);
+  }
+  .variant-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .variant-icon {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+  .variant-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .variant-badge.question { background: rgba(64, 237, 195, 0.15); color: var(--brand1); }
+  .variant-badge.statement { background: rgba(127, 251, 169, 0.15); color: var(--brand2); }
+  .variant-badge.listicle { background: rgba(211, 248, 154, 0.15); color: var(--brand3); }
+  .word-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    color: var(--text-muted);
+  }
+
+  /* Preview Iframe with Zoom Support */
+  .iframe-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    min-height: 400px;
+    transition: height 0.3s ease;
+  }
+  .preview-iframe {
+    width: calc(100% / var(--zoom-scale, 0.1));
+    height: calc(100% / var(--zoom-scale, 0.1));
+    border: none;
+    background: #fff;
+    transform: scale(var(--zoom-scale, 0.1));
+    transform-origin: top left;
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+      <div class="sidebar-header">
+        <span class="sidebar-brand">QA Matrix</span>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- Filters will be built by JS -->
+      </nav>
+      <div class="sidebar-current-type" id="sidebar-current-type"></div>
+      <div class="sidebar-matrix" id="sidebar-matrix"></div>
+      <div class="sidebar-collapsed-indicator" id="sidebar-collapsed-indicator"></div>
+      <div class="matrix-footer" id="matrix-footer"></div>
+    </aside>
+
+    <div class="main-content">
+      <div class="hero">
+        <h1>SCAI QA Matrix Export</h1>
+        <p class="meta">
+          Keyword: <strong>air fryer</strong>
+          <span class="meta-sep">|</span> 27 Articles
+          <span class="meta-sep">|</span> February 17, 2026
+        </p>
+      </div>
+
+      <div id="article-sections"></div>
+    </div>
+  </div>
+
+  <script>
+    // Scrollbar styles for iframe content (subtle, minimal design)
+    const IFRAME_SCROLLBAR_CSS = `<style>
+      ::-webkit-scrollbar { width: 4px; height: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { 
+        background: rgba(0, 0, 0, 0.15); 
+        border-radius: 4px; 
+      }
+      ::-webkit-scrollbar-thumb:hover { 
+        background: rgba(0, 0, 0, 0.25); 
+      }
+      html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.15) transparent; }
+      body { margin: 0; }
+    </style>`;
+
+    // Expected component matrix per article type with categories
+    // Universal components appear in all types; Unique are type-specific
+    const UNIVERSAL_COMPONENTS = [
+      { name: 'H1', required: true },
+      { name: 'Featured Image', required: true },
+      { name: 'Overview', required: true },
+      { name: 'H2 Heading', required: true, loop: true },
+      { name: 'H2 Image', required: false, loop: true },
+      { name: 'Paragraph', required: true, loop: true },
+      { name: 'TOC', required: false },
+      { name: 'FAQ', required: false },
+      { name: 'Closing H2', required: false },
+      { name: 'Closing Para', required: false },
+    ];
+
+    const UNIQUE_COMPONENTS = {
+      affiliate: [
+        { name: 'Product Card', required: true },
+      ],
+      commercial: [
+        { name: 'Feature List', required: true },
+        { name: 'CTA Box', required: true },
+      ],
+      comparison: [
+        { name: 'Topic Overview', required: true },
+        { name: 'Compare Table', required: true },
+        { name: 'Quick Verdict', required: false },
+      ],
+      'how-to': [
+        { name: 'Requirements', required: true },
+        { name: 'Instructions', required: true },
+        { name: 'Pro Tips', required: false },
+      ],
+      informational: [
+        { name: 'Key Takeaways', required: true },
+        { name: 'Quick Facts', required: false },
+      ],
+      listicle: [
+        { name: 'List Items', required: true },
+        { name: 'Mentions', required: false },
+      ],
+      local: [
+        { name: 'Local Info', required: true },
+        { name: 'Service Box', required: false },
+      ],
+      recipe: [
+        { name: 'Ingredients', required: true },
+        { name: 'Instructions', required: true },
+        { name: 'Recipe Tips', required: false },
+        { name: 'Nutrition', required: false },
+      ],
+      review: [
+        { name: 'Features List', required: true },
+        { name: 'Pros/Cons', required: true },
+        { name: 'Rating', required: true },
+      ],
+    };
+
+    const ARTICLE_DATA = {
+      affiliate: {
+        question: { wordCount: 1247, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Product Card', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">What Are the Best Air Fryers for Your Kitchen?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Air+Fryer" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p style="font-size:1.125rem;margin-bottom:2rem;">Discovering the perfect air fryer can transform your cooking experience.</p><h2 style="font-size:1.5rem;font-weight:600;margin:2rem 0 1rem;">What Features Should You Consider?</h2><p>When selecting an air fryer, capacity and preset functions play crucial roles.</p></article>' },
+        statement: { wordCount: 1189, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Product Card', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Top Air Fryers for Home Cooking Excellence</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Air+Fryer" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p style="font-size:1.125rem;margin-bottom:2rem;">Modern air fryers revolutionize home cooking by combining convenience with health.</p></article>' },
+        listicle: { wordCount: 1356, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Product Card', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">7 Best Air Fryers for Every Kitchen</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Air+Fryer" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p style="font-size:1.125rem;margin-bottom:2rem;">Choosing the right air fryer depends on your cooking needs.</p></article>' }
+      },
+      commercial: {
+        question: { wordCount: 1094, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Feature List', 'CTA Box', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">What Makes Our Air Fryers Stand Out?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Commercial" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Our commercial-grade air fryers deliver professional results.</p></article>' },
+        statement: { wordCount: 1126, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Feature List', 'CTA Box', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Professional Air Fryers for Commercial Kitchens</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Commercial" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Industry-leading air fryers designed for high-volume operations.</p></article>' },
+        listicle: { wordCount: 1203, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Feature List', 'CTA Box', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">5 Reasons to Choose Our Commercial Air Fryers</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Commercial" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Discover why restaurants trust our air fryer solutions.</p></article>' }
+      },
+      comparison: {
+        question: { wordCount: 1312, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Topic Overview', 'Compare Table', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Which Air Fryer Should You Choose?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Comparison" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Comparing leading air fryer models to help you decide.</p></article>' },
+        statement: { wordCount: 1278, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Topic Overview', 'Compare Table', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Air Fryer Comparison Guide</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Comparison" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Detailed comparison of top air fryer models.</p></article>' },
+        listicle: { wordCount: 1401, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Topic Overview', 'Compare Table', 'FAQ'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">7 Key Differences Between Top Air Fryers</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Comparison" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Understanding critical distinctions between popular models.</p></article>' }
+      },
+      'how-to': {
+        question: { wordCount: 1523, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Requirements', 'Instructions', 'Pro Tips', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">How Do You Use an Air Fryer Properly?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=How+To" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Master the art of air frying with this comprehensive guide.</p></article>' },
+        statement: { wordCount: 1487, components: ['H1', 'Featured Image', 'Overview', 'H2 Heading', 'Paragraph', 'TOC', 'Requirements', 'Instructions', 'Pro Tips', 'FAQ', 'Closing H2', 'Closing Para'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Complete Air Fryer Usage Guide</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=How+To" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Learn proper air fryer operation from setup to maintenance.</p></article>' },
+        listicle: { wordCount: 1612, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Requirements', 'Instructions', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">9 Steps to Perfect Air Fryer Cooking</h1><img src="https://placehold.co/800x450/111/D3F89A?text=How+To" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Follow these essential steps for restaurant-quality results.</p></article>' }
+      },
+      informational: {
+        question: { wordCount: 1167, components: ['H1', 'Featured Image', 'Overview', 'Takeaways', 'TOC', 'Facts', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">What Is Air Frying Technology?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Info" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Understanding the science behind air frying.</p></article>' },
+        statement: { wordCount: 1134, components: ['H1', 'Featured Image', 'Overview', 'Takeaways', 'TOC', 'Facts', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Air Fryer Technology Explained</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Info" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Comprehensive overview of air frying principles.</p></article>' },
+        listicle: { wordCount: 1289, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Facts', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">11 Facts About Air Fryer Technology</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Info" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Essential facts to enhance your cooking knowledge.</p></article>' }
+      },
+      listicle: {
+        question: { wordCount: 1445, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'List Items', 'Mentions', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">What Are the Top Air Fryer Recipes?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Listicle" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Explore the most popular air fryer recipes.</p></article>' },
+        statement: { wordCount: 1398, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'List Items', 'Mentions', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Top Air Fryer Recipe Collection</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Listicle" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Curated selection of the best air fryer recipes.</p></article>' },
+        listicle: { wordCount: 1534, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'List Items', 'Mentions', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">13 Must-Try Air Fryer Recipes</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Listicle" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Essential air fryer recipes showcasing versatility.</p></article>' }
+      },
+      local: {
+        question: { wordCount: 978, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Local Info', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Where Can You Buy Air Fryers Locally?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Local" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Discover the best local retailers in your area.</p></article>' },
+        statement: { wordCount: 1012, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Local Info', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Local Air Fryer Shopping Guide</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Local" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Complete guide to purchasing from local businesses.</p></article>' },
+        listicle: { wordCount: 1087, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Local Info', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">7 Best Local Stores for Air Fryers</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Local" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Top-rated local retailers with excellent selection.</p></article>' }
+      },
+      recipe: {
+        question: { wordCount: 1634, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Ingredients', 'Instructions', 'Tips', 'Nutrition', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">How Do You Make Perfect Air Fryer Chicken?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Recipe" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Create delicious, crispy air fryer chicken with this recipe.</p></article>' },
+        statement: { wordCount: 1589, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Ingredients', 'Instructions', 'Tips', 'Nutrition', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Crispy Air Fryer Chicken Recipe</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Recipe" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Restaurant-quality air fryer chicken with perfect crispness.</p></article>' },
+        listicle: { wordCount: 1701, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Ingredients', 'Instructions', 'Tips', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">9 Steps to Perfect Air Fryer Chicken</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Recipe" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Master air fryer chicken with this step-by-step guide.</p></article>' }
+      },
+      review: {
+        question: { wordCount: 1389, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Features', 'Pros/Cons', 'Rating', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Is This Air Fryer Worth Buying?</h1><img src="https://placehold.co/800x450/111/40EDC3?text=Review" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Comprehensive review examining performance and value.</p></article>' },
+        statement: { wordCount: 1342, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Features', 'Pros/Cons', 'Rating', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">Premium Air Fryer Review</h1><img src="https://placehold.co/800x450/111/7FFBA9?text=Review" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>In-depth analysis of performance and user experience.</p></article>' },
+        listicle: { wordCount: 1467, components: ['H1', 'Featured Image', 'Overview', 'TOC', 'Features', 'Pros/Cons', 'Rating', 'FAQ', 'Closing'], htmlContent: '<article style="max-width:800px;margin:0 auto;padding:2rem;font-family:system-ui;line-height:1.7;color:#1a1a1a;"><h1 style="font-size:2rem;font-weight:700;margin-bottom:1rem;">7 Key Points from Our Air Fryer Review</h1><img src="https://placehold.co/800x450/111/D3F89A?text=Review" style="width:100%;border-radius:8px;margin:1.5rem 0;"><p>Essential insights from our extensive testing.</p></article>' }
+      }
+    };
+
+    const ARTICLE_TYPES = [
+      { id: 'affiliate', name: 'Affiliate' },
+      { id: 'commercial', name: 'Commercial' },
+      { id: 'comparison', name: 'Comparison' },
+      { id: 'how-to', name: 'How-To' },
+      { id: 'informational', name: 'Informational' },
+      { id: 'listicle', name: 'Listicle' },
+      { id: 'local', name: 'Local' },
+      { id: 'recipe', name: 'Recipe' },
+      { id: 'review', name: 'Review' },
+    ];
+    const VARIATIONS = ['question', 'statement', 'listicle'];
+
+    // Article type icons (Lucide-style SVGs)
+    const ICONS = {
+      affiliate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+      commercial: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>',
+      comparison: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
+      'how-to': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>',
+      informational: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
+      listicle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>',
+      local: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+      recipe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path><line x1="6" y1="17" x2="18" y2="17"></line></svg>',
+      review: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'
+    };
+
+    // Variation icons
+    const VARIATION_ICONS = {
+      question: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+      statement: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
+      listicle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>'
+    };
+
+    let currentTypeId = 'affiliate';
+
+    // Check if component exists in article
+    function hasComponent(components, expected) {
+      if (!components || !Array.isArray(components)) return false;
+      return components.some(c => c.toLowerCase().includes(expected.toLowerCase()) || expected.toLowerCase().includes(c.toLowerCase()));
+    }
+
+    // Get validation results for an article type
+    function getValidation(typeId) {
+      const uniqueComps = UNIQUE_COMPONENTS[typeId] || [];
+      const allComps = [...UNIVERSAL_COMPONENTS, ...uniqueComps];
+      const data = ARTICLE_DATA[typeId] || {};
+      const results = { question: {}, statement: {}, listicle: {} };
+      const scores = { question: 0, statement: 0, listicle: 0 };
+
+      for (const v of VARIATIONS) {
+        // Skip if variation data doesn't exist
+        if (!data[v]) {
+          for (const comp of allComps) {
+            results[v][comp.name] = null; // null = missing/not available
+          }
+          continue;
+        }
+        const actual = data[v].components || [];
+        for (const comp of allComps) {
+          results[v][comp.name] = hasComponent(actual, comp.name);
+          if (results[v][comp.name]) scores[v]++;
+        }
+      }
+
+      return { allComps, results, scores, total: allComps.length };
+    }
+
+    // Build sidebar navigation (now includes filters)
+    function buildSidebarNav() {
+      const nav = document.getElementById('sidebar-nav');
+      
+      // Build type filters
+      const typeFiltersHTML = ARTICLE_TYPES.map(t => 
+        `<button class="sidebar-filter-btn active" data-type="${t.id}">${ICONS[t.id]}${t.name}</button>`
+      ).join('');
+      
+      // Build variation filters
+      const variationFiltersHTML = `
+        <button class="sidebar-filter-btn active q" data-variation="question">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Q
+        </button>
+        <button class="sidebar-filter-btn active s" data-variation="statement">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          S
+        </button>
+        <button class="sidebar-filter-btn active l" data-variation="listicle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line></svg>
+          L
+        </button>
+      `;
+
+      nav.innerHTML = `
+        <div class="sidebar-filter-group">
+          <label class="sidebar-filter-label">Article Types</label>
+          <div class="sidebar-filter-buttons" id="type-filters">${typeFiltersHTML}</div>
+        </div>
+        <div class="sidebar-filter-group">
+          <label class="sidebar-filter-label">Variations</label>
+          <div class="sidebar-filter-buttons" id="variation-filters">${variationFiltersHTML}</div>
+        </div>
+      `;
+
+      // Type filter click handlers (with scroll-to-section)
+      nav.querySelectorAll('[data-type]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const typeId = btn.dataset.type;
+          if (activeTypeFilters.has(typeId)) {
+            activeTypeFilters.delete(typeId);
+            btn.classList.remove('active');
+          } else {
+            activeTypeFilters.add(typeId);
+            btn.classList.add('active');
+            // Scroll to section when enabling
+            setTimeout(() => {
+              const section = document.getElementById(typeId);
+              if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+          }
+          applyFilters();
+        });
+      });
+
+      // Variation filter click handlers
+      nav.querySelectorAll('[data-variation]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const variation = btn.dataset.variation;
+          if (activeVariationFilters.has(variation)) {
+            activeVariationFilters.delete(variation);
+            btn.classList.remove('active');
+          } else {
+            activeVariationFilters.add(variation);
+            btn.classList.add('active');
+          }
+          applyFilters();
+        });
+      });
+    }
+
+    // Update sidebar matrix for current type
+    function updateSidebarMatrix(typeId) {
+      currentTypeId = typeId;
+      const validation = getValidation(typeId);
+      const type = ARTICLE_TYPES.find(t => t.id === typeId);
+      const typeData = ARTICLE_DATA[typeId] || {};
+
+      // Update nav active state
+      document.querySelectorAll('.sidebar-nav a').forEach(a => {
+        a.classList.toggle('active', a.dataset.type === typeId);
+      });
+
+      // Update current type header
+      const currentTypeEl = document.getElementById('sidebar-current-type');
+      currentTypeEl.innerHTML = `
+        <span class="current-type-icon">${ICONS[typeId]}</span>
+        <span class="current-type-name">${type.name}</span>
+      `;
+
+      // Build matrix table with categories - single column showing component presence
+      const matrix = document.getElementById('sidebar-matrix');
+      const uniqueComps = UNIQUE_COMPONENTS[typeId] || [];
+      
+      // Check if component exists in ANY variation of this article type
+      const componentExists = (compName) => {
+        for (const variation of VARIATIONS) {
+          if (typeData[variation] && hasComponent(typeData[variation].components || [], compName)) {
+            return true;
+          }
+        }
+        return false;
+      };
+
+      // Helper to render component row
+      const renderRow = (comp) => {
+        const exists = componentExists(comp.name);
+        return `
+        <tr>
+          <td class="comp-name">
+            <span class="comp-indicator ${comp.required ? 'required' : 'optional'}"></span>
+            ${comp.name}
+            ${comp.loop ? '<span class="loop-badge">LOOP</span>' : ''}
+          </td>
+          <td class="status">${exists ? '<span class="status-icon pass">✓</span>' : '<span class="status-icon skip">-</span>'}</td>
+        </tr>
+      `;
+      };
+
+      matrix.innerHTML = `
+        <div class="matrix-legend">
+          <span class="legend-item"><span class="legend-dot required"></span> Required</span>
+          <span class="legend-item"><span class="legend-dot optional"></span> Optional</span>
+          <span class="legend-item"><span class="legend-badge" style="background:rgba(127,251,169,0.15);color:var(--brand2);font-size:0.5rem;padding:0 0.2rem;border-radius:2px;font-weight:600;">LOOP</span> Repeats</span>
+        </div>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="comp-col">Component</th>
+              <th style="text-align:center;color:var(--text-sec);">Present</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="2" class="matrix-group-header universal">Universal</td></tr>
+            ${UNIVERSAL_COMPONENTS.map(renderRow).join('')}
+            ${uniqueComps.length > 0 ? `
+              <tr><td colspan="2" class="matrix-group-header unique">Unique to ${type.name}</td></tr>
+              ${uniqueComps.map(renderRow).join('')}
+            ` : ''}
+          </tbody>
+        </table>
+      `;
+
+      // Update footer - simplified without required counts
+      const footer = document.getElementById('matrix-footer');
+      footer.innerHTML = `
+        <div class="score-row" style="padding:0.5rem 0.75rem;border-top:1px solid var(--border-dim);font-size:0.625rem;color:var(--text-muted);text-align:center;">
+          <span>${type.name} Components</span>
+        </div>
+      `;
+    }
+
+    // Build main content
+    function buildPage() {
+      const container = document.getElementById('article-sections');
+
+      for (const type of ARTICLE_TYPES) {
+        const typeData = ARTICLE_DATA[type.id];
+        if (!typeData) continue;
+
+        const validation = getValidation(type.id);
+        const uniqueComps = UNIQUE_COMPONENTS[type.id] || [];
+        const allComps = [...UNIVERSAL_COMPONENTS, ...uniqueComps];
+        const requiredComps = allComps.filter(c => c.required);
+        
+        const checkRequired = (variation) => {
+          // If variation doesn't exist, return null (not pass/fail)
+          if (!typeData[variation]) return null;
+          return requiredComps.every(c => validation.results[variation][c.name] === true);
+        };
+        
+        const qPass = checkRequired('question');
+        const sPass = checkRequired('statement');
+        const lPass = checkRequired('listicle');
+        
+        // Helper to render status pill
+        const renderPill = (letter, pass) => {
+          if (pass === null) return `<span class="status-pill ${letter.toLowerCase()} skip">${letter} -</span>`;
+          return `<span class="status-pill ${letter.toLowerCase()} ${pass ? 'pass' : 'fail'}">${letter} ${pass ? '✓' : '✗'}</span>`;
+        };
+
+        const section = document.createElement('section');
+        section.className = 'article-section';
+        section.id = type.id;
+        section.innerHTML = `
+          <div class="section-header">
+            <div class="section-title">
+              <span class="section-icon">${ICONS[type.id]}</span>
+              <h2>${type.name}</h2>
+            </div>
+            <div class="section-zoom-controls">
+              <span class="section-zoom-label">Zoom</span>
+              <input type="range" class="section-zoom-slider" data-section="${type.id}" min="10" max="100" value="10" step="5">
+              <span class="section-zoom-value">10%</span>
+            </div>
+          </div>
+        `;
+
+        const grid = document.createElement('div');
+        grid.className = 'comparison-grid';
+
+        for (const variation of VARIATIONS) {
+          const data = typeData[variation];
+          const column = document.createElement('div');
+          column.className = 'variant-column';
+
+          if (!data) {
+            // Show placeholder for missing variation
+            column.innerHTML = `
+              <div class="variant-header">
+                <span class="variant-badge ${variation}"><span class="variant-icon">${VARIATION_ICONS[variation]}</span>${variation}</span>
+                <span class="word-count">- words</span>
+              </div>
+              <div class="iframe-wrapper missing">
+                <div class="missing-placeholder">
+                  <span class="missing-icon">○</span>
+                  <span>Not generated</span>
+                </div>
+              </div>
+            `;
+          } else {
+            column.innerHTML = `
+              <div class="variant-header">
+                <span class="variant-badge ${variation}"><span class="variant-icon">${VARIATION_ICONS[variation]}</span>${variation}</span>
+                <span class="word-count">${data.wordCount.toLocaleString()} words</span>
+              </div>
+              <div class="iframe-wrapper">
+                <iframe class="preview-iframe" srcdoc="${(IFRAME_SCROLLBAR_CSS + data.htmlContent).replace(/"/g, '&quot;')}" sandbox="allow-same-origin" data-article-type="${type.id}" data-variation="${variation}"></iframe>
+              </div>
+            `;
+          }
+          grid.appendChild(column);
+        }
+
+        section.appendChild(grid);
+        container.appendChild(section);
+      }
+
+      // Setup IntersectionObserver
+      const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            updateSidebarMatrix(entry.target.id);
+            break;
+          }
+        }
+      }, { threshold: [0.3, 0.5, 0.7] });
+
+      document.querySelectorAll('.article-section').forEach(section => {
+        observer.observe(section);
+      });
+
+      // Calculate iframe heights after all content loads
+      setTimeout(() => {
+        calculateAllIframeHeights();
+        initSectionZoom();
+        // Initialize all sections at 10% zoom
+        ARTICLE_TYPES.forEach(t => updateSectionZoom(t.id, 10));
+      }, 500);
+    }
+
+    // Sidebar toggle
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const layout = document.querySelector('.layout');
+    
+    toggleBtn.addEventListener('click', () => {
+      layout.classList.toggle('sidebar-collapsed');
+    });
+
+    // Update collapsed indicator
+    function updateCollapsedIndicator(typeId) {
+      const indicator = document.getElementById('sidebar-collapsed-indicator');
+      const type = ARTICLE_TYPES.find(t => t.id === typeId);
+      
+      indicator.innerHTML = `
+        <div class="collapsed-type-icon">${ICONS[typeId]}</div>
+        <div class="collapsed-type-name">${type ? type.name : typeId}</div>
+      `;
+    }
+
+    // Wrap original updateSidebarMatrix to also update collapsed indicator
+    const originalUpdateSidebarMatrix = updateSidebarMatrix;
+    updateSidebarMatrix = function(typeId) {
+      originalUpdateSidebarMatrix(typeId);
+      updateCollapsedIndicator(typeId);
+    };
+
+    // Zoom slider functionality - per section
+    const sectionZoomLevels = new Map();
+    
+    function initSectionZoom() {
+      document.querySelectorAll('.section-zoom-slider').forEach(slider => {
+        const sectionId = slider.dataset.section;
+        sectionZoomLevels.set(sectionId, 10); // Default 10%
+        
+        slider.addEventListener('input', (e) => {
+          const scale = parseInt(e.target.value);
+          sectionZoomLevels.set(sectionId, scale);
+          slider.nextElementSibling.textContent = scale + '%';
+          updateSectionZoom(sectionId, scale);
+        });
+      });
+    }
+    
+    function updateSectionZoom(sectionId, scale) {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+      
+      const scaleValue = scale / 100;
+      const iframes = section.querySelectorAll('.preview-iframe');
+      
+      iframes.forEach(iframe => {
+        iframe.style.transform = `scale(${scaleValue})`;
+        iframe.style.width = `calc(100% / ${scaleValue})`;
+        
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc && iframeDoc.body) {
+            const contentHeight = iframeDoc.body.scrollHeight;
+            const wrapperHeight = Math.max(400, Math.min(contentHeight * scaleValue, 1500));
+            const wrapper = iframe.closest('.iframe-wrapper');
+            if (wrapper) {
+              wrapper.style.height = wrapperHeight + 'px';
+              // Enable scrolling if zoomed in and content exceeds max height
+              wrapper.style.overflowY = (contentHeight * scaleValue > 1500) ? 'auto' : 'hidden';
+            }
+            iframe.style.height = contentHeight + 'px';
+          }
+        } catch (e) {
+          console.warn('Could not calculate iframe height:', e);
+        }
+      });
+    }
+    
+
+
+    // Function to calculate and set iframe heights dynamically
+    function calculateAllIframeHeights() {
+      const iframes = document.querySelectorAll('.preview-iframe');
+      const zoomScale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 0.2;
+      
+      iframes.forEach(iframe => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc && iframeDoc.body) {
+            // Get actual content height
+            const contentHeight = iframeDoc.body.scrollHeight;
+            // Calculate wrapper height (content height × zoom scale)
+            const wrapperHeight = Math.max(400, Math.min(contentHeight * zoomScale, 1500));
+            // Set iframe wrapper height
+            const wrapper = iframe.closest('.iframe-wrapper');
+            if (wrapper) {
+              wrapper.style.height = wrapperHeight + 'px';
+            }
+            // Set iframe height to match content
+            iframe.style.height = contentHeight + 'px';
+          }
+        } catch (e) {
+          // Handle cross-origin or loading errors silently
+          console.warn('Could not calculate iframe height:', e);
+        }
+      });
+    }
+
+    // Filter functionality
+    const activeTypeFilters = new Set(ARTICLE_TYPES.map(t => t.id));
+    const activeVariationFilters = new Set(['question', 'statement', 'listicle']);
+
+    // Apply filters to sections and columns
+    function applyFilters() {
+      // Show/hide article sections based on type filters
+      document.querySelectorAll('.article-section').forEach(section => {
+        const typeId = section.id;
+        section.style.display = activeTypeFilters.has(typeId) ? 'block' : 'none';
+      });
+
+      // Show/hide variation columns based on variation filters
+      document.querySelectorAll('.variant-column').forEach(column => {
+        const variation = column.querySelector('.variant-badge').classList[1]; // question, statement, or listicle
+        column.style.display = activeVariationFilters.has(variation) ? 'flex' : 'none';
+      });
+
+      // Update grid layout based on visible columns
+      document.querySelectorAll('.comparison-grid').forEach(grid => {
+        const visibleColumns = grid.querySelectorAll('.variant-column[style="display: flex;"], .variant-column:not([style])').length;
+        grid.style.gridTemplateColumns = visibleColumns > 0 ? `repeat(${visibleColumns}, 1fr)` : '1fr';
+      });
+    }
+
+    // Initialize
+    buildSidebarNav();
+    buildPage();
+    updateSidebarMatrix('affiliate');
+  </script>
+</body>
+</html>

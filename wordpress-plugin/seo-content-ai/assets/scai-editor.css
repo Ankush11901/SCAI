@@ -1,0 +1,1543 @@
+/*
+ * SCAI Connector — Elementor-Style WYSIWYG Article Editor Styles
+ *
+ * Full-width editor with top bar, sidebar, and WYSIWYG canvas.
+ * Uses design tokens from scai-admin.css (.scai-wrap custom properties).
+ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WORDPRESS OVERRIDES — remove WP chrome around editor
+   Body class .scai-editor-active is added via admin_body_class filter.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-active .wrap,
+.scai-editor-active #wpcontent {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.scai-editor-active #wpbody-content {
+  padding-bottom: 0 !important;
+}
+
+.scai-editor-active #wpfooter {
+  display: none !important;
+}
+
+/* Hide WP admin menu sidebar for true full-screen takeover */
+.scai-editor-active #adminmenuwrap,
+.scai-editor-active #adminmenuback {
+  display: none !important;
+}
+
+/* Hide native WP notices on editor page */
+.scai-editor-active .notice,
+.scai-editor-active .updated {
+  display: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   EDITOR SHELL — full-width takeover
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-wrap {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 32px); /* minus WP admin bar */
+  overflow: hidden;
+  background: var(--scai-page, #030303);
+  color: var(--scai-text, #fff);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TOP BAR — fixed header with back, title, save
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  min-height: 56px;
+  padding: 0 16px;
+  background: var(--scai-card, #0A0A0A);
+  border-bottom: 1px solid var(--scai-border, #222);
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.sce-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sce-topbar-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--scai-text-sec, #A3A3A3);
+  text-decoration: none;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.sce-topbar-back:hover {
+  background: var(--scai-surface, #111);
+  color: var(--scai-text, #fff);
+}
+
+.sce-topbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--scai-border, #222);
+  flex-shrink: 0;
+}
+
+.sce-topbar-title {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.sce-topbar-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--scai-text-muted, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.sce-topbar-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--scai-text, #fff);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.sce-topbar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.sce-topbar-unsaved {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--warning, #dba617);
+  animation: sce-fade-in 0.2s ease;
+}
+
+.sce-unsaved-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--warning, #dba617);
+  border-radius: 50%;
+  animation: sce-pulse 2s infinite;
+}
+
+@keyframes sce-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes sce-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sce-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sce-topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sce-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px !important;
+  background: var(--scai-brand-1, #40EDC3) !important;
+  color: #000 !important;
+  border: none !important;
+  border-radius: 8px;
+  font-size: 13px !important;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  line-height: 1.4 !important;
+}
+
+.sce-btn-save:hover {
+  background: var(--scai-brand-2, #7FFBA9) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(64, 237, 195, 0.3);
+}
+
+.sce-btn-save:active {
+  transform: translateY(0);
+}
+
+.sce-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.sce-btn-save .scai-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: scai-spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes scai-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MAIN LAYOUT — sidebar + canvas
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIDEBAR — wider (350px)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-sidebar {
+  width: 350px;
+  min-width: 350px;
+  background: var(--scai-card, #0A0A0A);
+  border-right: 1px solid var(--scai-border, #222);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+  transition: width 0.2s ease, min-width 0.2s ease, opacity 0.2s ease;
+}
+
+.sce-sidebar.collapsed {
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  border-right: none;
+}
+
+.sce-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 0;
+}
+
+/* Edit mode header — clean separator from scrollable content */
+.sce-sidebar-edit .sce-sidebar-header {
+  padding-bottom: 14px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--scai-border, #222);
+}
+
+.sce-sidebar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--scai-text, #fff);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 0;
+}
+
+.sce-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--scai-border, #222) !important;
+  border-radius: 6px;
+  background: transparent !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  cursor: pointer;
+  padding: 0 !important;
+  transition: all 0.15s;
+}
+
+.sce-sidebar-toggle:hover {
+  background: var(--scai-surface, #111) !important;
+  color: var(--scai-text, #fff) !important;
+  border-color: var(--scai-border-bright, #333) !important;
+}
+
+.sce-sidebar-hint {
+  font-size: 12px;
+  color: var(--scai-text-muted, #666);
+  padding: 8px 16px 12px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sce-sidebar-components {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px;
+  flex: 1;
+}
+
+.sce-component-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.sce-component-btn:hover {
+  background: var(--scai-surface, #111) !important;
+  border-color: var(--scai-border, #222) !important;
+}
+
+.sce-component-btn:active {
+  background: var(--scai-input, #1A1A1A) !important;
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+}
+
+.sce-component-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--scai-surface, #111);
+  border: 1px solid var(--scai-border, #222);
+  border-radius: 8px;
+  color: var(--scai-brand-1, #40EDC3);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.sce-component-btn:hover .sce-component-icon {
+  background: var(--scai-input, #1A1A1A);
+  border-color: var(--scai-border-bright, #333);
+}
+
+.sce-component-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sce-component-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--scai-text, #fff);
+  line-height: 1.2;
+}
+
+.sce-component-desc {
+  font-size: 11px;
+  color: var(--scai-text-muted, #666);
+  line-height: 1.2;
+}
+
+/* Sidebar Stats */
+
+.sce-sidebar-stats {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--scai-border, #222);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sce-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--scai-text-muted, #666);
+}
+
+.sce-stat-val {
+  font-weight: 600;
+  color: var(--scai-text-sec, #A3A3A3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIDEBAR — Browse / Edit Dual Mode
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-sidebar-browse,
+.sce-sidebar-edit {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sce-sidebar-edit-fields {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 24px;
+
+  /* Custom scrollbar — slim overlay thumb, no track/arrows */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+  overflow-y: overlay;
+}
+
+.sce-sidebar-edit-fields::-webkit-scrollbar,
+.sce-sidebar-browse .sce-component-list::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
+  background: transparent !important;
+}
+
+.sce-sidebar-edit-fields::-webkit-scrollbar-track,
+.sce-sidebar-browse .sce-component-list::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.sce-sidebar-edit-fields::-webkit-scrollbar-thumb,
+.sce-sidebar-browse .sce-component-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15) !important;
+  border-radius: 9999px !important;
+}
+
+.sce-sidebar-edit-fields::-webkit-scrollbar-thumb:hover,
+.sce-sidebar-browse .sce-component-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25) !important;
+}
+
+.sce-sidebar-edit-fields::-webkit-scrollbar-button,
+.sce-sidebar-browse .sce-component-list::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.sce-sidebar-edit-fields::-webkit-scrollbar-corner,
+.sce-sidebar-browse .sce-component-list::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+
+.sce-sidebar-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--scai-border, #222) !important;
+  border-radius: 6px;
+  background: transparent !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  cursor: pointer;
+  padding: 0 !important;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.sce-sidebar-back:hover {
+  background: var(--scai-surface, #111) !important;
+  color: var(--scai-text, #fff) !important;
+  border-color: var(--scai-border-bright, #333) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FLOATING SIDEBAR EXPAND BUTTON
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-sidebar-expand {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  width: 24px;
+  height: 48px;
+  border: 1px solid var(--scai-border, #222) !important;
+  border-left: none !important;
+  border-radius: 0 8px 8px 0;
+  background: var(--scai-card, #0A0A0A) !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  transition: all 0.15s;
+}
+
+.sce-sidebar-expand:hover {
+  background: var(--scai-surface, #111) !important;
+  color: var(--scai-brand-1, #40EDC3) !important;
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+  width: 28px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CANVAS — white WYSIWYG area
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-canvas {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  background: #fff;
+  min-height: 0;
+}
+
+.sce-canvas > form {
+  max-width: 100%;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WYSIWYG BLOCK CONTAINER — article typography
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Override scai-article.css "all: initial" on .scai-wrapper —
+   the editor blocks container needs flex layout to work. */
+.scai-editor-blocks.scai-wrapper {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 2rem 24px;
+  box-sizing: border-box;
+
+  /* Article typography baseline */
+  font-family: var(--scai-body-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  color: var(--scai-text-color, #1a1a1a);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.scai-editor-blocks h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 16px;
+  color: #1a1a1a;
+}
+
+.scai-editor-blocks h2 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 24px 0 12px;
+  color: #1a1a1a;
+}
+
+.scai-editor-blocks h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 20px 0 10px;
+  color: #1a1a1a;
+}
+
+.scai-editor-blocks p {
+  margin: 0 0 12px;
+  line-height: 1.7;
+}
+
+.scai-editor-blocks img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.scai-editor-blocks section {
+  margin-bottom: 24px;
+}
+
+.scai-editor-blocks ul,
+.scai-editor-blocks ol {
+  margin: 0 0 12px;
+  padding-left: 1.5em;
+}
+
+.scai-editor-blocks li {
+  margin-bottom: 4px;
+}
+
+.scai-editor-blocks a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.scai-editor-blocks table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.scai-editor-blocks th,
+.scai-editor-blocks td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.scai-editor-blocks th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WYSIWYG BLOCK — hover outline + toolbar
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-block {
+  position: relative;
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  border-radius: 4px;
+  transition: outline-color 0.15s;
+  margin-bottom: 4px;
+  padding-top: 8px; /* space for toolbar above */
+}
+
+.scai-editor-block:hover {
+  outline-color: rgba(64, 237, 195, 0.35);
+}
+
+.scai-editor-block.sce-editing {
+  outline-color: var(--scai-brand-1, #40EDC3);
+}
+
+/* Toolbar: dark floating bar at top */
+.scai-block-toolbar {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  background: #0A0A0A;
+  border: 1px solid #222;
+  border-radius: 8px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+  transform: translateY(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.scai-editor-block:hover .scai-block-toolbar,
+.scai-editor-block.sce-editing .scai-block-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.scai-block-toolbar-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #A3A3A3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.scai-block-toolbar-label svg {
+  width: 14px;
+  height: 14px;
+  color: #40EDC3;
+  flex-shrink: 0;
+}
+
+.scai-block-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.scai-block-action {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #333;
+  border-radius: 5px;
+  background: transparent;
+  color: #A3A3A3;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s;
+}
+
+.scai-block-action:hover {
+  background: #111;
+  color: #fff;
+  border-color: #444;
+}
+
+.scai-block-action.danger:hover {
+  background: rgba(214, 54, 56, 0.15);
+  color: #d63638;
+  border-color: rgba(214, 54, 56, 0.4);
+}
+
+.scai-block-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BLOCK PREVIEW — renders outer_html
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-block-preview {
+  min-height: 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.scai-block-preview:hover {
+  background: rgba(64, 237, 195, 0.03);
+}
+
+/* Empty block placeholder */
+.scai-block-preview:empty::after,
+.scai-block-preview--empty::after {
+  content: 'Click the pencil icon to add content';
+  display: block;
+  padding: 32px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+}
+
+/* Hidden fields container */
+.scai-block-fields {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ADD-BETWEEN BUTTON — appears between blocks on hover
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-block-add-between {
+  position: relative;
+  height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scai-block-add-btn {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #40EDC3;
+  border: 2px solid #fff;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.scai-editor-block:hover .scai-block-add-btn {
+  opacity: 1;
+}
+
+.scai-block-add-btn:hover {
+  transform: translateX(-50%) scale(1.15);
+  background: #7FFBA9;
+}
+
+.scai-block-add-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FORM FIELDS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-field {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--scai-border, #222);
+}
+
+.scai-editor-field:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.scai-editor-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--scai-text-sec, #A3A3A3);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.scai-editor-input {
+  width: 100%;
+  padding: 10px 12px !important;
+  background: var(--scai-input, #1A1A1A) !important;
+  border: 1px solid var(--scai-border, #222) !important;
+  border-radius: 6px !important;
+  color: var(--scai-text, #fff) !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  transition: border-color 0.15s;
+  box-shadow: none !important;
+  box-sizing: border-box;
+}
+
+.scai-editor-input:focus {
+  outline: none !important;
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+  box-shadow: 0 0 0 1px rgba(64, 237, 195, 0.15) !important;
+}
+
+.scai-editor-input-large {
+  font-size: 18px !important;
+  font-weight: 600;
+  padding: 10px 14px !important;
+}
+
+.scai-editor-input-sm {
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+.scai-editor-textarea {
+  width: 100%;
+  padding: 10px 12px !important;
+  background: var(--scai-input, #1A1A1A) !important;
+  border: 1px solid var(--scai-border, #222) !important;
+  border-radius: 6px !important;
+  color: var(--scai-text, #fff) !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  line-height: 1.6;
+  min-height: 130px;
+  resize: vertical;
+  transition: border-color 0.15s;
+  box-shadow: none !important;
+  box-sizing: border-box;
+}
+
+.scai-editor-textarea:focus {
+  outline: none !important;
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+  box-shadow: 0 0 0 1px rgba(64, 237, 195, 0.15) !important;
+}
+
+.scai-editor-textarea-code {
+  font-family: 'Consolas', 'Monaco', monospace !important;
+  font-size: 13px !important;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   IMAGE FIELDS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-image-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+/* Stack image row vertically in sidebar */
+.sce-sidebar-edit-fields .scai-editor-image-row {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scai-editor-image-preview {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--scai-border, #222);
+  flex-shrink: 0;
+  background: var(--scai-surface, #111);
+}
+
+/* Full-width image preview strip in sidebar */
+.sce-sidebar-edit-fields .scai-editor-image-preview {
+  width: 100%;
+  height: 140px;
+}
+
+/* Full-width inputs below image in sidebar */
+.sce-sidebar-edit-fields .scai-editor-image-inputs {
+  width: 100%;
+}
+
+.scai-editor-image-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--scai-text-muted, #666);
+}
+
+.scai-editor-image-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   REPEATER FIELDS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-repeater {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scai-editor-repeater-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding-left: 10px;
+  border-left: 2px solid var(--scai-border, #222);
+}
+
+.scai-editor-repeater-item > .scai-editor-textarea,
+.scai-editor-repeater-item > .scai-editor-input {
+  flex: 1;
+}
+
+.scai-editor-faq-item {
+  flex-direction: row;
+}
+
+.scai-editor-faq-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scai-editor-kv-item {
+  align-items: center;
+}
+
+/* Stack KV pairs vertically in sidebar */
+.sce-sidebar-edit-fields .scai-editor-kv-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+/* Remove width constraint on small inputs inside sidebar */
+.sce-sidebar-edit-fields .scai-editor-input-sm {
+  max-width: none;
+}
+
+.scai-editor-remove-btn {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--scai-border-bright, #333) !important;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.04) !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  transition: all 0.15s;
+  padding: 0 !important;
+  margin: 0;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.scai-editor-remove-btn:hover {
+  background: rgba(214, 54, 56, 0.12) !important;
+  border-color: rgba(214, 54, 56, 0.4) !important;
+  color: #ef4444 !important;
+}
+
+.scai-editor-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px !important;
+  border: 1px dashed var(--scai-border-bright, #333) !important;
+  border-radius: 6px;
+  background: transparent !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  font-size: 13px !important;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+
+.scai-editor-add-btn:hover {
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+  color: var(--scai-brand-1, #40EDC3) !important;
+  background: rgba(64, 237, 195, 0.05) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   INFO MESSAGES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-info {
+  font-size: 13px;
+  color: var(--scai-text-muted, #666);
+  margin: 0;
+  padding: 8px 0;
+}
+
+.scai-editor-info-warning {
+  color: var(--warning, #dba617);
+  background: rgba(219, 166, 23, 0.08);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TOAST NOTICES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-notice {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  animation: sce-slide-up 0.3s ease;
+  max-width: 400px;
+}
+
+.scai-notice-success {
+  background: var(--success, #00a32a);
+}
+
+.scai-notice-error {
+  background: var(--error, #d63638);
+}
+
+@keyframes sce-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ADD-BLOCK HIGHLIGHT
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-block.sce-just-added {
+  animation: sce-block-added 0.5s ease;
+  outline-color: var(--scai-brand-1, #40EDC3);
+}
+
+@keyframes sce-block-added {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   EMPTY STATE
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  color: #999;
+}
+
+.sce-empty-state svg {
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.sce-empty-state p {
+  font-size: 14px;
+  margin: 0;
+  color: #999;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .sce-sidebar {
+    width: 300px;
+    min-width: 300px;
+  }
+
+  .sce-topbar-name {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 782px) {
+  .scai-editor-wrap {
+    height: auto;
+    min-height: calc(100vh - 46px);
+  }
+
+  .sce-layout {
+    flex-direction: column;
+  }
+
+  .sce-sidebar {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--scai-border, #222);
+  }
+
+  .sce-sidebar.collapsed {
+    width: 0 !important;
+    min-width: 0 !important;
+    height: 0;
+    border-bottom: none;
+  }
+
+  .sce-sidebar-components {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 12px 12px;
+  }
+
+  .sce-component-btn {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 8px 12px !important;
+    border: 1px solid var(--scai-border, #222) !important;
+    border-radius: 8px;
+  }
+
+  .sce-component-desc {
+    display: none;
+  }
+
+  .sce-sidebar-stats {
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .sce-canvas {
+    padding: 0;
+  }
+
+  .sce-topbar {
+    padding: 0 10px;
+  }
+
+  .sce-topbar-label {
+    display: none;
+  }
+
+  .sce-topbar-center {
+    display: none;
+  }
+
+  .sce-topbar-meta {
+    display: none;
+  }
+
+  .scai-editor-image-row {
+    flex-direction: column;
+  }
+
+  .scai-editor-image-preview {
+    width: 100%;
+    height: 120px;
+  }
+
+  .scai-editor-kv-item {
+    flex-wrap: wrap;
+  }
+
+  .scai-editor-input-sm {
+    max-width: 100%;
+  }
+
+  /* Disable hover toolbars on mobile — use tap */
+  .scai-block-toolbar {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .scai-editor-block.sce-editing .scai-block-toolbar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sce-history-btns {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CUSTOM DELETE MODAL
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: sce-fade-in 0.15s ease;
+}
+
+.sce-modal {
+  background: var(--scai-card, #0A0A0A);
+  border: 1px solid var(--scai-border, #222);
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.sce-modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  background: rgba(214, 54, 56, 0.1);
+  border-radius: 50%;
+  color: var(--error, #d63638);
+}
+
+.sce-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--scai-text, #fff);
+  margin: 0 0 8px;
+}
+
+.sce-modal-text {
+  font-size: 13px;
+  color: var(--scai-text-sec, #A3A3A3);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.sce-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.sce-modal-btn {
+  padding: 8px 20px !important;
+  border-radius: 8px;
+  font-size: 13px !important;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--scai-border, #222) !important;
+}
+
+.sce-modal-cancel {
+  background: var(--scai-surface, #111) !important;
+  color: var(--scai-text, #fff) !important;
+}
+
+.sce-modal-cancel:hover {
+  background: var(--scai-input, #1A1A1A) !important;
+  border-color: var(--scai-border-bright, #333) !important;
+}
+
+.sce-modal-confirm {
+  background: var(--error, #d63638) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+.sce-modal-confirm:hover {
+  background: #c42b2d !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(214, 54, 56, 0.3);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ACCESSIBILITY — focus rings & contrast
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-block-action:focus-visible,
+.sce-btn-save:focus-visible,
+.sce-topbar-back:focus-visible,
+.sce-sidebar-toggle:focus-visible,
+.sce-sidebar-back:focus-visible,
+.sce-sidebar-expand:focus-visible,
+.sce-component-btn:focus-visible,
+.scai-editor-add-btn:focus-visible,
+.scai-editor-remove-btn:focus-visible,
+.sce-btn-undo:focus-visible,
+.sce-btn-redo:focus-visible,
+.sce-media-btn:focus-visible,
+.sce-modal-btn:focus-visible,
+.scai-block-add-btn:focus-visible {
+  outline: 2px solid var(--scai-brand-1, #40EDC3);
+  outline-offset: 2px;
+}
+
+.scai-editor-input:focus-visible,
+.scai-editor-textarea:focus-visible {
+  outline: none;
+}
+
+/* Improve muted text contrast (WCAG AA on #0A0A0A) */
+.sce-topbar-label,
+.sce-sidebar-hint,
+.sce-component-desc,
+.sce-stat-row,
+.scai-editor-info,
+.scai-editor-image-empty {
+  color: #8a8a8a;
+}
+
+/* Screen-reader only text */
+.sce-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MEDIA LIBRARY BUTTON
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-media-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px !important;
+  border: 1px solid var(--scai-border-bright, #333) !important;
+  border-radius: 6px;
+  background: var(--scai-surface, #111) !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  font-size: 12px !important;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.sce-media-btn:hover {
+  background: var(--scai-input, #1A1A1A) !important;
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+  color: var(--scai-brand-1, #40EDC3) !important;
+}
+
+.sce-media-btn svg {
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FIELD VALIDATION
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-input.sce-invalid,
+.scai-editor-textarea.sce-invalid {
+  border-color: #d63638 !important;
+  box-shadow: 0 0 0 1px rgba(214, 54, 56, 0.2) !important;
+}
+
+.sce-validation-msg {
+  color: #d63638;
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DRAG-AND-DROP
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.scai-editor-block[draggable="true"] {
+  cursor: grab;
+}
+
+.scai-editor-block[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.scai-editor-block.sce-dragging {
+  opacity: 0.4;
+  outline-style: dashed;
+}
+
+.sce-drop-indicator {
+  height: 3px;
+  background: var(--scai-brand-1, #40EDC3);
+  border-radius: 2px;
+  margin: 4px 0;
+  box-shadow: 0 0 8px rgba(64, 237, 195, 0.4);
+  animation: sce-fade-in 0.1s ease;
+}
+
+.sce-component-btn[draggable="true"] {
+  cursor: grab;
+}
+
+.sce-component-btn[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.sce-component-btn.sce-dragging-sidebar {
+  opacity: 0.4;
+  border-color: var(--scai-brand-1, #40EDC3) !important;
+  border-style: dashed !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   UNDO / REDO BUTTONS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sce-history-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sce-btn-undo,
+.sce-btn-redo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--scai-border, #222) !important;
+  border-radius: 6px;
+  background: transparent !important;
+  color: var(--scai-text-sec, #A3A3A3) !important;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0 !important;
+}
+
+.sce-btn-undo:hover,
+.sce-btn-redo:hover {
+  background: var(--scai-surface, #111) !important;
+  border-color: var(--scai-border-bright, #333) !important;
+  color: var(--scai-text, #fff) !important;
+}
+
+.sce-btn-undo:disabled,
+.sce-btn-redo:disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ARIA live region for announcements */
+.sce-live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

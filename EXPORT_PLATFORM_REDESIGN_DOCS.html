@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCAI - Export Platform Redesign Documentation</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-hover: #22222e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent-cyan: #00d4ff;
+            --accent-mint: #00ffa3;
+            --border-color: #2a2a3a;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #00ffa3 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 12px;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--accent-mint);
+            overflow-x: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 255, 163, 0.1);
+            color: var(--accent-mint);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Export Platform Redesign</h1>
+            <p>UI/UX Upgrade for Integrated CMS Exports</p>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">Overview</h2>
+            <p>The Export Article modal has been redesigned to provide a more intuitive, connection-aware, and visually
+                structured interface for publishing content to external platforms.</p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Key Improvements</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Platform Grid</h4>
+                    <p>Transitioned from a list view to a 2-column card grid for better scanning.</p>
+                </div>
+                <div class="card">
+                    <h4>Status Indicators</h4>
+                    <p>Real-time "Connected" / "Not Connected" states for all supported platforms.</p>
+                </div>
+                <div class="card">
+                    <h4>Enhanced Header</h4>
+                    <p>Simplified hierarchy with clear primary title and secondary instruction.</p>
+                </div>
+                <div class="card">
+                    <h4>Action Branding</h4>
+                    <p>Updated all CTAs to "Export Now" for increased urgency and clarity.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Technical Components</h2>
+            <p>The implementation resides primarily within:</p>
+            <div class="code-block">
+                components/cms/CMSExportDialog.tsx
+            </div>
+            <p style="margin-top: 1rem;">The selection logic combines WordPress site connections with generic CMS
+                platform configurations, mapping them to visual cards with specific brand background colors.</p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Design Constraints</h2>
+            <ul>
+                <li><strong>Grayscale UI:</strong> All functional elements respect the project's grayscale restriction.
+                </li>
+                <li><strong>No Hover Reliance:</strong> Status and selection states are explicit and do not require
+                    hover interactions.</li>
+                <li><strong>Consistent Spacing:</strong> Uses a 12px gap for the grid and 16px padding for cards.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+
+</html>

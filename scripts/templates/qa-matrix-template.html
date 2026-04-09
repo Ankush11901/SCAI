@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCAI QA Matrix Export</title>
+  <style>
+    /* Design system colors from the app */
+    :root {
+      --scai-page: #030303;
+      --scai-card: #0A0A0A;
+      --scai-surface: #111111;
+      --scai-input: #1A1A1A;
+      --scai-text: #FFFFFF;
+      --scai-text-sec: #A3A3A3;
+      --scai-text-muted: #666666;
+      --scai-brand1: #40EDC3;
+      --scai-brand2: #7FFBA9;
+      --scai-brand3: #D3F89A;
+      --success: #059669;
+      --error: #dc2626;
+      --warning: #f59e0b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: var(--scai-page);
+      color: var(--scai-text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1920px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: var(--scai-card);
+      border-radius: 12px;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--scai-brand1), var(--scai-brand2), var(--scai-brand3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header .meta {
+      color: var(--scai-text-sec);
+      font-size: 1rem;
+    }
+    
+    /* Article type section */
+    .article-type-section {
+      margin-bottom: 3rem;
+      background: var(--scai-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    
+    .article-type-section h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--scai-brand1);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Three column grid */
+    .three-column-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    
+    /* Variant column */
+    .variant-column {
+      background: var(--scai-surface);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .variant-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--scai-input);
+    }
+    
+    .variant-badge {
+      background: var(--scai-input);
+      color: var(--scai-brand1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    
+    .word-count {
+      color: var(--scai-text-sec);
+      font-size: 0.875rem;
+    }
+    
+    /* Component grid */
+    .component-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--scai-page);
+      border-radius: 6px;
+      min-height: 120px;
+    }
+    
+    .component-badge {
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+    
+    .component-badge.success {
+      background: rgba(5, 150, 105, 0.1);
+      color: var(--success);
+      border-color: rgba(5, 150, 105, 0.2);
+    }
+    
+    .component-badge.warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+    
+    .component-badge.dim {
+      background: rgba(102, 102, 102, 0.1);
+      color: var(--scai-text-muted);
+      border-color: rgba(102, 102, 102, 0.2);
+    }
+    
+    .component-score {
+      width: 100%;
+      text-align: center;
+      padding: 0.5rem;
+      background: var(--scai-surface);
+      border-radius: 6px;
+      color: var(--scai-text-sec);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    
+    /* Article preview iframe */
+    .article-preview {
+      width: 100%;
+      height: 600px;
+      border: 1px solid var(--scai-input);
+      border-radius: 6px;
+      background: white;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1400px) {
+      .three-column-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>SCAI QA Matrix Export</h1>
+      <div class="meta">
+        Keyword: <strong id="keyword-display">air fryer</strong> • 
+        <span id="article-count">0</span> Articles • 
+        Generated: <span id="generation-date">—</span>
+      </div>
+    </div>
+    
+    <!-- Article type sections (9 total) -->
+    <div id="article-sections">
+      <!-- Will be populated by script -->
+    </div>
+  </div>
+  
+  <script>
+    /* INJECT_ARTICLE_DATA */
+    
+    // Article type configuration
+    const ARTICLE_TYPES = [
+      { id: 'affiliate', name: 'AFFILIATE' },
+      { id: 'commercial', name: 'COMMERCIAL' },
+      { id: 'comparison', name: 'COMPARISON' },
+      { id: 'how-to', name: 'HOW-TO' },
+      { id: 'informational', name: 'INFORMATIONAL' },
+      { id: 'listicle', name: 'LISTICLE' },
+      { id: 'local', name: 'LOCAL' },
+      { id: 'recipe', name: 'RECIPE' },
+      { id: 'review', name: 'REVIEW' },
+    ];
+    
+    const VARIATIONS = ['question', 'statement', 'listicle'];
+    
+    // Component name mapping (for display)
+    const COMPONENT_LABELS = {
+      'scai-h1': 'H1',
+      'scai-featured-image': 'Featured Image',
+      'scai-overview': 'Overview',
+      'scai-toc': 'TOC',
+      'scai-h2': 'H2',
+      'scai-paragraph': 'Paragraph',
+      'scai-product-card': 'Product Card',
+      'scai-faq': 'FAQ',
+      'scai-closing': 'Closing',
+      'scai-feature-list': 'Features',
+      'scai-cta-box': 'CTA',
+      'scai-comparison-table': 'Comparison',
+      'scai-requirements-box': 'Requirements',
+      'scai-instructions': 'Instructions',
+      'scai-pro-tips': 'Pro Tips',
+      'scai-key-takeaways': 'Key Takeaways',
+      'scai-quick-facts': 'Quick Facts',
+      'scai-honorable-mentions': 'Honorable Mentions',
+      'scai-ingredients': 'Ingredients',
+      'scai-recipe-tips': 'Recipe Tips',
+      'scai-nutrition-table': 'Nutrition',
+      'scai-pros-cons': 'Pros & Cons',
+      'scai-rating': 'Rating',
+    };
+    
+    // Populate the page
+    function populatePage() {
+      if (typeof ARTICLE_DATA === 'undefined') {
+        document.body.innerHTML = '<div style="padding: 2rem; text-align: center; color: #dc2626;">No article data found. Run the populate script first.</div>';
+        return;
+      }
+      
+      // Update header meta
+      const totalArticles = Object.values(ARTICLE_DATA).reduce((sum, variants) => 
+        sum + Object.keys(variants).length, 0
+      );
+      document.getElementById('article-count').textContent = totalArticles;
+      document.getElementById('generation-date').textContent = new Date().toLocaleDateString();
+      
+      // Create sections for each article type
+      const container = document.getElementById('article-sections');
+      
+      for (const type of ARTICLE_TYPES) {
+        const typeData = ARTICLE_DATA[type.id];
+        if (!typeData) continue;
+        
+        const section = createArticleTypeSection(type, typeData);
+        container.appendChild(section);
+      }
+    }
+    
+    function createArticleTypeSection(type, variants) {
+      const section = document.createElement('div');
+      section.className = 'article-type-section';
+      
+      const header = document.createElement('h2');
+      header.textContent = type.name;
+      section.appendChild(header);
+      
+      const grid = document.createElement('div');
+      grid.className = 'three-column-grid';
+      
+      for (const variation of VARIATIONS) {
+        const variantData = variants[variation];
+        const column = createVariantColumn(variation, variantData);
+        grid.appendChild(column);
+      }
+      
+      section.appendChild(grid);
+      return section;
+    }
+    
+    function createVariantColumn(variation, data) {
+      const column = document.createElement('div');
+      column.className = 'variant-column';
+      
+      if (!data) {
+        column.innerHTML = `
+          <div class="variant-header">
+            <span class="variant-badge">${variation}</span>
+            <span class="word-count">Not generated</span>
+          </div>
+          <div style="padding: 2rem; text-align: center; color: var(--scai-text-muted);">
+            No data available
+          </div>
+        `;
+        return column;
+      }
+      
+      // Header
+      const header = document.createElement('div');
+      header.className = 'variant-header';
+      header.innerHTML = `
+        <span class="variant-badge">${variation}</span>
+        <span class="word-count">${data.wordCount} words</span>
+      `;
+      column.appendChild(header);
+      
+      // Component grid
+      const componentGrid = document.createElement('div');
+      componentGrid.className = 'component-grid';
+      
+      // Group similar components for display
+      const componentCounts = {};
+      for (const comp of data.components) {
+        componentCounts[comp] = (componentCounts[comp] || 0) + 1;
+      }
+      
+      for (const [comp, count] of Object.entries(componentCounts)) {
+        const badge = document.createElement('span');
+        badge.className = 'component-badge success';
+        const label = COMPONENT_LABELS[comp] || comp;
+        badge.textContent = count > 1 ? `${label} ×${count}` : label;
+        componentGrid.appendChild(badge);
+      }
+      
+      const score = document.createElement('div');
+      score.className = 'component-score';
+      score.textContent = `${data.components.length} components`;
+      componentGrid.appendChild(score);
+      
+      column.appendChild(componentGrid);
+      
+      // Article preview iframe
+      const iframe = document.createElement('iframe');
+      iframe.className = 'article-preview';
+      iframe.srcdoc = data.htmlContent;
+      iframe.sandbox = 'allow-same-origin';
+      column.appendChild(iframe);
+      
+      return column;
+    }
+    
+    // Initialize
+    populatePage();
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1767537155572,
+      "tag": "0000_nappy_phil_sheldon",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1769112482871,
+      "tag": "0001_add_images_and_jobs_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1769685864697,
+      "tag": "0002_giant_terror",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1770133625919,
+      "tag": "0003_acoustic_surge",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1770145055866,
+      "tag": "0004_milky_puck",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1770196410471,
+      "tag": "0005_add_article_clusters",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1770222588614,
+      "tag": "0006_add_cost_tracking_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1770323845781,
+      "tag": "0007_smart_mockingbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1770923318461,
+      "tag": "0008_striped_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1770945933627,
+      "tag": "0009_cynical_starhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1771973407699,
+      "tag": "0010_brave_deathbird",
+      "breakpoints": true
+    }
+  ]
+}

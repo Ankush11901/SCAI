@@ -1,0 +1,438 @@
+[dotenv@17.2.3] injecting env (46) from .env.local -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+======================================================================
+GENERATION TEST: "Air Fryer"
+Type: affiliate | Variation: listicle
+======================================================================
+
+[Generation] Starting...
+
+
+[Orchestrator] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+[Orchestrator] Starting article generation
+[Orchestrator]   Type: affiliate
+[Orchestrator]   Topic: Air Fryer
+[Orchestrator]   Variation: Clean Studio
+[Orchestrator]   Provider: openai
+[Orchestrator]   Target: 1000 words
+[Orchestrator] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+[Orchestrator] Phase 0: Affiliate product inference...
+  [Phase] inference: Analyzing topic for product recommendations...
+[inferProductCategories] Attempt 1 with openai/gpt-4o
+[inferProductCategories] Γ£à Success with openai on attempt 1
+[ProductInference] Inferred 3 product categories for "Air Fryer"
+[ProductInference] Provider: openai
+[ProductInference] Focus: Highlighting diverse air fryer options for different needs and budgets
+[ProductInference] Categories: best multi-function air fryer with presets, best compact air fryer for small kitchens, best large capacity air fryer for families
+  [Phase] amazon: Searching Amazon for products...
+[AmazonAPI] Searching for candidates "Best Overall": best multi-function air fryer with presets
+[AmazonAPI] Searching for candidates "Best Value": best compact air fryer for small kitchens
+[AmazonAPI] Category 1: Found 3 candidates
+[AmazonAPI] Category 2: Found 3 candidates
+[AmazonAPI] Searching for candidates "Premium Pick": best large capacity air fryer for families
+[AmazonAPI] Category 3: Found 3 candidates
+[Orchestrator] Validating 9 product candidates...
+[ProductValidator] Validating 9 products for topic: "Air Fryer"
+[validateProducts] Attempt 1 with openai/gpt-4o-mini
+[validateProducts] Γ£à Success with openai on attempt 1
+[ProductValidator] Result: 9 valid, 0 rejected
+[AmazonAPI] Enriching 3 products with detailed info...
+[AmazonAPI] Enriched B0C33CHG99: description=true, features=10
+[AmazonAPI] Enriched B0C768SVRN: description=true, features=5
+[AmazonAPI] Enriched B0CSZ7WBYW: description=true, features=8
+[AmazonAPI] Successfully enriched 3/3 products
+[Orchestrator] Pre-cleaning product names for structure generation...
+[cleanProductName] Attempt 1 with openai/gpt-4o-mini
+[cleanProductName] Γ£à Success with openai on attempt 1
+[Orchestrator] Cleaned: "Cosori 9-in-1 TurboBlaze Air Fryer 6 Qt,..." ΓåÆ "Cosori TurboBlaze Air Fryer"
+[cleanProductName] Attempt 1 with openai/gpt-4o-mini
+[cleanProductName] Γ£à Success with openai on attempt 1
+[Orchestrator] Cleaned: "Ninja | Air Fryer | 4-in-1 Pro Air Fry, ..." ΓåÆ "Ninja AF141 Air Fryer"
+[cleanProductName] Attempt 1 with openai/gpt-4o-mini
+[cleanProductName] Γ£à Success with openai on attempt 1
+[Orchestrator] Cleaned: "Ninja Foodi 6-in-1 FlexBasket Air Fryer ..." ΓåÆ "Ninja Foodi FlexBasket Air Fryer"
+[Orchestrator] Resolving smart badges...
+[BadgeService] Resolving badges for 3 products...
+[BadgeService] Product "Cosori 9-in-1 TurboBlaze Air Fryer 6 Qt,..." ΓåÆ Data-driven: "Best Value" (cheapest)
+[BadgeService] Product "Ninja | Air Fryer | 4-in-1 Pro Air Fry, ..." ΓåÆ Positional: "Best Value" (position 1)
+[BadgeService] Product "Ninja Foodi 6-in-1 FlexBasket Air Fryer ..." ΓåÆ Data-driven: "High-End" (most expensive)
+[BadgeService] Final badges: "Best Value", "Wallet Friendly", "High-End"
+[Orchestrator] Phase 1: Generating structure...
+  [Phase] structure: Generating article structure...
+[Orchestrator] Word budget: target=1000, fixed=300, unique=200, perSection=180
+[Orchestrator] H2 calculation: 0 fixed + 2 dynamic = 2 total H2s
+[Orchestrator] Available for dynamic sections: 500 words
+[Orchestrator] Affiliate with 3 products: capping h2Count from 2 to 3
+[Orchestrator] Flow: 3 H2 sections planned (from 1000 words target)
+[Orchestrator] Passing 3 products to structure generation:
+[Orchestrator]   1. "Cosori TurboBlaze Air Fryer" (Best Value)
+[Orchestrator]   2. "Ninja AF141 Air Fryer" (Wallet Friendly)
+[Orchestrator]   3. "Ninja Foodi FlexBasket Air Fryer" (High-End)
+[Orchestrator] Phase 1.5: Promise-aware structure generation...
+  [Phase] structure: Extracting core keywords...
+[Orchestrator] Keyword extraction:
+[Orchestrator]   Original phrase: "Air Fryer"
+[Orchestrator]   Core keywords: Air Fryer
+[Orchestrator]   Method: heuristic
+[Orchestrator]   Confidence: 1
+[Orchestrator] Γä╣∩╕Å These keywords will be used for natural H1/H2 phrasing
+  [Phase] structure: Generating H1 with promise detection...
+[generateH1Only] Attempt 1/3 for "Air Fryer"
+[generateH1Only] Γ£à Using extracted keywords: [Air Fryer]
+[generateH1Only] Original phrase: "Air Fryer"
+[generateH1Only] Attempt 1 with openai/gpt-4o-mini
+[generateH1Only] Γ£à Success with openai on attempt 1
+[grammar-check-h1] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h1] Γ£à Success with openai on attempt 1
+[generateH1Only] Γ£à H1: "3 Recommended Air Fryer Options for Every Budget in 2026"
+[generateH1Only] Promise: options, count: 3, subject: "Recommended Air Fryer Every Budget 2026"
+[generateH1Only] Keyword check - Full phrase: Γ¥î PRESENT, Natural keywords: Γ£à PRESENT
+[Orchestrator] H1 generated: "3 Recommended Air Fryer Options for Every Budget in 2026"
+[Orchestrator] Normalized H1: "3 Recommended Air Fryer Options for Every Budget in 2026"
+[Orchestrator] Promise extracted:
+[Orchestrator]   Type: options
+[Orchestrator]   Count: 3
+[Orchestrator]   Subject: "Recommended Air Fryer Every Budget 2026"
+[Orchestrator]   Confidence: 1
+  [Phase] structure: Generating promise-fulfilling H2s...
+[generateH2sFromH1] Attempt 1/3
+[generateH2sFromH1] Using core keywords: Air Fryer
+[generateH2sFromH1] Attempt 1 with openai/gpt-4o-mini
+[generateH2sFromH1] Γ£à Success with openai on attempt 1
+[generateH2sFromH1] Generated 3/3 H2s, validation score: 95/100
+[generateH2sFromH1] Γ£à H2s validated successfully (score: 95)
+[Orchestrator] H2s generated (1 attempt):
+[Orchestrator]   Validation score: 95/100
+[Orchestrator]   Fulfilled: true
+[Orchestrator]     1. "1. Cosori TurboBlaze Air Fryer Is Our Best Value Pick"
+[Orchestrator]     2. "2. Ninja AF141 Air Fryer Is the Wallet Friendly Choice"
+[Orchestrator]     3. "3. Ninja Foodi FlexBasket Air Fryer Offers Premium Features"
+[Grammar] Batch correcting 3 items...
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[Grammar] Batch correction: 1/3 items corrected
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[generateStructure] Topic: "Air Fryer", H2 count: 3
+[generateStructure] Attempt 1 with openai/gpt-4o-mini
+[generateStructure] Γ£à Success with openai on attempt 1
+[generateStructure] Applying grammar check to titles...
+[grammar-check-h1] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h1] Γ£à Success with openai on attempt 1
+[Grammar] Batch correcting 3 items...
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[Grammar] Batch correction: 1/3 items corrected
+[grammar-check-h2] Attempt 1 with openai/gpt-4o-mini
+[grammar-check-h2] Γ£à Success with openai on attempt 1
+[generateStructure] Γ£à Grammar check complete
+[generateStructure] Γ£à Success with openai/gpt-4o-mini (attempts: 1, fallback: false)
+[generateStructure] Generated structure with 3 H2s
+[Orchestrator] Structure received:
+[Orchestrator]   H1: "3 Recommended Air Fryer Options for Every Budget in 2026"
+[Orchestrator]   H2s: 3
+[Orchestrator]   FAQs: 5
+[Orchestrator] Listicle detected - normalizing H1/H2 numbering...
+[Orchestrator] Listicle normalization complete:
+[Orchestrator]   H1: "3 Recommended Air Fryer Options for Every Budget in 2026"
+[Orchestrator]   List items: 3
+[Orchestrator]   TOC entries: 3
+[generateImageCaption] Attempt 1 with openai/gpt-4o-mini
+[generateImageCaption] Γ£à Success with openai on attempt 1
+[Orchestrator] Phase 2: Generating content...
+  [Phase] content: Generating content...
+[Orchestrator] Starting overview generation...
+[streamOverview] Attempt 1 with openai/gpt-4o-mini
+[streamOverview] Γ£à Stream started with openai
+[Orchestrator] Overview stream completed with openai
+[Orchestrator] Overview complete: 98 words, 119 chunks
+[Orchestrator] Starting 3 sections...
+[Orchestrator] Starting section 1/3: "1. Cosori TurboBlaze Air Fryer Is Our Best Value Pick"
+[Orchestrator] ≡ƒöù Linked H2 "1. Cosori TurboBlaze Air Fryer..." to product image: Cosori 9-in-1 TurboBlaze Air F...
+[generateImageCaption] Attempt 1 with openai/gpt-4o-mini
+[generateImageCaption] Γ£à Success with openai on attempt 1
+[streamSection-0] Attempt 1 with openai/gpt-4o-mini
+[streamSection-0] Γ£à Stream started with openai
+[Orchestrator] Section 1 stream completed with openai
+[Orchestrator] Section 1 complete: 154 words
+[Orchestrator] Starting section 2/3: "2. Ninja AF141 Air Fryer Is the Wallet-Friendly Choice"
+[Orchestrator] ≡ƒöù Linked H2 "2. Ninja AF141 Air Fryer Is th..." to product image: Ninja | Air Fryer | 4-in-1 Pro...
+[generateImageCaption] Attempt 1 with openai/gpt-4o-mini
+[generateImageCaption] Γ£à Success with openai on attempt 1
+[streamSection-1] Attempt 1 with openai/gpt-4o-mini
+[streamSection-1] Γ£à Stream started with openai
+[Orchestrator] Section 2 stream completed with openai
+[Orchestrator] Section 2 complete: 158 words
+[Orchestrator] Starting section 3/3: "3. Ninja Foodi FlexBasket Air Fryer Offers Premium Features"
+[Orchestrator] ≡ƒöù Linked H2 "3. Ninja Foodi FlexBasket Air ..." to product image: Ninja Foodi 6-in-1 FlexBasket ...
+[generateImageCaption] Attempt 1 with openai/gpt-4o-mini
+[generateImageCaption] Γ£à Success with openai on attempt 1
+[streamSection-2] Attempt 1 with openai/gpt-4o-mini
+[streamSection-2] Γ£à Stream started with openai
+[Orchestrator] Section 3 stream completed with openai
+[Orchestrator] Section 3 complete: 158 words
+[generateFaqAnswers] Attempt 1 with openai/gpt-4o-mini
+[generateFaqAnswers] Γ£à Success with openai on attempt 1
+[Orchestrator] FAQ complete: 5 questions
+[Orchestrator] Starting closing section...
+[streamClosing] Attempt 1 with openai/gpt-4o-mini
+[streamClosing] Γ£à Stream started with openai
+[Orchestrator] Closing stream completed with openai
+[Orchestrator] Closing complete: 48 words
+[Orchestrator] Generating unique components for affiliate...
+[UniqueComponents] Total components generated for affiliate: 3
+[UniqueComponents] Component IDs: product-card-0, product-card-1, product-card-2
+[Orchestrator] Unique components complete: 3 components
+[Orchestrator] Unique component IDs: product-card-0, product-card-1, product-card-2
+[Orchestrator] Phase 3: Assembling article...
+  [Phase] assembly: Assembling article...
+[Assembler] Using dynamic flow for affiliate with 3 H2s: [
+  'overview-paragraph',
+  'product-card',
+  'product-card',
+  'product-card'
+]
+[Assembler] Unique component map has 3 components: product-card-0, product-card-1, product-card-2
+[Assembler] Flow contains 12 items
+[Assembler] Flow items: h1, featured-image, overview-paragraph, toc, product-card, product-card, product-card, faq-h2, faq-h3, faq-answer, closing-h2, closing-paragraph
+[Assembler] Added section 0 for product-card
+[Assembler] Added product card: product-card-0
+[Assembler] Added section 1 for product-card
+[Assembler] Added product card: product-card-1
+[Assembler] Added section 2 for product-card
+[Assembler] Added product card: product-card-2
+[Orchestrator] Article assembled: 1080 words
+[TOC Update] Updated TOC with 3 H2s
+[classifyArticle] Attempt 1 with openai/gpt-4o-mini
+[Orchestrator] Phase 4: Generating images...
+  [Phase] images: Generating images...
+[Orchestrator] Found 7 image placeholders to generate
+[Orchestrator] Image 1/7 complete
+[Orchestrator] Image 2/7 complete
+[Orchestrator] Image 3/7 complete
+[Orchestrator] Image 4/7 complete
+[Orchestrator] Image 5/7 complete
+[Orchestrator] Image 6/7 complete
+[Orchestrator] Image 7/7 complete
+[Orchestrator] Running content validation...
+[Orchestrator] Skipping alt text validation - will validate in Trigger.dev after real images
+[Orchestrator] Validation: Score=75/100, Valid=false
+[Orchestrator] Validation errors: Closing paragraph starts with forbidden phrase: "In summary"
+[Orchestrator] ≡ƒÜ½ Auto-replaced 1 buzzwords: innovative
+[Orchestrator] Starting iterative correction...
+  [Phase] correction: Auto-correcting validation issues...
+[ContentCorrector] Starting iterative correction...
+[ContentCorrector] Max attempts per component: 4
+[ContentCorrector] Max total attempts: 12
+[ContentCorrector] Initial validation: 75/100, 1 errors
+[ContentCorrector] Attempt 1: Correcting closingParagraph (attempt 1)
+[ContentCorrector]   Issue: Closing paragraph starts with forbidden phrase: "In summary"
+[correctComponent-closingParagraph] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-closingParagraph] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 85/100, 0 errors, 5 warnings
+[ContentCorrector] Attempt 2: Correcting paragraph_2 (attempt 1)
+[ContentCorrector]   Issue: Standard paragraph #2 word count (158) differs from target (150) by 8 words
+[correctComponent-standardParagraph] Attempt 1 with openai/gpt-4o-mini
+[classifyArticle] Γ£à Success with openai on attempt 1
+[ClassifyArticle] Summary: This article provides a curated list of three air fryer options suitable for var...
+[ClassifyArticle] Categories: Kitchen Appliances, Product Reviews, Cooking
+[ClassifyArticle] Tags: air fryer, best air fryers, 2026, kitchen gadgets, cooking appliances, budget-friendly, premium features
+[correctComponent-standardParagraph] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 85/100, 0 errors, 5 warnings
+[ContentCorrector] Attempt 3: Correcting paragraph_2 (attempt 2)
+[ContentCorrector]   Issue: Standard paragraph #2 word count (157) differs from target (150) by 7 words
+[correctComponent-standardParagraph] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-standardParagraph] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 85/100, 0 errors, 5 warnings
+[ContentCorrector] Attempt 4: Correcting paragraph_2 (attempt 3)
+[ContentCorrector]   Issue: Standard paragraph #2 word count (156) differs from target (150) by 6 words
+[correctComponent-standardParagraph] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-standardParagraph] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 88/100, 0 errors, 4 warnings
+[ContentCorrector] Attempt 5: Correcting paragraph_3 (attempt 1)
+[ContentCorrector]   Issue: Standard paragraph #3 word count (158) differs from target (150) by 8 words
+[correctComponent-standardParagraph] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-standardParagraph] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 91/100, 0 errors, 3 warnings
+[ContentCorrector] Attempt 6: Correcting faqQuestion_2 (attempt 1)
+[ContentCorrector]   Issue: FAQ question #2 too short (27 < 30)
+[correctComponent-faqQuestion] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-faqQuestion] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 94/100, 0 errors, 2 warnings
+[ContentCorrector] Attempt 7: Correcting metaTitle (attempt 1)
+[ContentCorrector]   Issue: Meta title too short (45 < 50)
+[correctComponent-metaTitle] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaTitle] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 97/100, 0 errors, 1 warnings
+[ContentCorrector] Attempt 8: Correcting metaDescription (attempt 1)
+[ContentCorrector]   Issue: Meta description too short (143 < 150)
+[correctComponent-metaDescription] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaDescription] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 97/100, 0 errors, 1 warnings
+[ContentCorrector] Attempt 9: Correcting metaDescription (attempt 2)
+[ContentCorrector]   Issue: Meta description too long (166 > 160)
+[correctComponent-metaDescription] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaDescription] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 97/100, 0 errors, 1 warnings
+[ContentCorrector] Attempt 10: Correcting metaDescription (attempt 3)
+[ContentCorrector]   Issue: Meta description too short (139 < 150)
+[correctComponent-metaDescription] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaDescription] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 97/100, 0 errors, 1 warnings
+[ContentCorrector] Attempt 11: Correcting metaDescription (attempt 4)
+[ContentCorrector]   Issue: Meta description too long (162 > 160)
+[correctComponent-metaDescription] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaDescription] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 97/100, 0 errors, 1 warnings
+[ContentCorrector] Max attempts reached for metaDescription, skipping...
+[ContentCorrector] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+[ContentCorrector] Correction complete
+[ContentCorrector]   Total attempts: 11
+[ContentCorrector]   Final score: 97/100
+[ContentCorrector]   Remaining errors: 0
+[ContentCorrector]   Remaining warnings: 1
+[ContentCorrector]   Success: false
+[ContentCorrector] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+[Orchestrator] Applied 11 corrections
+[Orchestrator] Deduped: 6 unique corrections (from 11 total)
+[Orchestrator] Correction complete: Score improved to 97/100
+[Orchestrator] Escalating correction pass for 100% compliance...
+  [Phase] correction: Final compliance pass...
+[ContentCorrector] Starting iterative correction...
+[ContentCorrector] Max attempts per component: 5
+[ContentCorrector] Max total attempts: 16
+[ContentCorrector] Initial validation: 97/100, 0 errors
+[ContentCorrector] Attempt 1: Correcting metaDescription (attempt 1)
+[ContentCorrector]   Issue: Meta description too short (138 < 150)
+[correctComponent-metaDescription] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaDescription] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 97/100, 0 errors, 1 warnings
+[ContentCorrector] Attempt 2: Correcting metaDescription (attempt 2)
+[ContentCorrector]   Issue: Meta description too long (163 > 160)
+[correctComponent-metaDescription] Attempt 1 with openai/gpt-4o-mini
+[correctComponent-metaDescription] Γ£à Success with openai on attempt 1
+[ContentCorrector]   Γ£ô Correction applied
+[ContentCorrector]   New validation: 100/100, 0 errors, 0 warnings
+[ContentCorrector] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+[ContentCorrector] Correction complete
+[ContentCorrector]   Total attempts: 2
+[ContentCorrector]   Final score: 100/100
+[ContentCorrector]   Remaining errors: 0
+[ContentCorrector]   Remaining warnings: 0
+[ContentCorrector]   Success: true
+[ContentCorrector] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+[Orchestrator] Applied 2 escalation corrections
+[Orchestrator] Deduped escalation: 1 unique corrections (from 2 total)
+[Orchestrator] Escalation complete: Score improved to 100/100
+[Orchestrator] Checking H2 keyword density...
+[H2KeywordCorrector] Using extracted keywords: Air Fryer
+[H2KeywordCorrector] Target density: 30-60%
+[H2KeywordCorrector] Current H2 keyword density: 100% (3/3)
+[H2KeywordCorrector] Density too high (100% > 60%), need to remove keyword from 2 H2s
+[correctH2RemoveKeyword] Attempt 1 with openai/gpt-4o-mini
+[correctH2RemoveKeyword] Γ£à Success with openai on attempt 1
+[H2KeywordCorrector] Rewritten H2 too long (61 chars), skipping
+[correctH2RemoveKeyword] Attempt 1 with openai/gpt-4o-mini
+[correctH2RemoveKeyword] Γ£à Success with openai on attempt 1
+[H2KeywordCorrector] Rewritten H2 too long (62 chars), skipping
+[H2KeywordCorrector] Completed with 0 corrections
+
+[Orchestrator] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+[Orchestrator] GENERATION COMPLETE
+[Orchestrator]   Final word count: 1075
+[Orchestrator]   Images generated: 7
+[Orchestrator]   Variation: Clean Studio
+[Orchestrator]   Provider: openai
+[Orchestrator] ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+
+[Generation] Complete!
+
+
+HTML saved to: ./generated-article.html
+
+======================================================================
+VALIDATION REPORT
+======================================================================
+
+Core keywords extracted: [Air Fryer]
+
+
+[WARN] COMPLIANCE SCORE: 94% (24/27 passed)
+
+Category Breakdown:
+--------------------------------------------------
+[OK] Character Limits: 3/3 (100%)
+[OK] Word Counts: 5/5 (100%)
+[OK] Structure: 6/6 (100%)
+[OK] Header Consistency: 1/1 (100%)
+[OK] Forbidden Content: 4/4 (100%)
+[FAIL] Content Quality: 1/3 (33%)
+   [WARN] Content Quality Words: 2 found (expected: No overused marketing buzzwords)
+      -> Found: revolutionize, innovative
+   [WARN] H2 Keyword Density: 2/2 (100%) (expected: 20-80% of H2s contain keywords (Air Fryer))
+      -> Too many H2s with keywords (100%) - vary your headings more
+[WARN] SEO & Meta: 4/5 (80%)
+   [WARN] Meta Description: 143 characters (expected: 150-160 characters)
+      -> Description too short
+
+--------------------------------------------------
+Summary: 24 passed, 3 warnings, 0 failed
+Target: 95-100% | Current: 94% | NEEDS IMPROVEMENT
+
+======================================================================
+BASIC ANALYSIS
+======================================================================
+
+H1: "3 Recommended Air Fryer Options for Every Budget in 2026" (56 chars)
+
+H2s (5 total):
+  1. [OK] "1. Cosori TurboBlaze Air Fryer Is Our Best Value Pick" (53 chars)
+  2. [OK] "2. Ninja AF141 Air Fryer Is the Wallet-Friendly Choice" (54 chars)
+  3. [OK] "3. Ninja Foodi FlexBasket Air Fryer Offers Premium Features" (59 chars)
+  4. [WARN] "Frequently Asked Questions" (26 chars)
+  5. [OK] "Maximizing Your Air Fryer Experience for Delicious Meals" (56 chars)
+
+Overview: 2 paragraph(s), 98 words
+  Paragraph 1: [OK] 330 chars
+  Paragraph 2: [OK] 326 chars
+
+Section Paragraphs:
+  Section 1: [OK] 3 para(s), [OK] 154 words
+    Para 1: [WARN] 382 chars
+    Para 2: [WARN] 379 chars
+    Para 3: [OK] 296 chars
+  Section 2: [OK] 3 para(s), [OK] 154 words
+    Para 1: [OK] 359 chars
+    Para 2: [WARN] 377 chars
+    Para 3: [OK] 305 chars
+  Section 3: [OK] 3 para(s), [OK] 149 words
+    Para 1: [OK] 346 chars
+    Para 2: [WARN] 378 chars
+    Para 3: [OK] 308 chars
+
+Meta Title: [OK] "Top 3 Reliable Air Fryer Picks for 2026 You Can Trust Today" (59 chars)
+Meta Desc: [WARN] 143 chars
+
+Total Word Count: 1075

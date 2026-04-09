@@ -1,0 +1,62 @@
+[
+  {
+    "id": "best-ambiguity",
+    "topic": "Best time of day to propagate succulents in winter",
+    "description": "Tests if 'Best' triggers product logic incorrectly when asking for a 'Time'. Expected: Guide/Generic, not Selection.",
+    "expectedType": "informational"
+  },
+  {
+    "id": "abstract-selection",
+    "topic": "Top philosophical approaches to solving the Trolley Problem",
+    "description": "Tests 'Top' with abstract concepts (philosophies) instead of physical products. Expected: Selection of concepts.",
+    "expectedType": "listicle"
+  },
+  {
+    "id": "negative-constraint",
+    "topic": "How to ferment kimchi without a fermentation crock",
+    "description": "Tests handling of negative constraints ('without'). Expected: How-to steps avoiding the excluded item.",
+    "expectedType": "how-to"
+  },
+  {
+    "id": "hyper-specific",
+    "topic": "7 underwater basket weaving techniques for left-handed people",
+    "description": "Tests niche specificity and audience constraints. Expected: 7 specific techniques tailored to lefties.",
+    "expectedType": "listicle"
+  },
+  {
+    "id": "behavioral-why",
+    "topic": "Why does my cat stare at the wall at 3am?",
+    "description": "Tests pure question/explanation intent. Expected: Reasons/Theories.",
+    "expectedType": "informational"
+  },
+  {
+    "id": "abstract-comparison",
+    "topic": "Dvorak vs Colemak keyboard layouts for coding",
+    "description": "Tests comparison of standards/systems rather than products. Expected: Comparison of efficiency/ergonomics.",
+    "expectedType": "comparison"
+  },
+  {
+    "id": "technical-industrial",
+    "topic": "Essential maintenance tips for industrial ball bearings",
+    "description": "Tests technical accuracy and 'Essential' trigger. Expected: Specific technical maintenance steps.",
+    "expectedType": "informational"
+  },
+  {
+    "id": "historical-obscurity",
+    "topic": "The cultural significance of spoon collecting in 19th century Europe",
+    "description": "Tests historical/cultural analysis without modern product bias. Expected: Historical analysis.",
+    "expectedType": "informational"
+  },
+  {
+    "id": "niche-question",
+    "topic": "Is competitive Excel spreadsheet modeling a real sport?",
+    "description": "Tests evaluative questioning of niche subcultures. Expected: Analysis/Verdict.",
+    "expectedType": "informational"
+  },
+  {
+    "id": "diy-material",
+    "topic": "10 uses for dryer lint in the garden",
+    "description": "Tests 'Uses' promise with a waste material. Expected: 10 specific practical uses.",
+    "expectedType": "listicle"
+  }
+]

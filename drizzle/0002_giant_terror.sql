@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `amazon_affiliate_tag` text;
