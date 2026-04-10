@@ -8,6 +8,7 @@ import { Capabilities } from "./Capabilities";
 import { ValueProps } from "./ValueProps";
 import { ProductShowcase } from "./ProductShowcase";
 import { IntegrationHub } from "./IntegrationHub";
+import { Testimonials } from "./Testimonials";
 import { Pricing } from "./Pricing";
 import { CTASection } from "./CTASection";
 import { Footer } from "./Footer";
@@ -18,12 +19,15 @@ export function HomePage() {
       <AnnouncementBar />
       <Navbar />
       <main id="main-content">
-        <Hero />
-        <LogoMarquee />
+        <div className="flex min-h-[calc(100dvh-104px)] flex-col">
+          <Hero />
+          <LogoMarquee />
+        </div>
         <Capabilities />
         <ValueProps />
         <ProductShowcase />
         <IntegrationHub />
+        <Testimonials />
         <Pricing />
         <CTASection />
       </main>

@@ -7,35 +7,34 @@ import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      {/* ── Hero illustration: blended into the page background ── */}
-      {/* Positioned absolutely so it sits behind/beside the text naturally */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute right-[5%] top-1/2 w-[65%] max-w-[780px] -translate-y-1/2 lg:right-[8%]"
-          style={{
-            mixBlendMode: "lighten",
-            maskImage:
-              "radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 72%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 72%)",
-          }}
-        >
-          <Image
-            src="/hero-engine.png"
-            alt=""
-            width={960}
-            height={540}
-            priority
-            quality={95}
-            className="h-auto w-full select-none"
-            draggable={false}
-          />
-        </div>
-      </div>
-
+    <section className="relative flex-1 overflow-hidden">
       {/* ── Content layer ── */}
-      <div className="relative z-10 mx-auto flex max-w-[1200px] flex-col px-6 pb-24 pt-24 lg:pb-36 lg:pt-36">
+      <div className="relative z-10 mx-auto flex max-w-[1200px] flex-col px-6 pb-12 pt-24 lg:pb-16 lg:pt-36">
+        {/* ── Hero illustration: positioned relative to this centered container ── */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="absolute -right-[5%] top-[55%] w-[55%] max-w-[680px] -translate-y-1/2"
+            style={{
+              mixBlendMode: "lighten",
+              maskImage:
+                "radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 72%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 72%)",
+            }}
+          >
+            <Image
+              src="/hero-engine.png"
+              alt=""
+              width={960}
+              height={540}
+              priority
+              quality={95}
+              className="h-auto w-full select-none"
+              draggable={false}
+            />
+          </div>
+        </div>
+
         <div className="max-w-xl">
           <motion.p
             className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#7fffd4]"
@@ -64,9 +63,9 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            Generate structured, validated HTML articles with real-time
-            streaming preview — across 9 intent-native formats. One click to
-            WordPress.
+            Pick a keyword, choose from 9 article types, and get a fully
+            structured HTML article — validated against 310+ SEO rules and
+            ready to publish to WordPress in one click.
           </motion.p>
 
           <motion.div
@@ -79,7 +78,7 @@ export function Hero() {
               href="/login"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-primary px-7 py-3 text-sm font-semibold text-scai-page shadow-glow transition-opacity hover:opacity-90"
             >
-              Start Generating Free
+              Generate Your First Article
               <ArrowRight size={16} />
             </Link>
             <a
@@ -96,7 +95,7 @@ export function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            100 free credits/month — no card required
+            100 free credits every month — no credit card required
           </motion.p>
         </div>
       </div>

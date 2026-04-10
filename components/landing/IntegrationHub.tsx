@@ -1,77 +1,84 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 
 /* ── Data ────────────────────────────────────────────────────────────────── */
 
 interface FlowNode {
   id: string;
   label: string;
+  logo: string;
 }
 
-const aiModels: FlowNode[] = [
-  { id: "claude", label: "Claude" },
-  { id: "gpt4", label: "GPT-4" },
-  { id: "gemini", label: "Gemini" },
+const inputNodes: { group: string; items: FlowNode[] }[] = [
+  {
+    group: "CMS Sources",
+    items: [
+      { id: "strapi", label: "Strapi", logo: "https://i.ibb.co/q830LVh/Strapi-Logo.png" },
+      { id: "contentful", label: "Contentful", logo: "https://i.ibb.co/LDQGH3h7/Contentful-logo.png" },
+      { id: "drupal", label: "Drupal", logo: "https://i.ibb.co/MyB51J4B/Durpal-Logo.png" },
+    ],
+  },
+  {
+    group: "Builders",
+    items: [
+      { id: "webflow-in", label: "Webflow", logo: "https://i.ibb.co/8nqJb23D/Webflow-logo.png" },
+    ],
+  },
 ];
 
-const dataSources: FlowNode[] = [{ id: "amazon", label: "Amazon Data" }];
-
-const platformNodes: FlowNode[] = [
-  { id: "wordpress", label: "WordPress" },
-  { id: "webflow", label: "Webflow" },
-  { id: "shopify", label: "Shopify" },
-  { id: "medium", label: "Medium" },
+const outputNodes: { group: string; items: FlowNode[] }[] = [
+  {
+    group: "Platforms",
+    items: [
+      { id: "wordpress", label: "WordPress", logo: "https://i.ibb.co/j9rdD5gW/Wordpress-logo.png" },
+      { id: "shopify", label: "Shopify", logo: "https://i.ibb.co/fGVXWv1S/Shopify-Logo.png" },
+      { id: "webflow-out", label: "Webflow", logo: "https://i.ibb.co/8nqJb23D/Webflow-logo.png" },
+      { id: "medium", label: "Medium", logo: "https://i.ibb.co/RTBBXpVm/Medium-Logo.png" },
+    ],
+  },
+  {
+    group: "Publishing",
+    items: [
+      { id: "devto", label: "Dev.to", logo: "https://i.ibb.co/gZyHZRmp/Devto-Logo.png" },
+      { id: "ghost", label: "Ghost", logo: "https://i.ibb.co/d4wGWwVv/Ghost-logo.png" },
+      { id: "hashnode", label: "Hashnode", logo: "https://i.ibb.co/W4H4pxP2/hashnode-logo.png" },
+    ],
+  },
 ];
 
-const formatNodes: FlowNode[] = [
-  { id: "html", label: "HTML" },
-  { id: "csv", label: "CSV" },
-  { id: "api", label: "REST API" },
-];
-
-const allInputIds = [...aiModels, ...dataSources].map((n) => n.id);
-const allOutputIds = [...platformNodes, ...formatNodes].map((n) => n.id);
+const allInputItems = inputNodes.flatMap((g) => g.items);
+const allOutputItems = outputNodes.flatMap((g) => g.items);
+const totalLines = allInputItems.length + allOutputItems.length;
 
 /* ── Sub-components ──────────────────────────────────────────────────────── */
 
-function Pill({
+function LogoCard({
   node,
   side,
   index,
-  dimmed,
-  onEnter,
-  onLeave,
 }: {
   node: FlowNode;
   side: "left" | "right";
   index: number;
-  dimmed: boolean | null;
-  onEnter: () => void;
-  onLeave: () => void;
 }) {
-  const isDimmed = dimmed === true;
   return (
     <motion.div
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-      className={`relative flex cursor-default select-none items-center gap-2.5 rounded-lg border px-3.5 py-2 text-[11px] font-medium transition-all duration-300 ${
-        isDimmed
-          ? "border-white/[0.03] bg-white/[0.01] text-white/15"
-          : "border-white/[0.08] bg-white/[0.03] text-white/70 hover:border-[#40EDC3]/25 hover:bg-white/[0.05] hover:text-white/90"
-      }`}
+      className="integration-node relative flex cursor-default select-none items-center justify-center rounded-lg border border-white/[0.03] bg-white/[0.015] p-2.5 transition-all duration-300 hover:border-[#40EDC3]/15 hover:bg-white/[0.03]"
       initial={{ opacity: 0, x: side === "left" ? -16 : 16 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.35, delay: 0.15 + index * 0.05 }}
     >
-      <span
-        className={`h-1.5 w-1.5 flex-shrink-0 rounded-full transition-colors duration-300 ${
-          isDimmed ? "bg-white/5" : "bg-[#40EDC3]/50"
-        }`}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={node.logo}
+        alt={node.label}
+        className="h-5 max-w-[90px] object-contain opacity-70 transition-opacity duration-300 group-hover:opacity-100"
+        style={{ filter: "brightness(0.9)" }}
+        draggable={false}
       />
-      {node.label}
     </motion.div>
   );
 }
@@ -85,7 +92,7 @@ function SectionLabel({
 }) {
   return (
     <motion.span
-      className="mb-2.5 block text-[10px] font-semibold uppercase tracking-[0.14em] text-white/25"
+      className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -96,60 +103,178 @@ function SectionLabel({
   );
 }
 
-function FlowLine({ dimmed, delay }: { dimmed: boolean; delay: number }) {
-  return (
-    <div className="relative h-px w-full overflow-hidden">
-      <div
-        className={`absolute inset-0 transition-opacity duration-300 ${
-          dimmed ? "opacity-20" : "opacity-100"
-        }`}
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(64,237,195,0.15) 30%, rgba(64,237,195,0.15) 70%, transparent)",
-        }}
-      />
-      {!dimmed && (
-        <motion.div
-          className="absolute top-0 h-full w-8"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(64,237,195,0.5), transparent)",
-          }}
-          animate={{ left: ["-2rem", "calc(100% + 2rem)"] }}
-          transition={{
-            duration: 2.5,
-            delay,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      )}
-    </div>
-  );
-}
+/* ── Animated SVG connection lines ──────────────────────────────────────── */
 
-function FlowConnector({ dimmed }: { dimmed: boolean }) {
+function AnimatedLines() {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const uid = useId().replace(/:/g, "");
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const container = svg.parentElement;
+    if (!container) return;
+
+    function getRect(el: Element) {
+      const r = el.getBoundingClientRect();
+      const cr = container!.getBoundingClientRect();
+      return {
+        cx: r.left - cr.left + r.width / 2,
+        cy: r.top - cr.top + r.height / 2,
+        right: r.left - cr.left + r.width,
+        left: r.left - cr.left,
+      };
+    }
+
+    function buildPaths() {
+      const hub = container!.querySelector(".integration-hub");
+      const nodes = container!.querySelectorAll(".integration-node");
+      if (!hub || nodes.length === 0) return;
+
+      const hubRect = getRect(hub);
+      const hubCx = hubRect.cx;
+      const hubCy = hubRect.cy;
+
+      // Clear previous
+      while (svg!.firstChild) svg!.removeChild(svg!.firstChild);
+
+      // Defs for laser gradient
+      const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+      svg!.appendChild(defs);
+
+      // Collect path data for canvas animation
+      const pathData: { path: SVGPathElement; len: number; speed: number; offset: number }[] = [];
+
+      nodes.forEach((node, i) => {
+        const nr = getRect(node);
+        const isLeft = nr.cx < hubCx;
+
+        // Start/end points
+        const sx = isLeft ? nr.right : nr.left;
+        const sy = nr.cy;
+        const ex = isLeft ? hubRect.left : hubRect.right;
+        const ey = hubCy;
+
+        // Curved path via cubic bezier
+        const cpOffset = Math.abs(ex - sx) * 0.45;
+        const cp1x = isLeft ? sx + cpOffset : sx - cpOffset;
+        const cp2x = isLeft ? ex - cpOffset : ex + cpOffset;
+        const d = `M ${sx} ${sy} C ${cp1x} ${sy}, ${cp2x} ${ey}, ${ex} ${ey}`;
+
+        // Static dim line (the track)
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "rgba(64,237,195,0.08)");
+        path.setAttribute("stroke-width", "1");
+        svg!.appendChild(path);
+
+        // Store for animation
+        pathData.push({
+          path,
+          len: path.getTotalLength(),
+          speed: 0.003 + (i % 5) * 0.0008,
+          offset: (i * 0.12) % 1,
+        });
+      });
+
+      // Laser animation via canvas overlay
+      const cvs = document.createElement("canvas");
+      cvs.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;";
+      container!.appendChild(cvs);
+
+      const dpr = window.devicePixelRatio || 1;
+      const rect = container!.getBoundingClientRect();
+      cvs.width = rect.width * dpr;
+      cvs.height = rect.height * dpr;
+      const c = cvs.getContext("2d")!;
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      let raf: number;
+      const laserLen = 40; // px length of the laser streak
+
+      function animate() {
+        c.clearRect(0, 0, rect.width, rect.height);
+
+        for (const pd of pathData) {
+          pd.offset += pd.speed;
+          if (pd.offset > 1) pd.offset -= 1;
+
+          const headDist = pd.offset * pd.len;
+          const tailDist = Math.max(0, headDist - laserLen);
+
+          // Draw laser streak as a series of points with fading opacity
+          const steps = 14;
+          for (let s = 0; s <= steps; s++) {
+            const t = s / steps;
+            const dist = tailDist + (headDist - tailDist) * t;
+            if (dist < 0 || dist > pd.len) continue;
+
+            const pt = pd.path.getPointAtLength(dist);
+            const alpha = t * t; // quadratic ramp — sharp bright head, fading tail
+
+            c.beginPath();
+            c.arc(pt.x, pt.y, 1.2, 0, Math.PI * 2);
+            c.fillStyle = `rgba(64,237,195,${alpha * 0.9})`;
+            c.fill();
+          }
+
+          // Bright hard leading edge point
+          if (headDist <= pd.len) {
+            const head = pd.path.getPointAtLength(headDist);
+            c.beginPath();
+            c.arc(head.x, head.y, 1.5, 0, Math.PI * 2);
+            c.fillStyle = "rgba(64,237,195,1)";
+            c.fill();
+
+            // Tight glow right at the head — not soft/fairy, just a thin halo
+            c.beginPath();
+            c.arc(head.x, head.y, 3, 0, Math.PI * 2);
+            c.fillStyle = "rgba(64,237,195,0.2)";
+            c.fill();
+          }
+        }
+
+        raf = requestAnimationFrame(animate);
+      }
+
+      raf = requestAnimationFrame(animate);
+
+      // Store cleanup ref
+      (svg as any).__laserCleanup = () => {
+        cancelAnimationFrame(raf);
+        cvs.remove();
+      };
+    }
+
+    // Build after a short delay to let layout settle
+    const timer = setTimeout(buildPaths, 200);
+
+    const resizeObserver = new ResizeObserver(() => {
+      buildPaths();
+    });
+    resizeObserver.observe(container);
+
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+      if ((svg as any).__laserCleanup) (svg as any).__laserCleanup();
+    };
+  }, [uid]);
+
   return (
-    <div className="flex flex-col items-center justify-center gap-3 self-stretch py-8">
-      <FlowLine dimmed={dimmed} delay={0} />
-      <FlowLine dimmed={dimmed} delay={1.2} />
-    </div>
+    <svg
+      ref={svgRef}
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      style={{ zIndex: 1 }}
+    />
   );
 }
 
 /* ── Integration Flow Diagram ────────────────────────────────────────────── */
 
 function IntegrationFlowDiagram() {
-  const [hovered, setHovered] = useState<string | null>(null);
-
-  const dim = (id: string): boolean | null => {
-    if (!hovered) return null;
-    return id !== hovered;
-  };
-
-  const leftDimmed = hovered ? !allInputIds.includes(hovered) : false;
-  const rightDimmed = hovered ? !allOutputIds.includes(hovered) : false;
-
   return (
     <div className="relative flex w-full items-center justify-center">
       {/* Ambient glow */}
@@ -161,46 +286,32 @@ function IntegrationFlowDiagram() {
         }}
       />
 
-      {/* 5-column grid: inputs | connector | engine | connector | outputs */}
-      <div className="relative z-10 grid w-full max-w-[540px] grid-cols-[minmax(0,1fr)_24px_auto_24px_minmax(0,1fr)] items-center sm:grid-cols-[minmax(0,1fr)_36px_auto_36px_minmax(0,1fr)] lg:max-w-[580px] lg:grid-cols-[minmax(0,1fr)_48px_auto_48px_minmax(0,1fr)]">
+      {/* SVG lines layer */}
+      <AnimatedLines />
+
+      {/* 5-column grid: inputs | gap | engine | gap | outputs */}
+      <div className="relative z-10 grid w-full max-w-[540px] grid-cols-[minmax(0,1fr)_32px_auto_32px_minmax(0,1fr)] items-center sm:grid-cols-[minmax(0,1fr)_40px_auto_40px_minmax(0,1fr)] lg:max-w-[580px] lg:grid-cols-[minmax(0,1fr)_52px_auto_52px_minmax(0,1fr)]">
         {/* ── Col 1: Inputs ──────────────────────── */}
         <div className="flex flex-col gap-4">
-          <div>
-            <SectionLabel delay={0.1}>AI Models</SectionLabel>
-            <div className="flex flex-col gap-1.5">
-              {aiModels.map((n, i) => (
-                <Pill
-                  key={n.id}
-                  node={n}
-                  side="left"
-                  index={i}
-                  dimmed={dim(n.id)}
-                  onEnter={() => setHovered(n.id)}
-                  onLeave={() => setHovered(null)}
-                />
-              ))}
+          {inputNodes.map((group, gi) => (
+            <div key={group.group}>
+              <SectionLabel delay={0.1 + gi * 0.15}>{group.group}</SectionLabel>
+              <div className="flex flex-col gap-1.5">
+                {group.items.map((n, i) => (
+                  <LogoCard
+                    key={n.id}
+                    node={n}
+                    side="left"
+                    index={gi * 3 + i}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-          <div>
-            <SectionLabel delay={0.25}>Data Source</SectionLabel>
-            <div className="flex flex-col gap-1.5">
-              {dataSources.map((n, i) => (
-                <Pill
-                  key={n.id}
-                  node={n}
-                  side="left"
-                  index={i + 3}
-                  dimmed={dim(n.id)}
-                  onEnter={() => setHovered(n.id)}
-                  onLeave={() => setHovered(null)}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* ── Col 2: Left connector ──────────────── */}
-        <FlowConnector dimmed={leftDimmed} />
+        {/* ── Col 2: spacer (lines drawn by SVG) ── */}
+        <div />
 
         {/* ── Col 3: SCAI Engine ─────────────────── */}
         <motion.div
@@ -222,7 +333,7 @@ function IntegrationFlowDiagram() {
           />
 
           <div
-            className="neon-float relative flex h-[100px] w-[100px] flex-col items-center justify-center rounded-2xl border border-[#40EDC3]/20 sm:h-[116px] sm:w-[116px]"
+            className="integration-hub neon-float relative flex h-[100px] w-[100px] items-center justify-center rounded-2xl border border-[#40EDC3]/20 sm:h-[116px] sm:w-[116px]"
             style={{
               background:
                 "linear-gradient(145deg, rgba(8,8,8,0.97) 0%, rgba(12,18,15,0.97) 100%)",
@@ -245,49 +356,29 @@ function IntegrationFlowDiagram() {
               <path d="M25.7021 21.8196H17.0879V25.686H25.7021V21.8196Z" fill="url(#intLogoGrad)"/>
               <path d="M25.705 14.6768H7.52148V18.5432H25.705V14.6768Z" fill="url(#intLogoGrad)"/>
             </svg>
-            <span className="mt-1.5 text-[8px] font-medium uppercase tracking-[0.14em] text-white/30 sm:text-[9px]">
-              Content Engine
-            </span>
           </div>
         </motion.div>
 
-        {/* ── Col 4: Right connector ─────────────── */}
-        <FlowConnector dimmed={rightDimmed} />
+        {/* ── Col 4: spacer ─────────────────────── */}
+        <div />
 
         {/* ── Col 5: Outputs ─────────────────────── */}
         <div className="flex flex-col gap-4">
-          <div>
-            <SectionLabel delay={0.1}>Platforms</SectionLabel>
-            <div className="flex flex-col gap-1.5">
-              {platformNodes.map((n, i) => (
-                <Pill
-                  key={n.id}
-                  node={n}
-                  side="right"
-                  index={i}
-                  dimmed={dim(n.id)}
-                  onEnter={() => setHovered(n.id)}
-                  onLeave={() => setHovered(null)}
-                />
-              ))}
+          {outputNodes.map((group, gi) => (
+            <div key={group.group}>
+              <SectionLabel delay={0.1 + gi * 0.15}>{group.group}</SectionLabel>
+              <div className="flex flex-col gap-1.5">
+                {group.items.map((n, i) => (
+                  <LogoCard
+                    key={n.id}
+                    node={n}
+                    side="right"
+                    index={gi * 4 + i}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-          <div>
-            <SectionLabel delay={0.25}>Export</SectionLabel>
-            <div className="flex flex-col gap-1.5">
-              {formatNodes.map((n, i) => (
-                <Pill
-                  key={n.id}
-                  node={n}
-                  side="right"
-                  index={i + 4}
-                  dimmed={dim(n.id)}
-                  onEnter={() => setHovered(n.id)}
-                  onLeave={() => setHovered(null)}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -313,9 +404,9 @@ export function IntegrationHub() {
               </span>
             </h2>
             <p className="mt-4 text-base leading-relaxed text-scai-text-sec">
-              SCAI sits at the center of your publishing workflow. Generate with
-              Claude, GPT, or Gemini. Enrich with Amazon product data. Publish
-              to any CMS in one click.
+              Generate articles with Claude, GPT-4, or Gemini. Pull real
+              product data from Amazon. Publish to any of 7 CMS platforms
+              without leaving SCAI.
             </p>
 
             <div className="mt-8 grid grid-cols-2 gap-4">
@@ -326,11 +417,11 @@ export function IntegrationHub() {
                 },
                 {
                   label: "3 AI Providers",
-                  desc: "Claude, GPT-4, Gemini with automatic fallback chain",
+                  desc: "Claude, GPT-4, and Gemini with automatic fallback if one provider is down",
                 },
                 {
                   label: "Amazon Associates",
-                  desc: "Real product data, pricing, ratings, and affiliate links",
+                  desc: "Live pricing, star ratings, and affiliate links pulled directly into your articles",
                 },
                 {
                   label: "WordPress Plugin",

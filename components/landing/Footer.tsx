@@ -41,40 +41,46 @@ export function Footer() {
   ];
 
   const socialLinks = [
-    { icon: <TwitterIcon className="size-4" />, link: "#" },
-    { icon: <LinkedinIcon className="size-4" />, link: "#" },
-    { icon: <GithubIcon className="size-4" />, link: "#" },
-    { icon: <YoutubeIcon className="size-4" />, link: "#" },
+    { icon: <TwitterIcon className="size-4" />, link: "#", label: "Twitter" },
+    { icon: <LinkedinIcon className="size-4" />, link: "#", label: "LinkedIn" },
+    { icon: <GithubIcon className="size-4" />, link: "#", label: "GitHub" },
+    { icon: <YoutubeIcon className="size-4" />, link: "#", label: "YouTube" },
+  ];
+
+  const linkColumns = [
+    { heading: "Product", links: product },
+    { heading: "Article Types", links: articleTypes },
+    { heading: "Resources", links: resources },
+    { heading: "Company", links: company },
   ];
 
   return (
-    <footer className="relative">
-      <div className="mx-auto max-w-4xl bg-[radial-gradient(35%_80%_at_30%_0%,rgba(255,255,255,0.06),transparent)] md:border-x md:border-scai-border-dim/50">
-        {/* Top divider */}
-        <div className="absolute inset-x-0 h-px w-full bg-scai-border-dim/50" />
-
-        <div className="grid max-w-4xl grid-cols-6 gap-6 p-4 pt-10 sm:p-6 sm:pt-12">
-          {/* Brand + social — spans 4 cols on md */}
-          <div className="col-span-6 flex flex-col gap-5 md:col-span-2">
-            <a href="/" className="w-max">
+    <footer className="border-t border-scai-border/60">
+      <div className="mx-auto max-w-[1200px] px-6 pb-8 pt-16">
+        {/* Top row: brand + link columns */}
+        <div className="grid gap-12 lg:grid-cols-[1fr_auto]">
+          {/* Brand block */}
+          <div className="max-w-sm">
+            <a href="/" className="inline-block">
               <img
                 src="/logo.svg"
                 alt="SEOContent.AI"
-                className="h-6 opacity-80"
+                className="h-7"
               />
             </a>
-            <p className="max-w-sm font-mono text-sm text-scai-text-muted text-balance">
-              The AI content engine for publishers, agencies, and marketing
-              teams. Structured articles, not chat dumps.
+            <p className="mt-4 text-sm leading-relaxed text-scai-text-sec">
+              Publish-ready SEO articles for publishers, agencies, and content
+              teams. Structured HTML — not AI drafts you have to rewrite.
             </p>
-            <div className="flex gap-2">
-              {socialLinks.map((item, i) => (
+            <div className="mt-5 flex gap-2">
+              {socialLinks.map((item) => (
                 <a
-                  key={i}
-                  className="rounded-md border border-scai-border-dim/50 p-1.5 text-scai-text-muted transition-colors hover:bg-scai-surface hover:text-scai-text-sec"
+                  key={item.label}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-scai-border/60 text-scai-text-muted transition-colors hover:border-[#7fffd4]/20 hover:text-scai-text-sec"
                   target="_blank"
                   rel="noopener noreferrer"
                   href={item.link}
+                  aria-label={item.label}
                 >
                   {item.icon}
                 </a>
@@ -82,81 +88,42 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Product */}
-          <div className="col-span-3 w-full sm:col-span-3 md:col-span-1">
-            <span className="mb-1 text-xs text-scai-text-muted">Product</span>
-            <div className="mt-2 flex flex-col gap-1">
-              {product.map(({ href, title }, i) => (
-                <a
-                  key={i}
-                  className="w-max py-1 text-sm text-scai-text-sec duration-200 hover:text-scai-text hover:underline"
-                  href={href}
-                >
-                  {title}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Article Types */}
-          <div className="col-span-3 w-full sm:col-span-3 md:col-span-1">
-            <span className="mb-1 text-xs text-scai-text-muted">
-              Article Types
-            </span>
-            <div className="mt-2 flex flex-col gap-1">
-              {articleTypes.map(({ href, title }, i) => (
-                <a
-                  key={i}
-                  className="w-max py-1 text-sm text-scai-text-sec duration-200 hover:text-scai-text hover:underline"
-                  href={href}
-                >
-                  {title}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Resources */}
-          <div className="col-span-3 w-full sm:col-span-3 md:col-span-1">
-            <span className="mb-1 text-xs text-scai-text-muted">
-              Resources
-            </span>
-            <div className="mt-2 flex flex-col gap-1">
-              {resources.map(({ href, title }, i) => (
-                <a
-                  key={i}
-                  className="w-max py-1 text-sm text-scai-text-sec duration-200 hover:text-scai-text hover:underline"
-                  href={href}
-                >
-                  {title}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Company */}
-          <div className="col-span-3 w-full sm:col-span-3 md:col-span-1">
-            <span className="mb-1 text-xs text-scai-text-muted">Company</span>
-            <div className="mt-2 flex flex-col gap-1">
-              {company.map(({ href, title }, i) => (
-                <a
-                  key={i}
-                  className="w-max py-1 text-sm text-scai-text-sec duration-200 hover:text-scai-text hover:underline"
-                  href={href}
-                >
-                  {title}
-                </a>
-              ))}
-            </div>
+          {/* Link columns */}
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
+            {linkColumns.map((col) => (
+              <div key={col.heading}>
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-scai-text-muted">
+                  {col.heading}
+                </span>
+                <div className="mt-4 flex flex-col gap-2.5">
+                  {col.links.map((link) => (
+                    <a
+                      key={link.title}
+                      className="text-sm text-scai-text-sec transition-colors hover:text-scai-text"
+                      href={link.href}
+                    >
+                      {link.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Bottom divider + copyright */}
-        <div className="h-px w-full bg-scai-border-dim/50" />
-        <div className="flex max-w-4xl flex-col justify-between gap-2 pb-5 pt-4">
-          <p className="text-center text-xs font-thin text-scai-text-muted">
-            &copy; SEOContent.AI. All rights reserved {year}
+        {/* Bottom bar */}
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-scai-border/60 pt-6 sm:flex-row">
+          <p className="text-xs text-scai-text-muted">
+            &copy; {year} SEOContent.AI. All rights reserved.
           </p>
+          <div className="flex gap-6">
+            <a href="#" className="text-xs text-scai-text-muted transition-colors hover:text-scai-text-sec">
+              Privacy Policy
+            </a>
+            <a href="#" className="text-xs text-scai-text-muted transition-colors hover:text-scai-text-sec">
+              Terms of Service
+            </a>
+          </div>
         </div>
       </div>
     </footer>

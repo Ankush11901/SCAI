@@ -47,7 +47,7 @@ export function LogoMarquee() {
           {[...integrations, ...integrations].map((item, i) => (
             <div
               key={`${item.name}-${i}`}
-              className="flex shrink-0 items-center gap-2.5 text-scai-text-muted/60 transition-colors hover:text-scai-text-sec"
+              className="flex shrink-0 items-center gap-2.5 text-scai-text-muted transition-colors hover:text-scai-text-sec"
             >
               {item.icon}
               <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
