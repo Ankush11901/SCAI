@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAI Integration Hub</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0A0A0A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+
+  .scene {
+    position: relative;
+    width: 1100px;
+    height: 620px;
+  }
+
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* ── Shared card ── */
+  .card {
+    position: absolute;
+    width: 200px;
+    height: 44px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding-left: 14px;
+    z-index: 2;
+  }
+
+  .card img {
+    max-height: 28px;
+    max-width: 120px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ── Hub ── */
+  .hub {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: 0 0 24px 4px rgba(20,184,166,0.25);
+  }
+
+  .hub img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+
+  /* ── Group labels ── */
+  .label {
+    position: absolute;
+    font-size: 11px;
+    color: #6b7280;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    z-index: 2;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <canvas id="lines"></canvas>
+
+  <!-- ─── Center Hub ─── -->
+  <div class="hub" style="left:495px; top:255px;">
+    <img src="https://i.ibb.co/TDhsxyjt/Logo.png" alt="SCAI">
+  </div>
+
+  <!-- ═══════════════════ LEFT SIDE ═══════════════════ -->
+
+  <!-- AI Models label -->
+  <div class="label" style="left:60px; top:120px;">AI Models</div>
+
+  <!-- AI Models cards -->
+  <div class="card" id="l0" style="left:60px; top:142px;">
+    <img src="https://i.ibb.co/q830LVh/Strapi-Logo.png" alt="Strapi">
+  </div>
+  <div class="card" id="l1" style="left:60px; top:196px;">
+    <img src="https://i.ibb.co/LDQGH3h7/Contentful-logo.png" alt="Contentful">
+  </div>
+  <div class="card" id="l2" style="left:60px; top:250px;">
+    <img src="https://i.ibb.co/8nqJb23D/Webflow-logo.png" alt="Webflow">
+  </div>
+
+  <!-- Data Source label -->
+  <div class="label" style="left:60px; top:322px;">Data Source</div>
+
+  <!-- Data Source card -->
+  <div class="card" id="l3" style="left:60px; top:344px;">
+    <img src="https://i.ibb.co/MyB51J4B/Durpal-Logo.png" alt="Drupal">
+  </div>
+
+  <!-- ═══════════════════ RIGHT SIDE ═══════════════════ -->
+
+  <!-- Platforms label -->
+  <div class="label" style="left:820px; top:80px;">Platforms</div>
+
+  <!-- Platforms cards -->
+  <div class="card" id="r0" style="left:820px; top:102px;">
+    <img src="https://i.ibb.co/j9rdD5gW/Wordpress-logo.png" alt="WordPress">
+  </div>
+  <div class="card" id="r1" style="left:820px; top:156px;">
+    <img src="https://i.ibb.co/8nqJb23D/Webflow-logo.png" alt="Webflow">
+  </div>
+  <div class="card" id="r2" style="left:820px; top:210px;">
+    <img src="https://i.ibb.co/fGVXWv1S/Shopify-Logo.png" alt="Shopify">
+  </div>
+  <div class="card" id="r3" style="left:820px; top:264px;">
+    <img src="https://i.ibb.co/RTBBXpVm/Medium-Logo.png" alt="Medium">
+  </div>
+
+  <!-- Export label -->
+  <div class="label" style="left:820px; top:336px;">Export</div>
+
+  <!-- Export cards -->
+  <div class="card" id="r4" style="left:820px; top:358px;">
+    <img src="https://i.ibb.co/gZyHZRmp/Devto-Logo.png" alt="Dev.to">
+  </div>
+  <div class="card" id="r5" style="left:820px; top:412px;">
+    <img src="https://i.ibb.co/QFqk0bgK/Blogger-Logo.png" alt="Blogger">
+  </div>
+  <div class="card" id="r6" style="left:820px; top:466px;">
+    <img src="https://i.ibb.co/W4H4pxP2/hashnode-logo.png" alt="Hashnode">
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('lines');
+  const ctx = canvas.getContext('2d');
+
+  // Hi-DPI support
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Hub center
+  const hub = { x: 495 + 55, y: 255 + 55 }; // center of 110x110
+
+  // Build connection list: { sx, sy, ex, ey, progress, speed }
+  function cardCenter(id, side) {
+    const el = document.getElementById(id);
+    const x = parseInt(el.style.left);
+    const y = parseInt(el.style.top);
+    const w = 200, h = 44;
+    // connect from right edge (left cards) or left edge (right cards)
+    if (side === 'left') return { x: x + w, y: y + h / 2 };
+    return { x: x, y: y + h / 2 };
+  }
+
+  const connections = [];
+
+  // Left cards → hub left edge
+  ['l0','l1','l2','l3'].forEach((id, i) => {
+    const src = cardCenter(id, 'left');
+    connections.push({
+      sx: src.x, sy: src.y,
+      ex: 495,   ey: hub.y,
+      progress: (i * 0.18) % 1,
+      speed: 0.003 + i * 0.001,
+    });
+  });
+
+  // Right cards → hub right edge
+  ['r0','r1','r2','r3','r4','r5','r6'].forEach((id, i) => {
+    const src = cardCenter(id, 'right');
+    connections.push({
+      sx: 495 + 110, sy: hub.y,
+      ex: src.x,     ey: src.y,
+      progress: (i * 0.12) % 1,
+      speed: 0.004 + (i % 4) * 0.0008,
+    });
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (const c of connections) {
+      // Draw line
+      ctx.beginPath();
+      ctx.moveTo(c.sx, c.sy);
+      ctx.lineTo(c.ex, c.ey);
+      ctx.strokeStyle = 'rgba(20,184,166,0.25)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Animated dot
+      const t = c.progress;
+      const dx = c.sx + (c.ex - c.sx) * t;
+      const dy = c.sy + (c.ey - c.sy) * t;
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(dx, dy, 8, 0, Math.PI * 2);
+      const glow = ctx.createRadialGradient(dx, dy, 0, dx, dy, 8);
+      glow.addColorStop(0, 'rgba(20,184,166,0.35)');
+      glow.addColorStop(1, 'rgba(20,184,166,0)');
+      ctx.fillStyle = glow;
+      ctx.fill();
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(dx, dy, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(20,184,166,0.9)';
+      ctx.fill();
+
+      // Advance
+      c.progress += c.speed;
+      if (c.progress > 1) c.progress = 0;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+
+</body>
+</html>

@@ -4,7 +4,22 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
 
-const plans = [
+interface Plan {
+  name: string;
+  price: string;
+  priceUnit?: string;
+  priceYearly?: string;
+  period: string;
+  credits: string;
+  articles?: string;
+  featured: boolean;
+  badge?: string;
+  cta: string;
+  ctaStyle: "primary" | "outline";
+  features: string[];
+}
+
+const plans: Plan[] = [
   {
     name: "Free",
     price: "$0",
@@ -12,6 +27,9 @@ const plans = [
     credits: "100 credits/month",
     articles: "~7 articles/month",
     featured: false,
+    badge: "",
+    cta: "Generate Free Articles",
+    ctaStyle: "outline",
     features: [
       "All 9 article types",
       "Real-time streaming preview",
@@ -31,6 +49,9 @@ const plans = [
     credits: "2,000 credits/month",
     articles: "~125 articles/month",
     featured: true,
+    badge: "MOST POPULAR",
+    cta: "Start Pro Trial",
+    ctaStyle: "primary",
     features: [
       "Everything in Free, plus:",
       "Premium AI images (Gemini + Imagen)",
@@ -39,6 +60,25 @@ const plans = [
       "Overage billing (capped)",
       "Priority support",
       "Weekly community calls",
+    ],
+  },
+  {
+    name: "Pay As You Go",
+    price: "$0.05",
+    priceUnit: "/ credit",
+    period: "",
+    credits: "Buy once, use anytime",
+    featured: false,
+    badge: "FLEXIBLE",
+    cta: "Buy Credits Now",
+    ctaStyle: "outline",
+    features: [
+      "Everything in Pro — no subscription",
+      "Credits never expire",
+      "100 credits for $5",
+      "500 credits for $25",
+      "1,000 credits for $50",
+      "5,000 credits for $250",
     ],
   },
 ];
@@ -57,12 +97,12 @@ export function Pricing() {
               Scale when ready.
             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-scai-text-sec">
-            Same capabilities on both tiers. Free users get 100 credits/month. Pro unlocks higher limits and premium image generation.
+          <p className="mx-auto mt-4 max-w-2xl text-base text-scai-text-sec">
+            Every plan includes all 9 article types, bulk generation, and 310+ validation rules. Pick the commitment level that fits your workflow.
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-[800px] gap-6 lg:grid-cols-2">
+        <div className="mx-auto mt-16 grid max-w-[1100px] gap-6 lg:grid-cols-3">
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
@@ -76,9 +116,15 @@ export function Pricing() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
             >
-              {plan.featured && (
-                <div className="absolute -top-3 left-8 rounded-full bg-gradient-primary px-3 py-1 text-[10px] font-bold text-scai-page">
-                  MOST POPULAR
+              {plan.badge && (
+                <div
+                  className={`absolute -top-3 left-8 rounded-full px-3 py-1 text-[10px] font-bold ${
+                    plan.featured
+                      ? "bg-gradient-primary text-scai-page"
+                      : "border border-scai-border-bright bg-scai-card text-scai-text-sec"
+                  }`}
+                >
+                  {plan.badge}
                 </div>
               )}
 
@@ -90,9 +136,16 @@ export function Pricing() {
                   <span className="text-4xl font-bold text-scai-text">
                     {plan.price}
                   </span>
-                  <span className="text-sm text-scai-text-sec">
-                    {plan.period}
-                  </span>
+                  {plan.priceUnit && (
+                    <span className="text-sm text-scai-text-sec">
+                      {plan.priceUnit}
+                    </span>
+                  )}
+                  {plan.period && (
+                    <span className="text-sm text-scai-text-sec">
+                      {plan.period}
+                    </span>
+                  )}
                 </div>
                 {plan.priceYearly && (
                   <p className="mt-1 text-xs text-scai-brand1">
@@ -103,21 +156,23 @@ export function Pricing() {
                   <span className="text-sm font-medium text-scai-text-sec">
                     {plan.credits}
                   </span>
-                  <span className="text-xs text-scai-text-muted">
-                    {plan.articles}
-                  </span>
+                  {plan.articles && (
+                    <span className="text-xs text-scai-text-muted">
+                      {plan.articles}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <Link
                 href="/login"
                 className={`mb-6 flex w-full items-center justify-center rounded-full py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 ${
-                  plan.featured
+                  plan.ctaStyle === "primary"
                     ? "bg-gradient-primary text-scai-page shadow-glow"
                     : "border border-scai-border-bright bg-transparent text-scai-text hover:bg-scai-surface"
                 }`}
               >
-                {plan.featured ? "Get Started" : "Start Free"}
+                {plan.cta}
               </Link>
 
               <ul className="flex flex-col gap-3">
@@ -137,10 +192,6 @@ export function Pricing() {
             </motion.div>
           ))}
         </div>
-
-        <p className="mt-8 text-center text-sm text-scai-text-muted">
-          Need more? Top-up credit packs available from $5 (100 credits) to $250 (5,000 credits).
-        </p>
       </div>
     </section>
   );

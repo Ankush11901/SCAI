@@ -7,32 +7,32 @@ import Image from "next/image";
 const capabilities = [
   {
     title: "9 Article Types",
-    subtitle: "Affiliate, review, recipe, and six more — each with its own layout and components.",
+    subtitle: "Affiliate, how-to, review, comparison, listicle, recipe, and more — each with its own layout, components, and validation logic.",
     image: "/capabilities/article-types.png",
   },
   {
     title: "Real-Time Streaming",
-    subtitle: "Watch your article build section by section with a live HTML preview as it generates.",
+    subtitle: "Watch your article build section by section in a live HTML preview. No waiting — review and edit as it writes.",
     image: "/capabilities/streaming.png",
   },
   {
     title: "Bulk Generation",
-    subtitle: "Generate up to 100 articles from a CSV or keyword list with per-article tracking.",
+    subtitle: "Upload a CSV or keyword list and generate up to 100 articles in one batch — with per-article status tracking and retry on failure.",
     image: "/capabilities/bulk.png",
   },
   {
     title: "One-Click CMS Publish",
-    subtitle: "Export directly to WordPress, Medium, Ghost, Webflow, Shopify, Dev.to, or Hashnode.",
+    subtitle: "Publish directly to WordPress, Medium, Ghost, Webflow, Shopify, Dev.to, or Hashnode — no copy-pasting, no reformatting.",
     image: "/capabilities/cms.png",
   },
   {
     title: "AI-Generated Images",
-    subtitle: "Featured hero and section images with SEO-targeted alt text, created automatically.",
+    subtitle: "Hero images, section visuals, and SEO-optimized alt text — generated automatically for every article you create.",
     image: "/capabilities/images.png",
   },
   {
     title: "310+ Validation Rules",
-    subtitle: "Every article checked for H-structure, keyword density, alt text, and word counts.",
+    subtitle: "Every article is scored against H-structure, keyword density, alt text, word count, banned AI phrases, and content flow before you publish.",
     image: "/capabilities/validation.png",
   },
 ];
@@ -59,8 +59,8 @@ export function Capabilities() {
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-scai-text-sec">
-            Every article ships with structured HTML, scoped CSS, SEO
-            validation, and CMS-ready formatting.
+            Structured HTML, auto-generated images, SEO validation, and
+            one-click publishing — built into every article.
           </p>
         </div>
 
@@ -79,25 +79,25 @@ export function Capabilities() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
             >
-              {/* Illustration area — fixed height, constrained width, centered */}
-              <div className="flex h-48 items-center justify-center px-6 pt-6">
-                <div className="relative h-[140px] w-[200px]">
-                  <Image
-                    src={cap.image}
-                    alt={cap.title}
-                    fill
-                    className="object-contain"
-                    sizes="200px"
-                  />
-                </div>
+              {/* Illustration area — fills full card width */}
+              <div className="relative h-40 w-full sm:h-44">
+                <Image
+                  src={cap.image}
+                  alt={cap.title}
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                {/* Bottom fade into text strip */}
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#141414] to-transparent" />
               </div>
 
-              {/* Text strip — slightly darker bg for separation */}
-              <div className="mt-auto bg-[#141414] px-8 py-5">
+              {/* Text strip — flush against image, fills remaining space */}
+              <div className="flex-1 bg-[#141414] px-8 py-5">
                 <h3 className="text-lg font-semibold text-white">
                   {cap.title}
                 </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-[#a0a0a0]">
+                <p className="mt-1.5 text-sm leading-relaxed text-[#b0b0b0]">
                   {cap.subtitle}
                 </p>
               </div>

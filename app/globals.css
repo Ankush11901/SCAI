@@ -34,7 +34,7 @@ input[type="number"] {
   /* Text scale */
   --scai-text: #FFFFFF;
   --scai-text-sec: #A3A3A3;
-  --scai-text-muted: #666666;
+  --scai-text-muted: #9A9A9A;
   
   /* Brand colors */
   --scai-brand-1: #40EDC3;
@@ -227,6 +227,42 @@ body {
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Landing Page — Testimonials Marquee
+   ───────────────────────────────────────────────────────────────────────────── */
+.testimonial-scroll-left {
+  animation: testimonial-left 45s linear infinite;
+  will-change: transform;
+}
+
+.testimonial-scroll-right {
+  animation: testimonial-right 45s linear infinite;
+  will-change: transform;
+}
+
+.testimonial-scroll-left:hover,
+.testimonial-scroll-right:hover {
+  animation-play-state: paused;
+}
+
+.testimonial-card {
+  transition: border-color 0.2s ease;
+}
+
+.testimonial-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+@keyframes testimonial-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes testimonial-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

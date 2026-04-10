@@ -6,27 +6,27 @@ import { LayoutGrid, ShieldCheck, Layers, CircleDollarSign } from "lucide-react"
 const values = [
   {
     icon: <LayoutGrid className="h-6 w-6 text-[#7fffd4]" />,
-    label: "Intent-Native Layouts",
+    label: "Purpose-Built Layouts",
     description:
-      "Not one template stretched across every topic. Each article type — affiliate, recipe, comparison, review — gets its own structure, components, and validation rules.",
+      "Affiliate, recipe, comparison, review — each article type gets its own structure, components, and validation rules. Not one template for everything.",
   },
   {
     icon: <ShieldCheck className="h-6 w-6 text-[#7fffd4]" />,
-    label: "310+ Validation Rules",
+    label: "310+ Quality Checks",
     description:
-      "Every article is checked against 310 rules covering H-structure, keyword density, alt text, word counts, banned AI phrases, grammar, and content sequencing.",
+      "H-structure, keyword density, alt text, banned phrases, and content flow — all checked automatically before anything reaches your CMS.",
   },
   {
     icon: <Layers className="h-6 w-6 text-[#7fffd4]" />,
     label: "100 Articles Per Batch",
     description:
-      "Upload a CSV or enter keywords manually. Bulk mode processes up to 100 articles with per-article status tracking, retry on failure, and batch download.",
+      "Upload a CSV or paste keywords. Generate up to 100 articles at once with live tracking, retries, and batch download.",
   },
   {
     icon: <CircleDollarSign className="h-6 w-6 text-[#7fffd4]" />,
-    label: "$0.54 Avg. Per Article",
+    label: "$0.54 Per Article",
     description:
-      "A 1,000-word article with AI images costs as little as $0.54 in credits. 25-article clusters average $0.39 each. Scale content without scaling spend.",
+      "A full article with AI images costs $0.54. Clusters drop to $0.39 each. Publish more without spending more.",
   },
 ];
 
